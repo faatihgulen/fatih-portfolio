@@ -1,0 +1,835 @@
+{
+  "settings": {
+    "siteTitle": "Fatih Gulen — Portfolio",
+    "logoText": "Fatih Gulen",
+    "heroLabel": "Design Portfolio",
+    "heroTitle": "Ask me anything.<br>I'll show you <em>the work.</em>",
+    "heroSubtitle": "Browse by category or describe what you're looking for. This portfolio understands context, tools, and intent.",
+    "searchPlaceholder": "Try: \"Show me your Unreal VR projects\"",
+    "initialStateText": "Select a category or type a query to explore projects. Press <span class=\"keystroke\">Enter</span> to search.",
+    "footerText": "© 2026 Fatih Gulen",
+    "suggestedPrompts": [
+      "Dashboard UI examples",
+      "VR projects in Unreal",
+      "AI workflows with ComfyUI",
+      "Architectural visualizations",
+      "3D product configurators"
+    ],
+    "about": {
+      "avatarImage": "images/Fatih_Gulen/1767480367261.webp",
+      "avatarFallback": "FG",
+      "name": "Fatih Gulen",
+      "title": "Multidisciplinary Designer",
+      "bio": "Multidisciplinary designer working across UI/UX, 3D, AI workflows, VR/AR experiences, and architectural visualization. I blend design thinking with emerging technologies to create meaningful, immersive digital experiences. Based in Germany.",
+      "links": [
+        {
+          "type": "website",
+          "label": "Website",
+          "value": "fatihgulen.com",
+          "url": "https://fatihgulen.com"
+        },
+        {
+          "type": "linkedin",
+          "label": "LinkedIn",
+          "value": "in/faatihgulen",
+          "url": "https://www.linkedin.com/in/faatihgulen/"
+        },
+        {
+          "type": "email",
+          "label": "Email",
+          "value": "faatihgulen@gmail.com",
+          "url": "mailto:faatihgulen@gmail.com"
+        },
+        {
+          "type": "phone",
+          "label": "Telefon",
+          "value": "+49 176 3716 0838",
+          "url": "tel:+4917637160838"
+        }
+      ]
+    },
+    "footerLinks": [
+      {
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/faatihgulen/"
+      },
+      {
+        "label": "Website",
+        "url": "https://fatihgulen.com"
+      },
+      {
+        "label": "Email",
+        "url": "mailto:faatihgulen@gmail.com"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "ui-ux",
+      "label": "UI / UX",
+      "order": 0
+    },
+    {
+      "id": "3d",
+      "label": "3D",
+      "order": 1
+    },
+    {
+      "id": "ai",
+      "label": "AI",
+      "order": 2
+    },
+    {
+      "id": "vr-ar",
+      "label": "VR / AR",
+      "order": 3
+    },
+    {
+      "id": "architecture",
+      "label": "Architecture",
+      "order": 4
+    }
+  ],
+  "keywordMap": {
+    "ui": "ui-ux",
+    "ux": "ui-ux",
+    "interface": "ui-ux",
+    "design": "ui-ux",
+    "app": "ui-ux",
+    "web": "ui-ux",
+    "3d": "3d",
+    "three": "3d",
+    "modeling": "3d",
+    "render": "3d",
+    "rendering": "3d",
+    "webgl": "3d",
+    "blender": "3d",
+    "ai": "ai",
+    "artificial": "ai",
+    "machine": "ai",
+    "ml": "ai",
+    "neural": "ai",
+    "generative": "ai",
+    "gpt": "ai",
+    "llm": "ai",
+    "vr": "vr-ar",
+    "ar": "vr-ar",
+    "virtual": "vr-ar",
+    "augmented": "vr-ar",
+    "mixed": "vr-ar",
+    "immersive": "vr-ar",
+    "metaverse": "vr-ar",
+    "quest": "vr-ar",
+    "hololens": "vr-ar",
+    "architecture": "architecture",
+    "architectural": "architecture",
+    "building": "architecture",
+    "urban": "architecture",
+    "residential": "architecture",
+    "city": "architecture",
+    "unreal": "unreal",
+    "ue5": "unreal",
+    "unity": "unity",
+    "figma": "figma",
+    "framer": "framer",
+    "webflow": "webflow",
+    "comfyui": "comfyui",
+    "stable diffusion": "stable-diffusion",
+    "midjourney": "midjourney",
+    "rhino": "rhino",
+    "grasshopper": "grasshopper",
+    "react": "react",
+    "python": "python",
+    "threejs": "threejs",
+    "touchdesigner": "touchdesigner",
+    "substance": "substance",
+    "dashboard": "dashboard",
+    "ecommerce": "ecommerce",
+    "e-commerce": "ecommerce",
+    "mobile": "mobile",
+    "banking": "banking",
+    "configurator": "configurator",
+    "product": "product",
+    "gallery": "gallery",
+    "visualization": "visualization",
+    "archviz": "archviz",
+    "workflow": "workflow",
+    "pipeline": "pipeline",
+    "automation": "automation",
+    "simulation": "simulation",
+    "training": "training",
+    "industrial": "industrial",
+    "design system": "design-system",
+    "components": "components",
+    "chatbot": "chatbot",
+    "conversational": "conversational",
+    "chat": "chatbot",
+    "art": "ai-art",
+    "collection": "collection",
+    "parametric": "parametric",
+    "algorithmic": "algorithmic",
+    "spatial": "spatial",
+    "hand tracking": "hand-tracking",
+    "dark": "dark-mode",
+    "luxury": "luxury",
+    "fashion": "fashion",
+    "masterplan": "masterplan",
+    "smart city": "smart-city",
+    "audio": "audio",
+    "music": "audio",
+    "visualizer": "visualizer",
+    "shader": "shaders",
+    "shaders": "shaders",
+    "asset": "asset",
+    "texture": "texturing",
+    "texturing": "texturing",
+    "portfolio": "portfolio",
+    "website": "website"
+  },
+  "projects": [
+    {
+      "id": "p01",
+      "title": "AERONIX — EV Dashboard UI",
+      "description": "End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive 3D car visualizations.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "dashboard",
+        "ev",
+        "automotive",
+        "dark-mode",
+        "figma",
+        "design-system",
+        "car"
+      ],
+      "tools": [
+        "Figma",
+        "Blender",
+        "After Effects"
+      ],
+      "thumbnail": "📊",
+      "image": "images/UI/AERONIX/Slide 16_9 - 1.webp",
+      "year": 2025,
+      "order": 0,
+      "images": [
+        "images/UI/AERONIX/Slide 16_9 - 1.webp"
+      ]
+    },
+    {
+      "id": "p02",
+      "title": "GroceryMate — Mobile App",
+      "description": "Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "mobile",
+        "grocery",
+        "app",
+        "ios",
+        "figma",
+        "prototype",
+        "ecommerce"
+      ],
+      "tools": [
+        "Figma",
+        "Protopie"
+      ],
+      "thumbnail": "📱",
+      "image": "images/UI/GroceryMate/app (1).webp",
+      "year": 2025,
+      "order": 1,
+      "images": [
+        "images/UI/GroceryMate/app (1).webp",
+        "images/UI/GroceryMate/0497cc64-cf65-4204-98d6-902663d07a5c.webp",
+        "images/UI/GroceryMate/1ccd81f7-2f0d-4039-927c-b5c300b88d64.webp",
+        "images/UI/GroceryMate/2.webp",
+        "images/UI/GroceryMate/26e8c458-b65e-4b0e-b1c0-8372f63651b9.webp",
+        "images/UI/GroceryMate/464399c8-5ed4-4de5-bbcc-3a2d23274799.webp",
+        "images/UI/GroceryMate/4b546f7f-3a77-4f15-bb71-5e7e7f6a8e6b.webp",
+        "images/UI/GroceryMate/5740d681-f772-48ed-8763-10d15c4f36dd.webp",
+        "images/UI/GroceryMate/57940ae9-7b11-497f-8ce1-caa71f82d520.webp",
+        "images/UI/GroceryMate/59f161fb-231b-42a6-bf4e-e623642d7077.webp",
+        "images/UI/GroceryMate/5c053a12-60e1-4717-9618-521d6e9e6e52.webp",
+        "images/UI/GroceryMate/6015c914-c6e3-4778-bf2b-0b0a4214707e.webp",
+        "images/UI/GroceryMate/73a2f167-73a3-4e0c-b0ce-1c7f4b0a8d07.webp",
+        "images/UI/GroceryMate/744d065c-30dd-40f4-986e-5b36cbb7aee4.webp",
+        "images/UI/GroceryMate/77694e4b-eea4-4a2b-acb2-d80ce1ac1b4f.webp",
+        "images/UI/GroceryMate/91fd82d4-1918-48fb-a276-89230a32c3c6.webp",
+        "images/UI/GroceryMate/96c6bd06-1cd4-4e2c-a9b0-ff6327eb993c.webp",
+        "images/UI/GroceryMate/97904e66-e477-45d4-83e3-7d4c48d9c22a.webp",
+        "images/UI/GroceryMate/app (10).webp",
+        "images/UI/GroceryMate/app (11).webp",
+        "images/UI/GroceryMate/app (12).webp",
+        "images/UI/GroceryMate/app (2).webp",
+        "images/UI/GroceryMate/app (3).webp",
+        "images/UI/GroceryMate/app (4).webp",
+        "images/UI/GroceryMate/app (5).webp",
+        "images/UI/GroceryMate/app (6).webp",
+        "images/UI/GroceryMate/app (7).webp",
+        "images/UI/GroceryMate/app (8).webp",
+        "images/UI/GroceryMate/app (9).webp"
+      ]
+    },
+    {
+      "id": "p03",
+      "title": "Hipicon — Brand Identity",
+      "description": "Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "branding",
+        "identity",
+        "ui",
+        "web",
+        "interaction",
+        "design"
+      ],
+      "tools": [
+        "Figma",
+        "Illustrator"
+      ],
+      "thumbnail": "🛍",
+      "image": "images/UI/Hipicon/40ca1d0a-9c16-42e9-8ad3-9ccb47228f54_rw_1920.webp",
+      "year": 2024,
+      "order": 2,
+      "images": [
+        "images/UI/Hipicon/40ca1d0a-9c16-42e9-8ad3-9ccb47228f54_rw_1920.webp",
+        "images/UI/Hipicon/0e563a5d-167c-4d7c-849c-d97b0bd2d4e3_rw_600.webp",
+        "images/UI/Hipicon/291b574d-dbe2-4579-b2ec-55d3d56dee8b_rw_600.webp",
+        "images/UI/Hipicon/296f373f-15a9-4417-b93f-2921529aa5c5_rw_1200.webp",
+        "images/UI/Hipicon/3045a34b-7d15-4e97-80b1-7c4169b84e62_rw_1200.webp",
+        "images/UI/Hipicon/8acf3de6-e781-4c73-8ced-a6497bcaf2b6_rw_600.webp"
+      ]
+    },
+    {
+      "id": "p04",
+      "title": "Balıkesir — Architectural Viz",
+      "description": "Architectural visualization for Balıkesir residential project. Photorealistic renders from concept to final presentation.",
+      "categories": [
+        "architecture",
+        "3d"
+      ],
+      "tags": [
+        "parametric",
+        "residential",
+        "archviz",
+        "grasshopper",
+        "rhino",
+        "rendering"
+      ],
+      "tools": [
+        "Rhino",
+        "V-Ray",
+        "Photoshop"
+      ],
+      "thumbnail": "🏗",
+      "image": "images/Architecture/Balıkesir/12345 (2).webp",
+      "year": 2024,
+      "order": 3,
+      "images": [
+        "images/Architecture/Balıkesir/12345 (2).webp",
+        "images/Architecture/Balıkesir/123456 (2).webp",
+        "images/Architecture/Balıkesir/12345678 (2).webp",
+        "images/Architecture/Balıkesir/123456789 (2).webp"
+      ]
+    },
+    {
+      "id": "p05",
+      "title": "Huawei VR — Racket Training",
+      "description": "VR racket training simulation for Huawei. Spatial UI, gesture tracking, and immersive training environments built in Unity.",
+      "categories": [
+        "vr-ar",
+        "3d"
+      ],
+      "tags": [
+        "vr",
+        "training",
+        "unity",
+        "immersive",
+        "spatial-ui",
+        "hand-tracking",
+        "huawei"
+      ],
+      "tools": [
+        "Unity",
+        "C#",
+        "Huawei VR SDK"
+      ],
+      "thumbnail": "🥽",
+      "image": "images/VR/Huawei/Racket_Training_1st.webp",
+      "year": 2025,
+      "order": 4,
+      "images": [
+        "images/VR/Huawei/Racket_Training_1st.webp"
+      ]
+    },
+    {
+      "id": "p06",
+      "title": "Synapse — AI Workflow Engine",
+      "description": "ComfyUI-based AI image generation pipeline. Custom nodes for style transfer, upscaling, and batch processing.",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "comfyui",
+        "ai",
+        "workflow",
+        "image-generation",
+        "stable-diffusion",
+        "pipeline",
+        "automation",
+        "nodes"
+      ],
+      "tools": [
+        "ComfyUI",
+        "Python",
+        "Stable Diffusion"
+      ],
+      "thumbnail": "🧠",
+      "image": "images/AI/Character_Comfyui/Deliverables_1.webp",
+      "year": 2025,
+      "order": 5,
+      "images": [
+        "images/AI/Character_Comfyui/Deliverables_1.webp"
+      ]
+    },
+    {
+      "id": "p07",
+      "title": "Istanbloom — Interior Design",
+      "description": "Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.",
+      "categories": [
+        "architecture",
+        "3d"
+      ],
+      "tags": [
+        "interior",
+        "residential",
+        "visualization",
+        "rendering",
+        "archviz",
+        "istanbul"
+      ],
+      "tools": [
+        "3ds Max",
+        "V-Ray",
+        "Photoshop"
+      ],
+      "thumbnail": "🏠",
+      "image": "images/Architecture/Istanbloom/ff1 (1).webp",
+      "year": 2024,
+      "order": 6,
+      "images": [
+        "images/Architecture/Istanbloom/ff1 (1).webp",
+        "images/Architecture/Istanbloom/Banyo (2).webp",
+        "images/Architecture/Istanbloom/ff2 (1).webp",
+        "images/Architecture/Istanbloom/ff3 (1).webp"
+      ]
+    },
+    {
+      "id": "p08",
+      "title": "AI Character — ComfyUI Pipeline",
+      "description": "AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.",
+      "categories": [
+        "ai",
+        "ui-ux"
+      ],
+      "tags": [
+        "ai",
+        "creative-tool",
+        "text-to-image",
+        "comfyui",
+        "character",
+        "stable-diffusion",
+        "interface"
+      ],
+      "tools": [
+        "ComfyUI",
+        "Python",
+        "Stable Diffusion"
+      ],
+      "thumbnail": "🎨",
+      "image": "images/AI/Character_Comfyui/Deliverables_3.webp",
+      "year": 2025,
+      "order": 7,
+      "images": [
+        "images/AI/Character_Comfyui/Deliverables_3.webp"
+      ]
+    },
+    {
+      "id": "p09",
+      "title": "Resorsus — Platform UI",
+      "description": "UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "platform",
+        "saas",
+        "interface",
+        "dashboard",
+        "web",
+        "design",
+        "dark-mode"
+      ],
+      "tools": [
+        "Figma",
+        "React"
+      ],
+      "thumbnail": "💬",
+      "image": "images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp",
+      "year": 2025,
+      "order": 8,
+      "images": [
+        "images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp",
+        "images/UI/Resorsus/28bb304b-afce-4e50-ad74-4b851da333e2_rw_1920.webp"
+      ]
+    },
+    {
+      "id": "p10",
+      "title": "Whaf — 3D Product Visualization",
+      "description": "3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.",
+      "categories": [
+        "3d",
+        "ui-ux"
+      ],
+      "tags": [
+        "3d",
+        "product",
+        "visualization",
+        "rendering",
+        "blender",
+        "materials",
+        "ecommerce"
+      ],
+      "tools": [
+        "Blender",
+        "Substance Painter",
+        "Photoshop"
+      ],
+      "thumbnail": "💎",
+      "image": "images/3D/Whaf/Whaf1.webp",
+      "year": 2025,
+      "order": 9,
+      "images": [
+        "images/3D/Whaf/Whaf1.webp",
+        "images/3D/Whaf/Whaf2.webp",
+        "images/3D/Whaf/Whaf3.webp"
+      ]
+    },
+    {
+      "id": "p11",
+      "title": "Gym — Fitness Center Design",
+      "description": "Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.",
+      "categories": [
+        "architecture",
+        "3d"
+      ],
+      "tags": [
+        "gym",
+        "fitness",
+        "interior",
+        "visualization",
+        "rendering",
+        "archviz",
+        "commercial"
+      ],
+      "tools": [
+        "3ds Max",
+        "V-Ray",
+        "Photoshop"
+      ],
+      "thumbnail": "🏛",
+      "image": "images/Architecture/Gym/2 (1) (2).webp",
+      "year": 2024,
+      "order": 10,
+      "images": [
+        "images/Architecture/Gym/2 (1) (2).webp",
+        "images/Architecture/Gym/0a7f0928-088b-4935-b340-184a4e98b039_rw_600.webp",
+        "images/Architecture/Gym/18f789de-20be-4ecb-a2e4-429b5524ac75_rw_600.webp",
+        "images/Architecture/Gym/5 (10).webp",
+        "images/Architecture/Gym/5f77331b-13b5-4882-a916-90307e1d6550_rw_600.webp"
+      ]
+    },
+    {
+      "id": "p12",
+      "title": "AI Thesis — Research Project",
+      "description": "Academic research project exploring AI-driven design workflows. Thesis documentation with generative design experiments.",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "ai",
+        "research",
+        "thesis",
+        "generative",
+        "automation",
+        "academic",
+        "design"
+      ],
+      "tools": [
+        "Python",
+        "ComfyUI",
+        "LaTeX"
+      ],
+      "thumbnail": "🎞",
+      "image": "images/AI/Thesis/1 (1).webp",
+      "year": 2025,
+      "order": 11,
+      "images": [
+        "images/AI/Thesis/1 (1).webp",
+        "images/AI/Thesis/1 (2).webp",
+        "images/AI/Thesis/1 (3).webp",
+        "images/AI/Thesis/1 (4).webp",
+        "images/AI/Thesis/1 (5).webp",
+        "images/AI/Thesis/15a8a83e-8261-4348-b715-97d9986655d2_rw_1200.webp",
+        "images/AI/Thesis/6da01b3c-5d56-4d91-aa01-73d61b043644_rw_1920.webp"
+      ]
+    },
+    {
+      "id": "p13",
+      "title": "Huawei VR — Unity Environments",
+      "description": "VR environment development for Huawei training platform. Spatial interaction design and immersive scene building.",
+      "categories": [
+        "vr-ar"
+      ],
+      "tags": [
+        "vr",
+        "unity",
+        "environment",
+        "simulation",
+        "industrial",
+        "huawei",
+        "spatial-ui",
+        "immersive"
+      ],
+      "tools": [
+        "Unity",
+        "C#",
+        "Blender"
+      ],
+      "thumbnail": "⚡",
+      "image": "images/VR/Huawei/Unity4.webp",
+      "year": 2024,
+      "order": 12,
+      "images": [
+        "images/VR/Huawei/Unity4.webp"
+      ]
+    },
+    {
+      "id": "p14",
+      "title": "AERONIX — Design System",
+      "description": "Comprehensive design system for AERONIX EV platform. 100+ components, dark/light modes, and automotive-specific patterns.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "design-system",
+        "components",
+        "tokens",
+        "accessibility",
+        "automotive",
+        "figma",
+        "ev"
+      ],
+      "tools": [
+        "Figma",
+        "Storybook",
+        "React"
+      ],
+      "thumbnail": "🔧",
+      "image": "images/UI/AERONIX/Slide 16_9 - 3.webp",
+      "year": 2025,
+      "order": 13,
+      "images": [
+        "images/UI/AERONIX/Slide 16_9 - 3.webp"
+      ]
+    },
+    {
+      "id": "p15",
+      "title": "AI Art — Diffusion Collection",
+      "description": "Curated collection of AI-generated art exploring identity and perception. Custom-trained models on personal datasets.",
+      "categories": [
+        "ai"
+      ],
+      "tags": [
+        "ai-art",
+        "generative",
+        "diffusion",
+        "collection",
+        "identity",
+        "custom-model",
+        "training"
+      ],
+      "tools": [
+        "Stable Diffusion",
+        "ComfyUI",
+        "LoRA"
+      ],
+      "thumbnail": "🖼",
+      "image": "images/AI/Character_Comfyui/Deliverables_5.webp",
+      "year": 2025,
+      "order": 14,
+      "images": [
+        "images/AI/Character_Comfyui/Deliverables_5.webp"
+      ]
+    },
+    {
+      "id": "p16",
+      "title": "VFX — 3D Visual Effects",
+      "description": "Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.",
+      "categories": [
+        "3d"
+      ],
+      "tags": [
+        "vfx",
+        "visual-effects",
+        "shaders",
+        "3d",
+        "particles",
+        "compositing",
+        "generative"
+      ],
+      "tools": [
+        "Blender",
+        "After Effects",
+        "Unreal Engine"
+      ],
+      "thumbnail": "🌊",
+      "image": "images/3D/VFX/posst.webp",
+      "year": 2025,
+      "order": 15,
+      "images": [
+        "images/3D/VFX/posst.webp",
+        "images/3D/VFX/2 (1) (3).webp",
+        "images/3D/VFX/EB055C3B-930B-43BC-B21A-82ABD9A06B89 (1).webp",
+        "images/3D/VFX/EFD15A56-B0E5-41F8-8F8C-2D48C5023A8B.webp",
+        "images/3D/VFX/s.webp"
+      ]
+    },
+    {
+      "id": "p17",
+      "title": "3D Materials — Texture Library",
+      "description": "Custom PBR material library with realistic metal, fabric, and organic surfaces. Procedural and hand-painted textures.",
+      "categories": [
+        "3d"
+      ],
+      "tags": [
+        "materials",
+        "textures",
+        "pbr",
+        "3d",
+        "substance",
+        "procedural",
+        "library"
+      ],
+      "tools": [
+        "Substance Painter",
+        "Blender",
+        "Photoshop"
+      ],
+      "thumbnail": "📈",
+      "image": "images/3D/Material/761c1a94-4679-498b-8b6d-c16150a59055_rw_1920.webp",
+      "year": 2025,
+      "order": 16,
+      "images": [
+        "images/3D/Material/761c1a94-4679-498b-8b6d-c16150a59055_rw_1920.webp",
+        "images/3D/Material/296bbee6-2962-4ffa-940d-deba4744484e_rw_1920.webp",
+        "images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp",
+        "images/3D/Material/518f25f6-43d9-4828-871a-8c53ee994ada_rw_1920.webp",
+        "images/3D/Material/6e5a781c-d5df-411b-97c7-46dc6fe055d6_rw_1920.webp",
+        "images/3D/Material/99f90083-4e7e-4423-bd00-7d3111fd2ad4_rw_1920.webp",
+        "images/3D/Material/c0675f3d-bb8e-4bc5-9d8b-9ff1422564ce_rw_1920.webp",
+        "images/3D/Material/e2d7dd6b-e78f-44f8-9c6f-aa3b12e30d8f_rw_1920.webp",
+        "images/3D/Material/e6f5edd8-5370-4f05-a00a-602fc3c4cd4e_rw_1920.webp"
+      ]
+    },
+    {
+      "id": "p18",
+      "title": "3D Concept — Digital Sculpture",
+      "description": "Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.",
+      "categories": [
+        "3d"
+      ],
+      "tags": [
+        "concept",
+        "sculpture",
+        "3d",
+        "digital",
+        "modeling",
+        "zbrush",
+        "art"
+      ],
+      "tools": [
+        "ZBrush",
+        "Blender",
+        "Photoshop"
+      ],
+      "thumbnail": "🌆",
+      "image": "images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp",
+      "year": 2025,
+      "order": 17,
+      "images": [
+        "images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp"
+      ]
+    },
+    {
+      "id": "p19",
+      "title": "AERONIX — 3D Car Visuals",
+      "description": "High-fidelity 3D car visualization for AERONIX EV. Detailed exterior renders, lighting studies, and turntable animations.",
+      "categories": [
+        "3d",
+        "ui-ux"
+      ],
+      "tags": [
+        "3d",
+        "car",
+        "automotive",
+        "visualization",
+        "rendering",
+        "blender",
+        "ev"
+      ],
+      "tools": [
+        "Blender",
+        "Substance Painter",
+        "After Effects"
+      ],
+      "thumbnail": "🚗",
+      "image": "images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp",
+      "year": 2025,
+      "order": 18,
+      "images": [
+        "images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp"
+      ]
+    },
+    {
+      "id": "p20",
+      "title": "Lumen — Portfolio Website",
+      "description": "AI-interface portfolio concept. Chat-based navigation, smart filtering, and ambient design system.",
+      "categories": [
+        "ui-ux"
+      ],
+      "tags": [
+        "portfolio",
+        "website",
+        "chat",
+        "interface",
+        "web",
+        "design",
+        "concept"
+      ],
+      "tools": [
+        "HTML/CSS/JS",
+        "Framer"
+      ],
+      "thumbnail": "✦",
+      "image": "",
+      "year": 2026,
+      "order": 19,
+      "images": []
+    }
+  ]
+}
