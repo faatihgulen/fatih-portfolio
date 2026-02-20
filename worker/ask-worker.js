@@ -1,17 +1,39 @@
 ﻿/**
- * Cloudflare Worker proxy for Gemini.
+ * Cloudflare Worker proxy for OpenAI Responses API.
  * Endpoint example: https://<worker>.<account>.workers.dev/api/ask
  * Secrets:
- * - GEMINI_API_KEY
+ * - OPENAI_API_KEY
  * Optional vars:
- * - GEMINI_MODEL (default: gemini-1.5-flash)
+ * - OPENAI_MODEL (default: gpt-4.1-mini)
  */
 
 const ALLOWED_ORIGINS = new Set([
   "https://fatihgulen.com",
   "https://www.fatihgulen.com",
-  "http://localhost:8000"
+  "http://localhost:8000",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5500",
+  "http://localhost:5500"
 ]);
+
+const ALLOWED_ORIGIN_SUFFIXES = [
+  ".fatihgulen-53.workers.dev",
+  ".pages.dev"
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+
+  try {
+    const { protocol, hostname } = new URL(origin);
+    if (protocol !== "https:") return false;
+    return ALLOWED_ORIGIN_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
+  } catch {
+    return false;
+  }
+}
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX = 30;
@@ -52,13 +74,13 @@ const FALLBACK_PATTERNS = [
 ];
 
 function corsHeaders(origin) {
-  const isAllowed = origin && ALLOWED_ORIGINS.has(origin);
+  const isAllowed = isAllowedOrigin(origin);
   if (!isAllowed) return {};
   return {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Vary": "Origin"
+    Vary: "Origin"
   };
 }
 
@@ -84,15 +106,23 @@ function isRateLimited(ip) {
   return bucket.count > RATE_LIMIT_MAX;
 }
 
-function readGeminiText(payload) {
-  const candidates = Array.isArray(payload?.candidates) ? payload.candidates : [];
-  if (!candidates.length) return "";
-  const parts = Array.isArray(candidates[0]?.content?.parts) ? candidates[0].content.parts : [];
-  const text = parts
-    .map((part) => (typeof part?.text === "string" ? part.text.trim() : ""))
-    .filter(Boolean)
-    .join("\n");
-  return text.trim();
+function readOpenAIText(payload) {
+  if (typeof payload?.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  const output = Array.isArray(payload?.output) ? payload.output : [];
+  const chunks = [];
+  for (const item of output) {
+    const content = Array.isArray(item?.content) ? item.content : [];
+    for (const block of content) {
+      if (block?.type === "output_text" && typeof block?.text === "string") {
+        chunks.push(block.text.trim());
+      }
+    }
+  }
+
+  return chunks.filter(Boolean).join("\n").trim();
 }
 
 function normalizeQuery(value) {
@@ -170,25 +200,29 @@ function buildFallbackAnswer(query) {
   if (q === "hi" || q === "hello" || q === "hey") {
     return "Hi. I can help you explore portfolio projects across UI/UX, AI, VR/AR, 3D, and architecture.";
   }
+
   let best = null;
   for (const entry of FALLBACK_PATTERNS) {
     const score = entry.keywords.reduce((acc, keyword) => (q.includes(keyword) ? acc + 1 : acc), 0);
     if (!best || score > best.score) best = { score, answer: entry.answer };
   }
   if (best && best.score > 0) return best.answer;
+
   return "I can help with portfolio topics like UI/UX, AI workflows, VR/AR, game UI, visual design, and project tools. Ask with a specific topic for better results.";
 }
 
-async function callGemini(model, apiKey, promptText) {
-  return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+async function callOpenAI(model, apiKey, promptText) {
+  return fetch("https://api.openai.com/v1/responses", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`
+    },
     body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: promptText }] }],
-      generationConfig: {
-        temperature: 0.25,
-        maxOutputTokens: 260
-      }
+      model,
+      input: promptText,
+      temperature: 0.25,
+      max_output_tokens: 260
     })
   });
 }
@@ -203,7 +237,7 @@ export default {
     const origin = request.headers.get("Origin") || "";
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
 
-    if (origin && !ALLOWED_ORIGINS.has(origin)) {
+    if (origin && !isAllowedOrigin(origin)) {
       return jsonResponse(403, { error: "Origin not allowed" }, origin);
     }
 
@@ -223,9 +257,9 @@ export default {
       return jsonResponse(429, { error: "Too many requests" }, origin);
     }
 
-    const apiKey = env.GEMINI_API_KEY;
+    const apiKey = env.OPENAI_API_KEY;
     if (!apiKey) {
-      return jsonResponse(500, { error: "Server is missing Gemini API configuration." }, origin);
+      return jsonResponse(500, { error: "Server is missing OpenAI API configuration." }, origin);
     }
 
     let query = "";
@@ -240,30 +274,90 @@ export default {
       return jsonResponse(400, { error: "Query is required" }, origin);
     }
 
-    const model = String(env.GEMINI_MODEL || "gemini-1.5-flash").trim();
+    if (query === "__status_ping__") {
+      try {
+        const healthRes = await fetch("https://api.openai.com/v1/models?limit=1", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${apiKey}`
+          }
+        });
+        if (!healthRes.ok) {
+          const reason = healthRes.status === 429
+            ? "quota_limited"
+            : (healthRes.status === 401 || healthRes.status === 403)
+              ? "auth_invalid"
+              : "upstream_unavailable";
+          return jsonResponse(200, {
+            answer: "",
+            fallback: true,
+            reason,
+            upstream_status: healthRes.status
+          }, origin);
+        }
+        return jsonResponse(200, { answer: "ok", fallback: false, reason: "" }, origin);
+      } catch {
+        return jsonResponse(200, {
+          answer: "",
+          fallback: true,
+          reason: "upstream_unavailable"
+        }, origin);
+      }
+    }
+
+    const model = String(env.OPENAI_MODEL || "gpt-4.1-mini").trim();
     const promptText = [
-      "You are a portfolio assistant for fatihgulen.com.",
-      "Keep answers short and professional.",
-      "Only use information implied by the portfolio query context.",
-      "Do not invent personal details."
-    ].join(" ") + `\n\nUser query: ${query}`;
+      "You are the portfolio assistant for fatihgulen.com.",
+      "Answer in the same language as the user query.",
+      "Be concise but specific. Avoid generic marketing phrasing.",
+      "Use only verified facts below. If the user asks outside these facts, say it briefly and offer related portfolio topics.",
+      "Do not invent personal details, project names, dates, or tools.",
+      "",
+      "Verified facts:",
+      `- ${PROFILE_FACTS.education}`,
+      `- ${PROFILE_FACTS.experience}`,
+      `- ${PROFILE_FACTS.uiExperience}`,
+      `- ${PROFILE_FACTS.tools}`,
+      `- ${PROFILE_FACTS.languages}`
+    ].join("\n") + `\n\nUser query: ${query}`;
 
     try {
-      const geminiRes = await callGemini(model, apiKey, promptText);
-      const raw = await geminiRes.text();
-      if (!geminiRes.ok) {
-        const reason = geminiRes.status === 429 ? "quota_limited" : "upstream_unavailable";
-        return jsonResponse(200, { answer: buildFallbackAnswer(query), fallback: true, reason }, origin);
+      const openaiRes = await callOpenAI(model, apiKey, promptText);
+      const raw = await openaiRes.text();
+      if (!openaiRes.ok) {
+        const reason = openaiRes.status === 429
+          ? "quota_limited"
+          : (openaiRes.status === 401 || openaiRes.status === 403)
+            ? "auth_invalid"
+            : "upstream_unavailable";
+        console.log(JSON.stringify({
+          event: "openai_fallback",
+          status: openaiRes.status,
+          reason
+        }));
+        return jsonResponse(200, {
+          answer: buildFallbackAnswer(query),
+          fallback: true,
+          reason,
+          upstream_status: openaiRes.status
+        }, origin);
       }
-      const geminiJson = raw ? JSON.parse(raw) : {};
-      const answer = readGeminiText(geminiJson);
+
+      const openaiJson = raw ? JSON.parse(raw) : {};
+      const answer = readOpenAIText(openaiJson);
       if (!answer) {
         return jsonResponse(500, {
           answer: "I could not generate a reliable answer right now. Please try a different question."
         }, origin);
       }
+
       return jsonResponse(200, { answer }, origin);
-    } catch {
+    } catch (err) {
+      console.log(JSON.stringify({
+        event: "openai_exception",
+        reason: "upstream_unavailable",
+        message: err && err.message ? String(err.message) : "unknown"
+      }));
       return jsonResponse(200, {
         answer: buildFallbackAnswer(query),
         fallback: true,

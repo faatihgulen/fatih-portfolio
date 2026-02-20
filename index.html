@@ -2432,7 +2432,9 @@ const aiFallbackFollowups = [
   "Show VR projects",
   "Contact details"
 ];
-const AI_ENDPOINT = "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask";
+const AI_ENDPOINT = (window.AI_ENDPOINT && String(window.AI_ENDPOINT).trim())
+  ? String(window.AI_ENDPOINT).trim()
+  : "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask";
 const aiUnknownFallback = "I could not find an exact match, but this portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects. I can also guide you to the closest category and show related work.";
 const aiThreshold = 0.58;
 let aiKbCache = null;
@@ -2697,9 +2699,7 @@ function renderAiAnswer(query, answer, suggestions) {
 function slightlyExpandAnswer(answer) {
   const text = String(answer || "").trim();
   if (!text) return text;
-  if (text.length >= 220) return text;
-  const extra = " I can also suggest the most relevant category and show matching projects below.";
-  return text.endsWith(".") ? text + extra : text + "." + extra;
+  return text;
 }
 
 function escapeHtml(value) {
@@ -2729,11 +2729,15 @@ function setAiServiceStatus(isOnline) {
 }
 
 async function askProxy(query) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
   const res = await fetch(AI_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: query })
-  });
+    body: JSON.stringify({ query: query }),
+    cache: "no-store",
+    signal: controller.signal
+  }).finally(() => clearTimeout(timeout));
   if (!res.ok) {
     let payload = null;
     try { payload = await res.json(); } catch (_) {}
@@ -2746,7 +2750,8 @@ async function askProxy(query) {
   return {
     answer: (data && typeof data.answer === "string") ? data.answer.trim() : "",
     fallback: Boolean(data && data.fallback),
-    reason: data && data.reason ? String(data.reason) : ""
+    reason: data && data.reason ? String(data.reason) : "",
+    upstream_status: data && data.upstream_status ? Number(data.upstream_status) : 0
   };
 }
 
@@ -2754,7 +2759,7 @@ let aiStatusTimer = null;
 async function refreshAiServiceStatus() {
   try {
     const ping = await askProxy("__status_ping__");
-    const isOnline = Boolean(ping.answer) && !ping.fallback;
+    const isOnline = Boolean(ping.answer);
     setAiServiceStatus(isOnline);
   } catch (_) {
     setAiServiceStatus(false);
@@ -2837,6 +2842,7 @@ async function handleQuery() {
     let answerText = "";
     let followups = aiFallbackFollowups;
     let shouldUseLocalFallback = false;
+    let fallbackReason = "unavailable";
 
     try {
       const proxyResult = await askProxy(query);
@@ -2847,6 +2853,13 @@ async function handleQuery() {
         setAiServiceStatus(true);
       } else {
         shouldUseLocalFallback = true;
+        fallbackReason = proxyResult.reason || "unavailable";
+        if (proxyResult.fallback) {
+          console.warn("Worker returned fallback:", {
+            reason: proxyResult.reason || "",
+            upstreamStatus: proxyResult.upstream_status || ""
+          });
+        }
         setAiServiceStatus(false);
       }
     } catch (err) {
@@ -2870,7 +2883,8 @@ async function handleQuery() {
         console.warn("KB matching failed:", err);
       }
       if (!answerText) {
-        const grounded = getQueryAwareFallback(query, "unavailable");
+        const mappedReason = fallbackReason === "quota_limited" ? "rate_limited" : fallbackReason;
+        const grounded = getQueryAwareFallback(query, mappedReason);
         answerText = grounded.answer;
         followups = grounded.followups;
       }
