@@ -1,0 +1,122 @@
+[
+  {
+    "intent": "about_fatih",
+    "keywords": ["who is fatih", "about fatih", "profile", "tell me about fatih"],
+    "responses": [
+      "Fatih Gulen is a multidisciplinary designer working across UI/UX, 3D, AI workflows, VR/AR experiences, and architectural visualization.",
+      "He combines design thinking with emerging technologies to create immersive and practical digital experiences.",
+      "Fatih's portfolio focuses on cross-disciplinary work that connects product design, 3D, AI, and spatial experiences."
+    ],
+    "followups": ["What tools does he use?", "What categories are available?", "Show VR projects", "Contact details"]
+  },
+  {
+    "intent": "experience_years",
+    "keywords": ["years of experience", "how many years of experience", "experience duration"],
+    "responses": [
+      "The exact total number of years is not explicitly stated in this repository.",
+      "A precise years-of-experience value is not provided in the current source data.",
+      "The portfolio shows broad multi-domain work, but it does not state an exact total year count."
+    ],
+    "followups": ["What kind of projects are listed?", "Show AI projects", "Show UI/UX projects", "Contact details"]
+  },
+  {
+    "intent": "tools_stack",
+    "keywords": ["what tools does he use", "tools", "tool stack", "software", "technologies"],
+    "responses": [
+      "Common tools in the portfolio include Figma, Blender, Unity, ComfyUI, Python, React, Substance Painter, V-Ray, and Photoshop.",
+      "The project stack combines UI, 3D, AI, and architectural visualization tools.",
+      "Frequent tools include design platforms, 3D pipelines, and AI workflow tools depending on project type."
+    ],
+    "followups": ["Figma projects", "ComfyUI projects", "Show VR projects", "Architecture examples"]
+  },
+  {
+    "intent": "contact_info",
+    "keywords": ["contact", "contact details", "email", "linkedin", "how to reach"],
+    "responses": [
+      "You can contact Fatih via email (faatihgulen@gmail.com), LinkedIn (linkedin.com/in/faatihgulen), and the website (fatihgulen.com).",
+      "Available contact channels include Website, LinkedIn, Email, and phone details in the About section.",
+      "The portfolio includes direct contact links in both header/footer and About details."
+    ],
+    "followups": ["Who is Fatih?", "Portfolio categories", "Show AI projects", "Show VR projects"]
+  },
+  {
+    "intent": "show_vr_projects",
+    "keywords": ["vr projects", "vr ar", "virtual reality", "huawei vr", "unity vr"],
+    "responses": [
+      "In VR/AR, you can explore projects like Huawei VR - Racket Training and Huawei VR - Unity Environments.",
+      "The VR/AR category includes immersive training and spatial interaction work.",
+      "You can switch to the VR/AR category to view relevant projects quickly."
+    ],
+    "followups": ["Show 3D projects", "What tools were used in VR?", "Show AI projects", "Show Architecture projects"]
+  },
+  {
+    "intent": "show_uiux_projects",
+    "keywords": ["ui ux", "ui projects", "dashboard ui", "interface design", "resorsus", "aeronix ui"],
+    "responses": [
+      "UI/UX highlights include AERONIX, GroceryMate, Hipicon, and Resorsus.",
+      "The UI/UX category features dashboard interfaces, mobile product design, and design system work.",
+      "For interface-focused content, filtering to UI/UX is the best starting point."
+    ],
+    "followups": ["Design system examples", "Mobile app projects", "UI + 3D projects", "Contact details"]
+  },
+  {
+    "intent": "show_3d_projects",
+    "keywords": ["3d projects", "render", "vfx", "materials", "digital sculpture"],
+    "responses": [
+      "The 3D category includes product visualization, materials, VFX, and concept work.",
+      "You can find modeling, rendering, and material-focused projects in the 3D section.",
+      "3D work in this portfolio spans assets, visualization, and effects pipelines."
+    ],
+    "followups": ["Show VFX works", "Show materials projects", "Show Architecture + 3D", "Show AI projects"]
+  },
+  {
+    "intent": "show_ai_projects",
+    "keywords": ["ai projects", "artificial intelligence", "comfyui", "thesis", "generative ai"],
+    "responses": [
+      "AI-focused items include ComfyUI workflows, character generation experiments, and an AI thesis project.",
+      "The AI category showcases generative workflows and research-oriented experiments.",
+      "You can switch to the AI category to view relevant projects directly."
+    ],
+    "followups": ["ComfyUI details", "Thesis project", "VR + AI projects", "What tools does he use?"]
+  },
+  {
+    "intent": "show_architecture_projects",
+    "keywords": ["architecture", "archviz", "interior design", "residential visualization", "villa"],
+    "responses": [
+      "Architecture projects include Balikesir, Istanbloom, and Gym visualization work.",
+      "This category contains residential and interior architectural visualization projects.",
+      "Filter by Architecture to focus on archviz and interior-oriented cases."
+    ],
+    "followups": ["Show 3D works", "Interior-focused examples", "Show UI/UX projects", "Contact details"]
+  },
+  {
+    "intent": "portfolio_scope",
+    "keywords": ["what is in this portfolio", "what categories are available", "categories", "portfolio content"],
+    "responses": [
+      "This portfolio has five main categories: UI/UX, 3D, AI, VR/AR, and Architecture.",
+      "You can browse via category filters or ask in natural language to find relevant projects.",
+      "The portfolio combines product design, technical visualization, and AI-assisted workflows."
+    ],
+    "followups": ["Show UI/UX", "Show VR/AR", "Show AI", "Who is Fatih?"]
+  },
+  {
+    "intent": "location",
+    "keywords": ["where is fatih based", "location", "based in"],
+    "responses": [
+      "According to the portfolio profile text, Fatih is based in Germany.",
+      "Location in the current source data is listed as Germany.",
+      "The About profile indicates Germany as the current base."
+    ],
+    "followups": ["Contact details", "About Fatih", "Show VR projects", "Show UI/UX projects"]
+  },
+  {
+    "intent": "website_links",
+    "keywords": ["website", "portfolio link", "artstation", "linkedin link", "site address"],
+    "responses": [
+      "Primary website: fatihgulen.com. LinkedIn and ArtStation links are also available on the page.",
+      "The portfolio provides website, LinkedIn, and email links in the footer and About section.",
+      "You can use the public links to reach profile and contact channels quickly."
+    ],
+    "followups": ["Contact details", "Who is Fatih?", "Show AI projects", "Show VR projects"]
+  }
+]

@@ -42,7 +42,7 @@
         },
         {
           "type": "phone",
-          "label": "Telefon",
+          "label": "Phone",
           "value": "+49 176 3716 0838",
           "url": "tel:+4917637160838"
         }
@@ -306,8 +306,8 @@
     },
     {
       "id": "p04",
-      "title": "Balıkesir — Architectural Viz",
-      "description": "Architectural visualization for Balıkesir residential project. Photorealistic renders from concept to final presentation.",
+      "title": "Balikesir — Architectural Viz",
+      "description": "Architectural visualization for Balikesir residential project. Photorealistic renders from concept to final presentation.",
       "categories": [
         "architecture",
         "3d"

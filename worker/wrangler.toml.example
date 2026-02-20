@@ -1,0 +1,6 @@
+name = "fatih-portfolio-ai-proxy"
+main = "ask-worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+GEMINI_MODEL = "gemini-2.0-flash"

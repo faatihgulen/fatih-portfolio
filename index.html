@@ -127,6 +127,10 @@
     width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
     animation: statusBlink 3s ease-in-out infinite; display: inline-block;
   }
+  .status-dot.offline {
+    background: #ff6b6b;
+    animation: none;
+  }
   @keyframes statusBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
   .header-link {
     font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
@@ -221,6 +225,91 @@
   }
   .suggest-chip:hover {
     color: var(--text-secondary); border-color: var(--border-hover); background: var(--surface);
+  }
+
+  /* --- AI Answer Container --- */
+  .ai-answer-container {
+    width: 100%;
+    max-width: 840px;
+    margin: 0 auto 28px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(17,17,19,0.94), rgba(17,17,19,0.8));
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .ai-answer-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .ai-answer-label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .ai-asked {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .ai-asked strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .ai-answer-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .ai-answer-text {
+    color: var(--text-primary);
+    font-size: 0.96rem;
+    line-height: 1.72;
+    min-height: 1.6em;
+  }
+  .ai-answer-text.loading {
+    color: var(--text-secondary);
+  }
+  .ai-followups {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .ai-followups-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .ai-followup-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ai-followup-chip {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 100px;
+    padding: 7px 13px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+  .ai-followup-chip:hover {
+    border-color: var(--accent-mid);
+    color: var(--text-primary);
+    background: var(--accent-dim);
   }
 
   /* --- Response Area --- */
@@ -654,11 +743,26 @@
     width: 76px; height: 52px; border-radius: 8px; overflow: hidden;
     border: 1px solid var(--border); background: var(--surface-2);
     flex: 0 0 auto; cursor: pointer; transition: all 0.25s;
+    position: relative;
   }
   .pm-gallery-thumb.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim) inset; }
   .pm-gallery-thumb:hover { border-color: var(--accent-mid); transform: translateY(-1px); }
   .pm-gallery-thumb img,
   .pm-gallery-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pm-gallery-caption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 5px 6px;
+    font-size: 0.58rem; line-height: 1.3; color: var(--text-primary);
+    background: linear-gradient(180deg, rgba(10,10,11,0) 0%, rgba(10,10,11,0.9) 72%);
+    opacity: 0; transform: translateY(5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .pm-gallery-thumb:hover .pm-gallery-caption { opacity: 1; transform: translateY(0); }
 
   .pm-story {
     display: flex;
@@ -745,10 +849,21 @@
     max-width: min(94vw, 1400px); max-height: 90vh; border-radius: 12px;
     border: 1px solid var(--border);
   }
+  .image-lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--border); background: rgba(17,17,19,0.84);
+    color: var(--text-primary); cursor: pointer; font-size: 1.45rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    z-index: 2;
+  }
+  .image-lightbox-nav.prev { left: 16px; }
+  .image-lightbox-nav.next { right: 16px; }
   .image-lightbox-close {
     position: absolute; top: 18px; right: 18px; width: 36px; height: 36px;
     border-radius: 50%; border: 1px solid var(--border);
     background: rgba(17,17,19,0.8); color: var(--text-primary); cursor: pointer;
+    z-index: 3;
   }
 
   /* --- Responsive --- */
@@ -757,6 +872,7 @@
     .hero { padding: 60px 20px 40px; }
     .categories, .suggested { padding-left: 20px; padding-right: 20px; }
     .chat-input-wrap { padding: 0 20px 16px; }
+    .ai-answer-container { margin: 0 20px 20px; width: auto; }
     .response-area { padding: 0 20px 40px; }
     .project-grid { grid-template-columns: 1fr; }
     footer { padding: 16px 20px; flex-direction: column; gap: 12px; text-align: center; }
@@ -775,6 +891,11 @@
     .pm-embed-host { min-height: 440px; }
     .pm-embed-grid { grid-template-columns: 1fr; }
     .pm-image-count, .pm-preview-close, .pm-expand-btn { font-size: 0.58rem; }
+    .image-lightbox { padding: 12px; }
+    .image-lightbox-nav { width: 38px; height: 38px; font-size: 1.25rem; }
+    .image-lightbox-nav.prev { left: 8px; }
+    .image-lightbox-nav.next { right: 8px; }
+    .image-lightbox-close { top: 10px; right: 10px; }
     .project-overlay.expanded .project-modal { transform: translateY(0) scale(1); }
     .project-overlay.expanded .pm-body { padding: 22px 20px 24px; transform: none; }
   }
@@ -782,6 +903,7 @@
     .hero h1 { font-size: 2.2rem; }
     .cat-pill { padding: 8px 14px; font-size: 0.65rem; }
     .suggest-chip { font-size: 0.72rem; padding: 6px 12px; }
+    .ai-followup-chip { font-size: 0.74rem; padding: 6px 11px; }
   }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1187,7 +1309,7 @@
             <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           </div>
           <div class="modal-link-info">
-            <span class="modal-link-label">Telefon</span>
+            <span class="modal-link-label">Phone</span>
             <span class="modal-link-value">+49 176 37160838</span>
           </div>
           <div class="modal-link-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
@@ -1213,7 +1335,9 @@
 <div class="tour-focus" id="tourFocus"></div>
 
 <div class="image-lightbox" id="imageLightbox" onclick="if(event.target===this)closeImageLightbox()">
-  <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
+  <button class="image-lightbox-nav prev" id="imageLightboxPrev" onclick="navImageLightbox(-1)" aria-label="Previous image">&#8249;</button>
+  <button class="image-lightbox-nav next" id="imageLightboxNext" onclick="navImageLightbox(1)" aria-label="Next image">&#8250;</button>
+  <button class="image-lightbox-close" onclick="closeImageLightbox()" aria-label="Close image viewer">&times;</button>
   <img id="imageLightboxImg" src="" alt="Expanded preview">
   <video id="imageLightboxVideo" controls playsinline style="display:none;"></video>
 </div>
@@ -1248,7 +1372,7 @@
   <header>
     <div class="logo" onclick="resetView()"><span>*</span> Fatih Gulen</div>
     <div class="header-meta">
-      <span class="header-link" onclick="resetView()"><span class="status-dot"></span>&nbsp; Online</span>
+      <span class="header-link" id="aiStatusLink" onclick="resetView()"><span class="status-dot" id="aiStatusDot"></span>&nbsp; <span id="aiStatusText">Online</span></span>
       <span class="header-link" onclick="openAbout()">About</span>
     </div>
   </header>
@@ -1290,12 +1414,23 @@
   </div>
 
   <div class="suggested" id="suggestedPrompts">
-    <button class="suggest-chip" onclick="usePrompt(this)">Dashboard UI examples</button>
-    <button class="suggest-chip" onclick="usePrompt(this)">VR projects in Unreal</button>
-    <button class="suggest-chip" onclick="usePrompt(this)">Generative AI</button>
-    <button class="suggest-chip" onclick="usePrompt(this)">Architectural visualizations</button>
-    <button class="suggest-chip" onclick="usePrompt(this)">3D Assets</button>
+    <button class="suggest-chip" onclick="usePrompt(this)">Who is Fatih?</button>
+    <button class="suggest-chip" onclick="usePrompt(this)">How many years of experience?</button>
+    <button class="suggest-chip" onclick="usePrompt(this)">What tools does he use?</button>
+    <button class="suggest-chip" onclick="usePrompt(this)">Show VR projects</button>
+    <button class="suggest-chip" onclick="usePrompt(this)">Contact details</button>
   </div>
+
+  <section class="ai-answer-container" id="aiAnswerContainer" aria-live="polite" hidden>
+    <div class="ai-answer-label">AI Answer</div>
+    <p class="ai-asked" id="aiAsked"></p>
+    <h2 class="ai-answer-title" id="aiAnswerHeading" tabindex="-1">Answer</h2>
+    <p class="ai-answer-text" id="aiAnswerText"></p>
+    <div class="ai-followups">
+      <div class="ai-followups-label">Suggested questions</div>
+      <div class="ai-followup-chips" id="aiFollowupChips"></div>
+    </div>
+  </section>
 
   <div class="response-area" id="responseArea">
     <div class="initial-state" id="initialState">
@@ -1324,7 +1459,19 @@ function closeAbout() {
   document.getElementById('aboutModal').classList.remove('open');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAbout(); closeProject(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeImageLightbox();
+    closeAbout();
+    closeProject();
+    return;
+  }
+  const lightbox = document.getElementById('imageLightbox');
+  if (lightbox && lightbox.classList.contains('open')) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); navImageLightbox(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navImageLightbox(-1); }
+  }
+});
 
 // --- PROJECT DETAIL MODAL ---
 let currentProjectIndex = -1;
@@ -1337,6 +1484,9 @@ let coverProjectImageIndex = 0;
 let storyPreviewActive = false;
 const preferredImageCache = new Map();
 const preferredImagePending = new Map();
+let imageLightboxSources = [];
+let imageLightboxIndex = 0;
+let imageLightboxRequestId = 0;
 
 function onProjectModalScroll() {
   const modal = document.getElementById('projectModalContent');
@@ -1357,20 +1507,17 @@ function openImageLightbox(src) {
   const video = document.getElementById('imageLightboxVideo');
   if (!lightbox || !img || !video) return;
   const mediaSrc = normalizeImagePath(src);
-  if (isVideoMedia(mediaSrc)) {
-    img.style.display = 'none';
-    img.src = '';
-    video.style.display = 'block';
-    video.src = mediaSrc;
-    video.currentTime = 0;
-    video.play().catch(() => {});
-  } else {
-    video.pause();
-    video.style.display = 'none';
-    video.removeAttribute('src');
-    img.style.display = 'block';
-    setImageWithPreferredQuality(img, mediaSrc);
+  imageLightboxSources = (Array.isArray(currentProjectGallery) && currentProjectGallery.length)
+    ? [...currentProjectGallery]
+    : [mediaSrc];
+  const hitIndex = findLightboxIndexBySrc(mediaSrc, imageLightboxSources);
+  imageLightboxIndex = hitIndex >= 0 ? hitIndex : 0;
+  if (hitIndex < 0 && mediaSrc) {
+    imageLightboxSources = [mediaSrc, ...imageLightboxSources.filter(s => normalizeImagePath(s) !== mediaSrc)];
+    imageLightboxIndex = 0;
   }
+  renderLightboxCurrentMedia();
+  updateLightboxNavControls();
   lightbox.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1385,12 +1532,117 @@ function closeImageLightbox() {
     video.removeAttribute('src');
     video.style.display = 'none';
   }
+  imageLightboxSources = [];
+  imageLightboxIndex = 0;
+  imageLightboxRequestId += 1;
   if (lightbox) lightbox.classList.remove('open');
   if (document.getElementById('projectModal').classList.contains('open')) {
     document.body.style.overflow = 'hidden';
   } else {
     document.body.style.overflow = '';
   }
+}
+
+function baseMediaName(src) {
+  return normalizeImagePath(src).split('?')[0].replace(/\.[^/.]+$/, '').toLowerCase();
+}
+
+function findLightboxIndexBySrc(src, list) {
+  if (!src || !Array.isArray(list) || !list.length) return -1;
+  const cleanSrc = normalizeImagePath(src);
+  const exact = list.findIndex(item => normalizeImagePath(item) === cleanSrc);
+  if (exact >= 0) return exact;
+  const base = baseMediaName(cleanSrc);
+  return list.findIndex(item => baseMediaName(item) === base);
+}
+
+function buildLightboxOriginalCandidates(src) {
+  const clean = normalizeImagePath(src);
+  if (!clean || isVideoMedia(clean)) return [clean];
+  const m = clean.match(/^(.*)\.([a-zA-Z0-9]+)(\?.*)?$/);
+  if (!m) return [clean];
+  const base = m[1];
+  const ext = m[2].toLowerCase();
+  const query = m[3] || '';
+  return [
+    `${base}.jpg${query}`,
+    `${base}.jpeg${query}`,
+    `${base}.png${query}`,
+    `${base}.webp${query}`,
+    `${base}.${ext}${query}`
+  ].filter((value, idx, arr) => value && arr.indexOf(value) === idx);
+}
+
+async function resolveOriginalLightboxImage(src) {
+  const clean = normalizeImagePath(src);
+  const candidates = buildLightboxOriginalCandidates(clean);
+  for (const candidate of candidates) {
+    if (await probeImageExists(candidate)) return candidate;
+  }
+  return clean;
+}
+
+function renderLightboxCurrentMedia() {
+  const lightbox = document.getElementById('imageLightbox');
+  const img = document.getElementById('imageLightboxImg');
+  const video = document.getElementById('imageLightboxVideo');
+  if (!lightbox || !img || !video || !imageLightboxSources.length) return;
+  const activeSrc = normalizeImagePath(imageLightboxSources[imageLightboxIndex] || '');
+  if (!activeSrc) return;
+  if (isVideoMedia(activeSrc)) {
+    img.style.display = 'none';
+    img.src = '';
+    video.style.display = 'block';
+    video.src = activeSrc;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+    return;
+  }
+  video.pause();
+  video.style.display = 'none';
+  video.removeAttribute('src');
+  img.style.display = 'block';
+  img.src = activeSrc;
+  const reqId = ++imageLightboxRequestId;
+  resolveOriginalLightboxImage(activeSrc).then((bestSrc) => {
+    if (reqId !== imageLightboxRequestId) return;
+    if (!bestSrc || isVideoMedia(bestSrc)) return;
+    img.src = bestSrc;
+  });
+}
+
+function updateLightboxNavControls() {
+  const prev = document.getElementById('imageLightboxPrev');
+  const next = document.getElementById('imageLightboxNext');
+  const show = imageLightboxSources.length > 1;
+  if (prev) prev.style.display = show ? 'inline-flex' : 'none';
+  if (next) next.style.display = show ? 'inline-flex' : 'none';
+}
+
+function navImageLightbox(dir) {
+  if (!imageLightboxSources.length) return;
+  if (imageLightboxSources.length === 1) return;
+  imageLightboxIndex = (imageLightboxIndex + dir + imageLightboxSources.length) % imageLightboxSources.length;
+  renderLightboxCurrentMedia();
+}
+
+function setupImageLightboxSwipe() {
+  const lightbox = document.getElementById('imageLightbox');
+  if (!lightbox) return;
+  let startX = 0;
+  let startY = 0;
+  lightbox.addEventListener('touchstart', (e) => {
+    if (!lightbox.classList.contains('open') || !e.changedTouches || !e.changedTouches.length) return;
+    startX = e.changedTouches[0].clientX;
+    startY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  lightbox.addEventListener('touchend', (e) => {
+    if (!lightbox.classList.contains('open') || !e.changedTouches || !e.changedTouches.length) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    navImageLightbox(dx < 0 ? 1 : -1);
+  }, { passive: true });
 }
 
 function setProjectExpanded(expanded) {
@@ -1483,13 +1735,11 @@ function normalizeGalleryEntry(entry) {
 
 const galleryConfig = {
   p01: [
-    'images/UI/AERONIX/1.webp',
-    'images/UI/AERONIX/2.webp',
+    'images/UI/AERONIX/1230.mp4',
     'images/UI/AERONIX/Charge.webp',
     'images/UI/AERONIX/Drive.webp',
-    'images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp',
-    'images/UI/AERONIX/ian-tan-fronttop-v001.webp',
-    'images/UI/AERONIX/ian-tan-reartop-v001.webp',
+    'images/UI/AERONIX/1.webp',
+    'images/UI/AERONIX/2.webp',
     'images/UI/AERONIX/ezgif-545218b14e7a7379.gif',
     'images/UI/AERONIX/Image 1.webp',
     'images/UI/AERONIX/2.webp',
@@ -1500,6 +1750,9 @@ const galleryConfig = {
     'images/UI/AERONIX/Slide 16_9 - 4.webp',
     'images/UI/AERONIX/Slide 16_9 - 8.webp',
     'images/UI/AERONIX/Slide 16_9 - 9.webp',
+    'images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp',
+    'images/UI/AERONIX/ian-tan-fronttop-v001.webp',
+    'images/UI/AERONIX/ian-tan-reartop-v001.webp',
   ],
   p02: [
     'images/UI/GroceryMate/app (1).webp',
@@ -1560,9 +1813,9 @@ const galleryConfig = {
     'images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp',
     'images/Architecture/BSH/c58faca5-df89-4f49-a727-1c0666711960_rw_1920.webp',
   ],
-  p08: [
+ // p08: [
     
-  ],
+ // ],
   p09: [
     'images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp',
     'images/UI/Resorsus/28bb304b-afce-4e50-ad74-4b851da333e2_rw_1920.webp',
@@ -1689,6 +1942,33 @@ const projectEmbeds = {
   }
 };
 
+// Detailed image captions for popup gallery thumbnails.
+// Edit this area to map each project image to a hover description.
+// Format: project id -> exact image path -> caption text
+const projectImageDetails = {
+  p01: {
+    'images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp': 'Designed by IANTAN',
+    'images/UI/AERONIX/ian-tan-fronttop-v001.webp': 'Designed by IANTAN',
+    'images/UI/AERONIX/ian-tan-reartop-v001.webp': 'Designed  by IANTAN',
+  },
+  p02: {
+  },
+  p17: {
+  },
+};
+
+function getManualImageCaptions(projectId) {
+  const raw = projectImageDetails[projectId];
+  if (!raw || typeof raw !== 'object') return {};
+  const normalized = {};
+  Object.entries(raw).forEach(([src, caption]) => {
+    const key = normalizeImagePath(src);
+    const text = String(caption || '').trim();
+    if (key && text) normalized[key] = text;
+  });
+  return normalized;
+}
+
 const projects = [
   { id:"p01", title:"AERONIX - EV Dashboard UI", description:"End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive interior and HMI visualizations.", categories:["ui-ux","ai"], tags:["dashboard","ev","automotive","dark-mode","figma","design-system","car"], tools:["Figma","VizcomAI","ComfyUI","Procreate"], thumbnail:"UI", image:"images/UI/AERONIX/Drive.webp", year:2026 },
   { id:"p02", title:"GroceryMate - Mobile App", description:"Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.", categories:["ui-ux"], tags:["mobile","grocery","app","ios","figma","prototype","ecommerce"], tools:["Figma"], thumbnail:"APP", image:"images/UI/GroceryMate/26e8c458-b65e-4b0e-b1c0-8372f63651b9.webp", year:2025 },
@@ -1697,7 +1977,7 @@ const projects = [
   { id:"p05", title:"3D Materials - PBR Material", description:"This material artwork explores a stylized interpretation of a snow-covered, weathered stone path. Designed to emphasize the interplay between natural erosion and human interaction, the piece incorporates intricate surface details such as, bootprints, and scattered leaves. The contrast between snow accumulation and exposed rock highlights the passage of time and movement.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp", year:2025 },
   { id:"p06", title:"Ogut Tarabya - Villa Design ", description:"This project represents a holistic design approach that blends classic touches and, contemporary living requirements with a timeless design language. The spatial layout is shaped around user experience, creating open, balanced, and fluid environments.Beyond aesthetics, the design process prioritizes real-life usage scenarios. Each space is designed not only to be visually compelling but also to provide comfort, clarity, and long-term usability.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Tarabya_Villa/1.png", year:2026 },
   { id:"p07", title:"BSH - Office Interior Design", description:"The BSH office project is a seamless blend of functionality, comfort, and modern aesthetics, designed to foster a dynamic and collaborative work environment. The open-plan workspace is meticulously arranged with ergonomic furniture and warm-toned seating areas, creating a balanced atmosphere that enhances productivity and well-being.", categories:["architecture"], tags:["spatial","architecture","office","BSH","interior"], tools:["Blender"], thumbnail:"ARCH", image:"images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp", year:2025 },
-  { id:"p08", title:"AI Character - ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"AI", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2025 },
+ // { id:"p08", title:"AI Character - ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"AI", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2025 },
   { id:"p09", title:"Resorsus - Platform UI", description:"UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.", categories:["ui-ux"], tags:["platform","saas","interface","dashboard","web","design","dark-mode"], tools:["Figma","HTML", "CSS"], thumbnail:"UI", image:"images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp", year:2025 },
   { id:"p10", title:"Whaf - 3D Product Visualization", description:"3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.", categories:["3d"], tags:["3d","product","visualization","rendering","blender","materials","ecommerce"], tools:["Cinema4D","Substance Painter","Photoshop","After Effects"], thumbnail:"3D", image:"images/3D/Whaf/image (4).png", year:2022 },
   { id:"p11", title:"Gym - Fitness Center Design", description:"Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.", categories:["architecture",], tags:["gym","fitness","interior","visualization","rendering","archviz","commercial"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Gym/2 (1) (2).webp", year:2024 },
@@ -1722,7 +2002,7 @@ function getProjectGallery(p) {
 }
 
 function getProjectCaptionMap(p) {
-  const map = {};
+  const map = getManualImageCaptions(p.id);
   const fromConfig = (Array.isArray(galleryConfig[p.id]) ? galleryConfig[p.id] : []).map(normalizeGalleryEntry).filter(Boolean);
   const fromProject = (Array.isArray(p.images) ? p.images : []).map(normalizeGalleryEntry).filter(Boolean);
   [...fromConfig, ...fromProject].forEach(e => {
@@ -1955,8 +2235,8 @@ function renderProjectModal(p) {
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button class="pm-expand-btn" onclick="toggleProjectExpanded()">Expand</button>
-          <button class="pm-preview-close" id="pmPreviewClose" onclick="closeStoryPreview()">Cover</button>
+          <button class="pm-expand-btn" onclick="toggleProjectExpanded()">${UI_TEXT.expandLabel}</button>
+          <button class="pm-preview-close" id="pmPreviewClose" onclick="closeStoryPreview()">${UI_TEXT.coverLabel}</button>
         </div>
       </div>` : ''}
     </div>
@@ -1968,6 +2248,7 @@ function renderProjectModal(p) {
             ? `<video src="${img}" muted loop autoplay playsinline preload="metadata"></video>`
             : `<img src="${img}" data-base-src="${img}" alt="${p.title + ' ' + (i + 1)}" loading="lazy">`
           }
+          ${currentProjectCaptions[img] ? `<div class="pm-gallery-caption">${currentProjectCaptions[img]}</div>` : ''}
         </button>
       `).join('')}
     </div>` : ''}
@@ -1977,18 +2258,18 @@ function renderProjectModal(p) {
       </div>
       <div class="pm-title-row">
         <div class="pm-title">${p.title}</div>
-        ${currentProjectGallery.length > 1 ? '<div class="pm-gallery-chip">Projects Gallery</div>' : ''}
+        ${currentProjectGallery.length > 1 ? `<div class="pm-gallery-chip">${UI_TEXT.projectsGallery}</div>` : ''}
       </div>
       <div class="pm-desc">${p.description}</div>
       <div class="pm-details">
         <div class="pm-detail-row">
-          <div class="pm-detail-label">Tools</div>
+          <div class="pm-detail-label">${UI_TEXT.toolsLabel}</div>
           <div class="pm-detail-value">${p.tools.map(t => '<span class="tool-chip">'+t+'</span>').join('')}</div>
         </div>
       </div>
       ${embedCfg && !useEmbedAsCover ? `
       <div class="pm-embed-block">
-        <div class="pm-embed-title">360 Tour</div>
+        <div class="pm-embed-title">${UI_TEXT.tourLabel}</div>
         <div class="pm-embed-host" data-project-embed="${p.id}"></div>
       </div>` : ''}
       ${currentProjectGallery.length > 1 ? `
@@ -1996,8 +2277,8 @@ function renderProjectModal(p) {
         ${currentProjectGallery.map((img, i) => `
           <article class="pm-story-item">
             ${isVideoMedia(img)
-              ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="previewStoryImage(${i})" ondblclick="openImageLightbox(this.currentSrc || this.src)"></video>`
-              : `<img class="pm-story-media pm-story-image" src="${img}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="previewStoryImage(${i})" ondblclick="openImageLightbox(this.currentSrc || this.src)">`
+              ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="openImageLightbox(this.currentSrc || this.src)"></video>`
+              : `<img class="pm-story-media pm-story-image" src="${img}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="openImageLightbox(this.currentSrc || this.src)">`
             }
             ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
           </article>
@@ -2055,6 +2336,14 @@ const keywordMap = {
 };
 
 const catLabels = {"ui-ux":"UI/UX","3d":"3D","ai":"AI","vr-ar":"VR/AR","architecture":"Architecture"};
+// UI text config area: edit these labels from one place.
+const UI_TEXT = {
+  projectsGallery: "Projects Gallery",
+  toolsLabel: "Tools",
+  tourLabel: "360 Tour",
+  expandLabel: "Expand",
+  coverLabel: "Cover"
+};
 
 // --- SEARCH ---
 function searchProjects(query) {
@@ -2088,18 +2377,365 @@ function searchProjects(query) {
 }
 function filterByCategory(catId) { return projects.filter(p=>p.categories.includes(catId)); }
 
-const promptCategoryMap = {
-  'dashboard ui examples': 'ui-ux',
-  'vr projects in unreal': 'vr-ar',
-  'generative ai': 'ai',
-  'architectural visualizations': 'architecture',
-  '3d assets': '3d'
+const aiFallbackFollowups = [
+  "Who is Fatih?",
+  "What kind of projects are in this portfolio?",
+  "Show VR projects",
+  "Contact details"
+];
+const aiUnknownFallback = "I could not find an exact match, but this portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects. I can also guide you to the closest category and show related work.";
+const aiThreshold = 0.58;
+let aiKbCache = null;
+
+const turkishCharMap = {
+  "ı": "i",
+  "ş": "s",
+  "ğ": "g",
+  "ü": "u",
+  "ö": "o",
+  "ç": "c"
 };
 
-function splitPrimaryRelatedByCategory(results, category, primaryLimit = 9, relatedLimit = 6) {
-  const primary = results.filter(p => p.categories.includes(category)).slice(0, primaryLimit);
-  const related = results.filter(p => !p.categories.includes(category)).slice(0, relatedLimit);
-  return { primary, related };
+const navigationalSignals = {
+  "ui-ux": ["ui", "ux", "ui ux", "ui/ux", "interface", "tasarim", "design system", "dashboard"],
+  "3d": ["3d", "model", "render", "rendering", "materials", "vfx", "asset"],
+  "ai": ["ai", "artificial intelligence", "comfyui", "generative", "thesis"],
+  "vr-ar": ["vr", "ar", "xr", "virtual reality", "augmented", "spatial", "unity", "huawei"],
+  "architecture": ["architecture", "interior", "archviz", "villa", "residential"]
+};
+
+function normalizeQuery(raw) {
+  const lower = String(raw || "").toLowerCase().trim();
+  const mapped = lower.replace(/[ışğüöç]/g, ch => turkishCharMap[ch] || ch);
+  const noPunctuation = mapped.replace(/[^a-z0-9\s]/g, " ");
+  return noPunctuation.replace(/\s+/g, " ").trim();
+}
+
+function tokenize(text) {
+  return normalizeQuery(text).split(" ").filter(Boolean);
+}
+
+function levenshteinDistance(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  const matrix = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+  for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return matrix[a.length][b.length];
+}
+
+function stringSimilarity(a, b) {
+  if (!a || !b) return 0;
+  const distance = levenshteinDistance(a, b);
+  return 1 - distance / Math.max(a.length, b.length);
+}
+
+function tokenOverlapScore(aTokens, bTokens) {
+  if (!aTokens.length || !bTokens.length) return 0;
+  const bSet = new Set(bTokens);
+  const overlap = aTokens.filter(t => bSet.has(t)).length;
+  return overlap / Math.max(aTokens.length, bTokens.length);
+}
+
+async function loadAiKb() {
+  if (aiKbCache) return aiKbCache;
+  const res = await fetch("/data/ai_kb.json", { cache: "no-store" });
+  if (!res.ok) throw new Error("KB load failed");
+  aiKbCache = await res.json();
+  return aiKbCache;
+}
+
+function pickRandom(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function isGreetingQuery(query) {
+  const q = normalizeQuery(query);
+  return ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"].includes(q);
+}
+
+function getSiteGroundedAnswer(query) {
+  const q = normalizeQuery(query);
+  const totalProjects = Array.isArray(projects) ? projects.length : 0;
+  const categoryCount = {
+    "ui-ux": filterByCategory("ui-ux").length,
+    "3d": filterByCategory("3d").length,
+    "ai": filterByCategory("ai").length,
+    "vr-ar": filterByCategory("vr-ar").length,
+    "architecture": filterByCategory("architecture").length
+  };
+
+  if (isGreetingQuery(q)) {
+    return {
+      answer: `Hi. I can help you explore this portfolio. There are ${totalProjects} projects across UI/UX, 3D, AI, VR/AR, and Architecture.`,
+      followups: ["Show UI/UX projects", "Show AI projects", "Show VR projects", "Who is Fatih?"]
+    };
+  }
+
+  if (q.includes("projects") || q.includes("portfolio") || q.includes("categories")) {
+    return {
+      answer: `This portfolio currently lists ${totalProjects} projects. Category counts: UI/UX (${categoryCount["ui-ux"]}), 3D (${categoryCount["3d"]}), AI (${categoryCount["ai"]}), VR/AR (${categoryCount["vr-ar"]}), Architecture (${categoryCount["architecture"]}).`,
+      followups: ["Show UI/UX projects", "Show 3D projects", "Show AI projects", "Show Architecture projects"]
+    };
+  }
+
+  return {
+    answer: aiUnknownFallback,
+    followups: aiFallbackFollowups
+  };
+}
+
+function getQueryAwareFallback(query, reason) {
+  const navCategory = detectNavigationalCategory(query);
+  const matches = searchProjects(query).slice(0, 3);
+  const lead = reason === "rate_limited"
+    ? "The live AI service is temporarily rate-limited."
+    : "I could not reach the live AI service right now.";
+
+  if (navCategory) {
+    const catName = catLabels[navCategory] || navCategory;
+    const topInCategory = filterByCategory(navCategory).slice(0, 2).map(p => p.title);
+    if (topInCategory.length) {
+      return {
+        answer: `${lead} Based on the portfolio data, the best match is ${catName}. You can start with: ${topInCategory.join(" and ")}.`,
+        followups: ["Show more from this category", "What tools were used?", "Who is Fatih?", "Contact details"]
+      };
+    }
+  }
+
+  if (matches.length) {
+    return {
+      answer: `${lead} Based on your query, relevant projects include ${matches.map(p => p.title).join(", ")}.`,
+      followups: ["Show these projects", "Show related categories", "What tools does he use?", "Contact details"]
+    };
+  }
+
+  return getSiteGroundedAnswer(query);
+}
+
+function matchKbIntent(query, kb) {
+  const normalizedQuery = normalizeQuery(query);
+  const queryTokens = tokenize(query);
+  let best = null;
+
+  kb.forEach(entry => {
+    const keywords = Array.isArray(entry.keywords) ? entry.keywords : [];
+    let bestEntryScore = 0;
+    let matchedByIncludes = false;
+
+    keywords.forEach(rawKeyword => {
+      const keyword = normalizeQuery(rawKeyword);
+      if (!keyword) return;
+
+      if (normalizedQuery.includes(keyword) || keyword.includes(normalizedQuery)) {
+        matchedByIncludes = true;
+        const includesScore = Math.max(
+          keyword.length / Math.max(normalizedQuery.length || 1, 1),
+          normalizedQuery.length / Math.max(keyword.length || 1, 1)
+        );
+        bestEntryScore = Math.max(bestEntryScore, 0.82 + Math.min(0.18, includesScore * 0.18));
+        return;
+      }
+
+      const keywordTokens = tokenize(keyword);
+      const overlap = tokenOverlapScore(queryTokens, keywordTokens);
+      const fuzzy = stringSimilarity(normalizedQuery, keyword);
+      const score = (overlap * 0.6) + (fuzzy * 0.4);
+      bestEntryScore = Math.max(bestEntryScore, score);
+    });
+
+    if (!best || bestEntryScore > best.score) {
+      best = {
+        entry: entry,
+        score: bestEntryScore,
+        isConfident: matchedByIncludes || bestEntryScore >= aiThreshold
+      };
+    }
+  });
+
+  if (!best || !best.isConfident) return null;
+  return best;
+}
+
+function detectNavigationalCategory(query) {
+  const normalized = normalizeQuery(query);
+  let winner = null;
+  let bestScore = 0;
+
+  Object.keys(navigationalSignals).forEach(catId => {
+    const signals = navigationalSignals[catId];
+    let score = 0;
+    signals.forEach(signal => {
+      const normalizedSignal = normalizeQuery(signal);
+      if (normalized.includes(normalizedSignal)) score += normalizedSignal.length > 2 ? 2 : 1;
+    });
+    if (score > bestScore) {
+      bestScore = score;
+      winner = catId;
+    }
+  });
+
+  return bestScore > 0 ? winner : null;
+}
+
+function revealAnswerContainer() {
+  const container = document.getElementById("aiAnswerContainer");
+  if (!container) return;
+  container.hidden = false;
+  requestAnimationFrame(() => container.classList.add("visible"));
+  container.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setAnswerLoading(query) {
+  revealAnswerContainer();
+  const asked = document.getElementById("aiAsked");
+  const answerText = document.getElementById("aiAnswerText");
+  const followups = document.getElementById("aiFollowupChips");
+  if (asked) asked.innerHTML = 'You asked: <strong>' + escapeHtml(query) + "</strong>";
+  if (answerText) {
+    answerText.classList.add("loading");
+    answerText.textContent = "Thinking...";
+  }
+  if (followups) followups.innerHTML = "";
+}
+
+function typeAnswerText(text) {
+  const answerText = document.getElementById("aiAnswerText");
+  if (!answerText) return;
+  answerText.classList.remove("loading");
+  answerText.textContent = "";
+  const finalText = String(text || "").trim();
+  if (!finalText) return;
+  const stepMs = 8;
+  let i = 0;
+  const timer = setInterval(() => {
+    i += 3;
+    answerText.textContent = finalText.slice(0, i);
+    if (i >= finalText.length) clearInterval(timer);
+  }, stepMs);
+}
+
+function renderFollowups(questions) {
+  const followups = document.getElementById("aiFollowupChips");
+  if (!followups) return;
+  const safeList = (Array.isArray(questions) && questions.length ? questions : aiFallbackFollowups).slice(0, 4);
+  followups.innerHTML = safeList
+    .map(q => '<button class="ai-followup-chip" onclick="askFollowUp(\'' + escapeJs(q) + '\')">' + escapeHtml(q) + "</button>")
+    .join("");
+}
+
+function renderAiAnswer(query, answer, suggestions) {
+  const heading = document.getElementById("aiAnswerHeading");
+  const asked = document.getElementById("aiAsked");
+  if (asked) asked.innerHTML = 'You asked: <strong>' + escapeHtml(query) + "</strong>";
+  typeAnswerText(answer);
+  renderFollowups(suggestions);
+  if (heading) heading.focus({ preventScroll: true });
+}
+
+function slightlyExpandAnswer(answer) {
+  const text = String(answer || "").trim();
+  if (!text) return text;
+  if (text.length >= 220) return text;
+  const extra = " I can also suggest the most relevant category and show matching projects below.";
+  return text.endsWith(".") ? text + extra : text + "." + extra;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function escapeJs(value) {
+  return String(value || "").replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
+
+function setAiServiceStatus(isOnline) {
+  const dot = document.getElementById("aiStatusDot");
+  const text = document.getElementById("aiStatusText");
+  const link = document.getElementById("aiStatusLink");
+  if (!dot || !text || !link) return;
+  dot.classList.toggle("offline", !isOnline);
+  text.textContent = isOnline ? "Online" : "Offline";
+  link.title = isOnline
+    ? "Currently live AI is online."
+    : "Currently live AI is offline.";
+  link.setAttribute("aria-label", link.title);
+}
+
+async function askProxy(query) {
+  const isProdDomain = window.location.hostname === "fatihgulen.com" || window.location.hostname === "www.fatihgulen.com";
+  const defaultEndpoint = isProdDomain
+    ? "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask"
+    : "/api/ask";
+  const endpoint = (window.__AI_ENDPOINT && String(window.__AI_ENDPOINT).trim()) || defaultEndpoint;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: query })
+  });
+  if (!res.ok) {
+    let payload = null;
+    try { payload = await res.json(); } catch (_) {}
+    const err = new Error("Proxy request failed");
+    err.status = res.status;
+    err.payload = payload;
+    throw err;
+  }
+  const data = await res.json();
+  return {
+    answer: (data && typeof data.answer === "string") ? data.answer.trim() : "",
+    fallback: Boolean(data && data.fallback),
+    reason: data && data.reason ? String(data.reason) : ""
+  };
+}
+
+let aiStatusTimer = null;
+async function refreshAiServiceStatus() {
+  try {
+    const ping = await askProxy("__status_ping__");
+    const isOnline = Boolean(ping.answer) && !ping.fallback;
+    setAiServiceStatus(isOnline);
+  } catch (_) {
+    setAiServiceStatus(false);
+  }
+}
+
+function initAiServiceStatus() {
+  refreshAiServiceStatus();
+  if (aiStatusTimer) clearInterval(aiStatusTimer);
+  aiStatusTimer = setInterval(refreshAiServiceStatus, 120000);
+}
+
+function applyCategoryFilter(catId, options = {}) {
+  const el = document.querySelector('.cat-pill[data-cat="' + catId + '"]');
+  if (el) {
+    document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+    el.classList.add("active");
+  }
+  const results = filterByCategory(catId);
+  const catName = catLabels[catId] || catId;
+  renderProjects(results, 'Browsing <strong>' + catName + "</strong> - " + results.length + " project" + (results.length > 1 ? "s" : "") + " in this category");
+  if (!options.keepInput) {
+    const input = document.getElementById("chatInput");
+    if (input) input.value = "";
+    toggleSubmit();
+  }
 }
 
 function generateResponse(query, count) {
@@ -2145,14 +2781,82 @@ function renderProjects(filteredProjects, responseHtml) {
 }
 
 // --- HANDLERS ---
-function handleQuery() {
+async function handleQuery() {
   const input = document.getElementById('chatInput');
   const query = input.value.trim();
   if (!query) return;
-  const results = searchProjects(query);
-  const response = results.length > 0 ? generateResponse(query, results.length) : null;
-  renderProjects(results, response || 'No matches for "'+query+'" - try broader terms or pick a category.', []);
-  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  setAnswerLoading(query);
+  try {
+    const normalized = normalizeQuery(query);
+    const navCategory = detectNavigationalCategory(normalized);
+    let answerText = "";
+    let followups = aiFallbackFollowups;
+    let isLocalAnswer = false;
+
+    // Always return a direct answer for simple greetings.
+    if (isGreetingQuery(query)) {
+      const grounded = getSiteGroundedAnswer(query);
+      renderAiAnswer(query, slightlyExpandAnswer(grounded.answer), grounded.followups);
+      const results = projects.slice(0, 9);
+      renderProjects(results, 'Showing a quick overview of the portfolio.');
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      return;
+    }
+
+    try {
+      const kb = await loadAiKb();
+      const match = matchKbIntent(query, kb);
+      if (match && match.entry && Array.isArray(match.entry.responses) && match.entry.responses.length) {
+        answerText = pickRandom(match.entry.responses);
+        followups = Array.isArray(match.entry.followups) && match.entry.followups.length
+          ? match.entry.followups
+          : aiFallbackFollowups;
+        isLocalAnswer = true;
+      }
+    } catch (err) {
+      console.warn("KB matching failed:", err);
+    }
+
+    if (!isLocalAnswer) {
+      try {
+        const proxyResult = await askProxy(query);
+        const proxyAnswer = proxyResult.answer;
+        if (proxyAnswer) {
+          answerText = proxyAnswer;
+          followups = aiFallbackFollowups;
+          setAiServiceStatus(!proxyResult.fallback);
+        } else {
+          const grounded = getQueryAwareFallback(query, "empty");
+          answerText = grounded.answer;
+          followups = grounded.followups;
+          setAiServiceStatus(false);
+        }
+      } catch (err) {
+        console.warn("Proxy fallback failed:", err);
+        const reason = err && err.status === 429 ? "rate_limited" : "unavailable";
+        const grounded = getQueryAwareFallback(query, reason);
+        answerText = grounded.answer;
+        followups = grounded.followups;
+        setAiServiceStatus(false);
+      }
+    }
+
+    renderAiAnswer(query, slightlyExpandAnswer(answerText), followups);
+
+    if (navCategory) {
+      applyCategoryFilter(navCategory, { keepInput: true });
+      return;
+    }
+
+    const results = searchProjects(query);
+    const response = results.length > 0 ? generateResponse(query, results.length) : null;
+    renderProjects(results, response || 'No matches for "' + query + '" - try broader terms or pick a category.');
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  } catch (err) {
+    console.error("handleQuery failed:", err);
+    const grounded = getSiteGroundedAnswer(query);
+    renderAiAnswer(query, slightlyExpandAnswer(grounded.answer), grounded.followups);
+  }
 }
 
 function filterCategory(el) {
@@ -2160,32 +2864,22 @@ function filterCategory(el) {
   const wasActive = el.classList.contains('active');
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   if (wasActive) { resetView(); return; }
-  el.classList.add('active');
-  const results = filterByCategory(cat);
-  const catName = catLabels[cat] || cat;
-  renderProjects(results, 'Browsing <strong>'+catName+'</strong> - '+results.length+' project'+(results.length>1?'s':'')+' in this category');
-  document.getElementById('chatInput').value = '';
-  toggleSubmit();
+  applyCategoryFilter(cat);
 }
 
 function usePrompt(el) {
-  const prompt = el.textContent.trim();
-  document.getElementById('chatInput').value = prompt;
+  const prompt = el.textContent.trim().replace(/\s+/g, " ");
+  const input = document.getElementById('chatInput');
+  input.value = prompt;
   toggleSubmit();
-  const key = prompt.toLowerCase();
-  const category = promptCategoryMap[key];
-  if (!category) {
-    handleQuery();
-    return;
-  }
-  const results = searchProjects(prompt);
-  const split = splitPrimaryRelatedByCategory(results, category);
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-  const primary = split.primary.length ? split.primary : filterByCategory(category);
-  const related = isMobile ? [] : split.related;
-  const catName = catLabels[category] || category;
-  renderProjects(primary, 'Showing <strong>'+catName+'</strong> projects for "<strong>'+prompt+'</strong>".', related);
-  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  handleQuery();
+}
+
+function askFollowUp(question) {
+  const input = document.getElementById("chatInput");
+  input.value = question;
+  toggleSubmit();
+  handleQuery();
 }
 
 function toggleSubmit() {
@@ -2197,8 +2891,16 @@ function resetView() {
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   document.getElementById('chatInput').value = '';
   toggleSubmit();
+  const answerContainer = document.getElementById("aiAnswerContainer");
+  if (answerContainer) {
+    answerContainer.classList.remove("visible");
+    answerContainer.hidden = true;
+  }
   document.getElementById('responseArea').innerHTML = '<div class="initial-state" id="initialState">Select a category or type a query to explore projects. Press <span class="keystroke">Enter</span> to search.</div>';
 }
+
+setupImageLightboxSwipe();
+initAiServiceStatus();
 
 // =========== SKELETON LOADING UI ===========
 function buildSkeletonHTML(count) {
@@ -2538,6 +3240,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     bot.style.display = 'none';
     bot.classList.remove('pinned');
     document.getElementById('tourOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
     showStep(0);
   };
 
@@ -2549,6 +3252,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     document.getElementById('tourFocus').classList.remove('active');
     clearOverlayHole();
     pinTourBot();
+    document.body.style.overflow = '';
     storage.set(TOUR_KEY, '1');
   };
 
@@ -2735,5 +3439,9 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 </script>
 </body>
 </html>
+
+
+
+
 
 

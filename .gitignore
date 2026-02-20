@@ -1,4 +1,6 @@
-﻿node_modules/
-nul
+node_modules/
 .DS_Store
-!index.html
+.env
+.env.*
+!.env.example
+.wrangler/
