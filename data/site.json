@@ -1,13 +1,13 @@
 {
   "settings": {
-    "siteTitle": "Fatih Gulen — Portfolio",
+    "siteTitle": "Fatih Gulen â€” Portfolio",
     "logoText": "Fatih Gulen",
     "heroLabel": "Design Portfolio",
     "heroTitle": "Ask me anything.<br>I'll show you <em>the work.</em>",
     "heroSubtitle": "Browse by category or describe what you're looking for. This portfolio understands context, tools, and intent.",
     "searchPlaceholder": "Try: \"Show me your Unreal VR projects\"",
     "initialStateText": "Select a category or type a query to explore projects. Press <span class=\"keystroke\">Enter</span> to search.",
-    "footerText": "© 2026 Fatih Gulen",
+    "footerText": "Â© 2026 Fatih Gulen",
     "suggestedPrompts": [
       "Dashboard UI examples",
       "VR projects in Unreal",
@@ -42,7 +42,7 @@
         },
         {
           "type": "phone",
-          "label": "Phone",
+          "label": "Telefon",
           "value": "+49 176 3716 0838",
           "url": "tel:+4917637160838"
         }
@@ -189,7 +189,7 @@
   "projects": [
     {
       "id": "p01",
-      "title": "AERONIX — EV Dashboard UI",
+      "title": "AERONIX â€” EV Dashboard UI",
       "description": "End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive 3D car visualizations.",
       "categories": [
         "ui-ux"
@@ -208,7 +208,7 @@
         "Blender",
         "After Effects"
       ],
-      "thumbnail": "📊",
+      "thumbnail": "ğŸ“Š",
       "image": "images/UI/AERONIX/Slide 16_9 - 1.webp",
       "year": 2025,
       "order": 0,
@@ -218,7 +218,7 @@
     },
     {
       "id": "p02",
-      "title": "GroceryMate — Mobile App",
+      "title": "GroceryMate â€” Mobile App",
       "description": "Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.",
       "categories": [
         "ui-ux"
@@ -236,7 +236,7 @@
         "Figma",
         "Protopie"
       ],
-      "thumbnail": "📱",
+      "thumbnail": "ğŸ“±",
       "image": "images/UI/GroceryMate/app (1).webp",
       "year": 2025,
       "order": 1,
@@ -274,7 +274,7 @@
     },
     {
       "id": "p03",
-      "title": "Hipicon — Brand Identity",
+      "title": "Hipicon â€” Brand Identity",
       "description": "Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.",
       "categories": [
         "ui-ux"
@@ -291,7 +291,7 @@
         "Figma",
         "Illustrator"
       ],
-      "thumbnail": "🛍",
+      "thumbnail": "ğŸ›",
       "image": "images/UI/Hipicon/40ca1d0a-9c16-42e9-8ad3-9ccb47228f54_rw_1920.webp",
       "year": 2024,
       "order": 2,
@@ -306,8 +306,8 @@
     },
     {
       "id": "p04",
-      "title": "Balikesir — Architectural Viz",
-      "description": "Architectural visualization for Balikesir residential project. Photorealistic renders from concept to final presentation.",
+      "title": "BalÄ±kesir â€” Architectural Viz",
+      "description": "Architectural visualization for BalÄ±kesir residential project. Photorealistic renders from concept to final presentation.",
       "categories": [
         "architecture",
         "3d"
@@ -325,20 +325,15 @@
         "V-Ray",
         "Photoshop"
       ],
-      "thumbnail": "🏗",
-      "image": "images/Architecture/Balıkesir/12345 (2).webp",
+      "thumbnail": "ğŸ—",
+      "image": "images/Architecture/BalÄ±kesir/12345 (2).webp",
       "year": 2024,
       "order": 3,
-      "images": [
-        "images/Architecture/Balıkesir/12345 (2).webp",
-        "images/Architecture/Balıkesir/123456 (2).webp",
-        "images/Architecture/Balıkesir/12345678 (2).webp",
-        "images/Architecture/Balıkesir/123456789 (2).webp"
-      ]
+      "images": []
     },
     {
       "id": "p05",
-      "title": "Huawei VR — Racket Training",
+      "title": "Huawei VR â€” Racket Training",
       "description": "VR racket training simulation for Huawei. Spatial UI, gesture tracking, and immersive training environments built in Unity.",
       "categories": [
         "vr-ar",
@@ -358,7 +353,7 @@
         "C#",
         "Huawei VR SDK"
       ],
-      "thumbnail": "🥽",
+      "thumbnail": "ğŸ¥½",
       "image": "images/VR/Huawei/Racket_Training_1st.webp",
       "year": 2025,
       "order": 4,
@@ -368,7 +363,7 @@
     },
     {
       "id": "p06",
-      "title": "Synapse — AI Workflow Engine",
+      "title": "Synapse â€” AI Workflow Engine",
       "description": "ComfyUI-based AI image generation pipeline. Custom nodes for style transfer, upscaling, and batch processing.",
       "categories": [
         "ai"
@@ -388,7 +383,7 @@
         "Python",
         "Stable Diffusion"
       ],
-      "thumbnail": "🧠",
+      "thumbnail": "ğŸ§ ",
       "image": "images/AI/Character_Comfyui/Deliverables_1.webp",
       "year": 2025,
       "order": 5,
@@ -398,7 +393,7 @@
     },
     {
       "id": "p07",
-      "title": "Istanbloom — Interior Design",
+      "title": "Istanbloom â€” Interior Design",
       "description": "Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.",
       "categories": [
         "architecture",
@@ -417,7 +412,7 @@
         "V-Ray",
         "Photoshop"
       ],
-      "thumbnail": "🏠",
+      "thumbnail": "ğŸ ",
       "image": "images/Architecture/Istanbloom/ff1 (1).webp",
       "year": 2024,
       "order": 6,
@@ -430,7 +425,7 @@
     },
     {
       "id": "p08",
-      "title": "AI Character — ComfyUI Pipeline",
+      "title": "AI Character â€” ComfyUI Pipeline",
       "description": "AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.",
       "categories": [
         "ai",
@@ -450,7 +445,7 @@
         "Python",
         "Stable Diffusion"
       ],
-      "thumbnail": "🎨",
+      "thumbnail": "ğŸ¨",
       "image": "images/AI/Character_Comfyui/Deliverables_3.webp",
       "year": 2025,
       "order": 7,
@@ -460,7 +455,7 @@
     },
     {
       "id": "p09",
-      "title": "Resorsus — Platform UI",
+      "title": "Resorsus â€” Platform UI",
       "description": "UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.",
       "categories": [
         "ui-ux"
@@ -478,7 +473,7 @@
         "Figma",
         "React"
       ],
-      "thumbnail": "💬",
+      "thumbnail": "ğŸ’¬",
       "image": "images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp",
       "year": 2025,
       "order": 8,
@@ -489,7 +484,7 @@
     },
     {
       "id": "p10",
-      "title": "Whaf — 3D Product Visualization",
+      "title": "Whaf â€” 3D Product Visualization",
       "description": "3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.",
       "categories": [
         "3d",
@@ -509,7 +504,7 @@
         "Substance Painter",
         "Photoshop"
       ],
-      "thumbnail": "💎",
+      "thumbnail": "ğŸ’",
       "image": "images/3D/Whaf/Whaf1.webp",
       "year": 2025,
       "order": 9,
@@ -521,7 +516,7 @@
     },
     {
       "id": "p11",
-      "title": "Gym — Fitness Center Design",
+      "title": "Gym â€” Fitness Center Design",
       "description": "Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.",
       "categories": [
         "architecture",
@@ -541,7 +536,7 @@
         "V-Ray",
         "Photoshop"
       ],
-      "thumbnail": "🏛",
+      "thumbnail": "ğŸ›",
       "image": "images/Architecture/Gym/2 (1) (2).webp",
       "year": 2024,
       "order": 10,
@@ -555,7 +550,7 @@
     },
     {
       "id": "p12",
-      "title": "AI Thesis — Research Project",
+      "title": "AI Thesis â€” Research Project",
       "description": "Academic research project exploring AI-driven design workflows. Thesis documentation with generative design experiments.",
       "categories": [
         "ai"
@@ -574,7 +569,7 @@
         "ComfyUI",
         "LaTeX"
       ],
-      "thumbnail": "🎞",
+      "thumbnail": "ğŸ",
       "image": "images/AI/Thesis/1 (1).webp",
       "year": 2025,
       "order": 11,
@@ -590,7 +585,7 @@
     },
     {
       "id": "p13",
-      "title": "Huawei VR — Unity Environments",
+      "title": "Huawei VR â€” Unity Environments",
       "description": "VR environment development for Huawei training platform. Spatial interaction design and immersive scene building.",
       "categories": [
         "vr-ar"
@@ -610,7 +605,7 @@
         "C#",
         "Blender"
       ],
-      "thumbnail": "⚡",
+      "thumbnail": "âš¡",
       "image": "images/VR/Huawei/Unity4.webp",
       "year": 2024,
       "order": 12,
@@ -620,7 +615,7 @@
     },
     {
       "id": "p14",
-      "title": "AERONIX — Design System",
+      "title": "AERONIX â€” Design System",
       "description": "Comprehensive design system for AERONIX EV platform. 100+ components, dark/light modes, and automotive-specific patterns.",
       "categories": [
         "ui-ux"
@@ -639,7 +634,7 @@
         "Storybook",
         "React"
       ],
-      "thumbnail": "🔧",
+      "thumbnail": "ğŸ”§",
       "image": "images/UI/AERONIX/Slide 16_9 - 3.webp",
       "year": 2025,
       "order": 13,
@@ -649,7 +644,7 @@
     },
     {
       "id": "p15",
-      "title": "AI Art — Diffusion Collection",
+      "title": "AI Art â€” Diffusion Collection",
       "description": "Curated collection of AI-generated art exploring identity and perception. Custom-trained models on personal datasets.",
       "categories": [
         "ai"
@@ -668,7 +663,7 @@
         "ComfyUI",
         "LoRA"
       ],
-      "thumbnail": "🖼",
+      "thumbnail": "ğŸ–¼",
       "image": "images/AI/Character_Comfyui/Deliverables_5.webp",
       "year": 2025,
       "order": 14,
@@ -678,7 +673,7 @@
     },
     {
       "id": "p16",
-      "title": "VFX — 3D Visual Effects",
+      "title": "VFX â€” 3D Visual Effects",
       "description": "Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.",
       "categories": [
         "3d"
@@ -697,7 +692,7 @@
         "After Effects",
         "Unreal Engine"
       ],
-      "thumbnail": "🌊",
+      "thumbnail": "ğŸŒŠ",
       "image": "images/3D/VFX/posst.webp",
       "year": 2025,
       "order": 15,
@@ -711,7 +706,7 @@
     },
     {
       "id": "p17",
-      "title": "3D Materials — Texture Library",
+      "title": "3D Materials â€” Texture Library",
       "description": "Custom PBR material library with realistic metal, fabric, and organic surfaces. Procedural and hand-painted textures.",
       "categories": [
         "3d"
@@ -730,7 +725,7 @@
         "Blender",
         "Photoshop"
       ],
-      "thumbnail": "📈",
+      "thumbnail": "ğŸ“ˆ",
       "image": "images/3D/Material/761c1a94-4679-498b-8b6d-c16150a59055_rw_1920.webp",
       "year": 2025,
       "order": 16,
@@ -748,7 +743,7 @@
     },
     {
       "id": "p18",
-      "title": "3D Concept — Digital Sculpture",
+      "title": "3D Concept â€” Digital Sculpture",
       "description": "Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.",
       "categories": [
         "3d"
@@ -767,7 +762,7 @@
         "Blender",
         "Photoshop"
       ],
-      "thumbnail": "🌆",
+      "thumbnail": "ğŸŒ†",
       "image": "images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp",
       "year": 2025,
       "order": 17,
@@ -777,7 +772,7 @@
     },
     {
       "id": "p19",
-      "title": "AERONIX — 3D Car Visuals",
+      "title": "AERONIX â€” 3D Car Visuals",
       "description": "High-fidelity 3D car visualization for AERONIX EV. Detailed exterior renders, lighting studies, and turntable animations.",
       "categories": [
         "3d",
@@ -797,7 +792,7 @@
         "Substance Painter",
         "After Effects"
       ],
-      "thumbnail": "🚗",
+      "thumbnail": "ğŸš—",
       "image": "images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp",
       "year": 2025,
       "order": 18,
@@ -807,7 +802,7 @@
     },
     {
       "id": "p20",
-      "title": "Lumen — Portfolio Website",
+      "title": "Lumen â€” Portfolio Website",
       "description": "AI-interface portfolio concept. Chat-based navigation, smart filtering, and ambient design system.",
       "categories": [
         "ui-ux"
@@ -825,7 +820,7 @@
         "HTML/CSS/JS",
         "Framer"
       ],
-      "thumbnail": "✦",
+      "thumbnail": "âœ¦",
       "image": "",
       "year": 2026,
       "order": 19,

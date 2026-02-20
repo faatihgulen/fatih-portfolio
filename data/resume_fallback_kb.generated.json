@@ -1,0 +1,78 @@
+[
+  {
+    "intent": "ai_vr_ar_focus",
+    "keywords": [
+      "ai",
+      "vr",
+      "ar",
+      "unity",
+      "huawei",
+      "thesis",
+      "immersive"
+    ],
+    "answer": "AI, VR, and AR related experience is available in the portfolio context. You can ask for AI workflows, VR projects, or Unity-based work.",
+    "sourceIds": [
+      "ai_vrp"
+    ],
+    "availableSources": [
+      "ai_vrp"
+    ]
+  },
+  {
+    "intent": "uiux_hmi_focus",
+    "keywords": [
+      "ui",
+      "ux",
+      "hmi",
+      "dashboard",
+      "interface",
+      "product design"
+    ],
+    "answer": "UI/UX and HMI related experience is covered in the portfolio. You can ask about dashboards, interface systems, and product UI projects.",
+    "sourceIds": [
+      "uiux_hmi",
+      "ui_vd",
+      "cd_uiux"
+    ],
+    "availableSources": [
+      "uiux_hmi",
+      "ui_vd",
+      "cd_uiux"
+    ]
+  },
+  {
+    "intent": "game_ui_focus",
+    "keywords": [
+      "game ui",
+      "hud",
+      "game interface",
+      "interaction"
+    ],
+    "answer": "Game UI focused work is available. You can ask for HUD, in-game interface patterns, and interaction design examples.",
+    "sourceIds": [
+      "game_ui"
+    ],
+    "availableSources": [
+      "game_ui"
+    ]
+  },
+  {
+    "intent": "visual_design_focus",
+    "keywords": [
+      "visual design",
+      "branding",
+      "brand",
+      "creative direction",
+      "presentation"
+    ],
+    "answer": "Visual design and creative direction related work is included. You can ask about branding, layout systems, or cross-platform design outputs.",
+    "sourceIds": [
+      "vd_pr",
+      "cd_uiux"
+    ],
+    "availableSources": [
+      "vd_pr",
+      "cd_uiux"
+    ]
+  }
+]

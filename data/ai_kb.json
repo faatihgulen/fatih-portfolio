@@ -13,9 +13,9 @@
     "intent": "experience_years",
     "keywords": ["years of experience", "how many years of experience", "experience duration"],
     "responses": [
-      "The exact total number of years is not explicitly stated in this repository.",
-      "A precise years-of-experience value is not provided in the current source data.",
-      "The portfolio shows broad multi-domain work, but it does not state an exact total year count."
+      "Based on the provided timeline, experience starts from February 2022, which is about 4 years as of 2026.",
+      "From February 2022 to the present timeline, total experience is roughly 4 years.",
+      "Current profile timeline indicates approximately 4 years of experience (starting 02/2022)."
     ],
     "followups": ["What kind of projects are listed?", "Show AI projects", "Show UI/UX projects", "Contact details"]
   },
@@ -118,5 +118,45 @@
       "You can use the public links to reach profile and contact channels quickly."
     ],
     "followups": ["Contact details", "Who is Fatih?", "Show AI projects", "Show VR projects"]
+  },
+  {
+    "intent": "education_background",
+    "keywords": ["education", "which university", "what university", "degree", "master", "bachelor", "school background"],
+    "responses": [
+      "Education includes an M.A. in New Media Design at University of Europe for Applied Sciences (Berlin) and a B.A. in Interior Design at Mimar Sinan Fine Arts University (Istanbul).",
+      "Academic background: Master of Arts in New Media Design and Bachelor of Arts in Interior Design.",
+      "He studied New Media Design at master level and Interior Design at bachelor level."
+    ],
+    "followups": ["What is his work experience?", "What tools does he use?", "Show UI/UX projects", "Show VR projects"]
+  },
+  {
+    "intent": "ui_experience_detail",
+    "keywords": ["ui experience", "ux experience", "game ui experience", "interface experience", "ui workflow"],
+    "responses": [
+      "UI/UX experience includes designing UX flows, wireframes, and interaction systems for interactive and game-like experiences.",
+      "He builds clean and readable UI layouts, prototypes interfaces in Unreal Engine, and iterates from playtesting feedback.",
+      "UI feature ownership spans concept to polish, with close collaboration across design and development."
+    ],
+    "followups": ["Which tools are used for UI?", "Show game UI related projects", "Show dashboard projects", "Show VR projects"]
+  },
+  {
+    "intent": "work_timeline",
+    "keywords": ["work experience", "career timeline", "freelance", "huawei experience", "professional background"],
+    "responses": [
+      "Professional timeline includes freelance experience design work since 02/2022 and a Huawei Digital Experience Designer role from 09/2023 to 09/2024 in Berlin.",
+      "Experience covers real-time visualization, XR environments, and end-to-end digital pipeline execution.",
+      "Recent roles combine immersive experience design, UI systems, and production-ready real-time optimization."
+    ],
+    "followups": ["What tools does he use?", "Show VR/AR projects", "Show UI/UX projects", "Education details"]
+  },
+  {
+    "intent": "languages",
+    "keywords": ["languages", "language skills", "english level", "german level", "turkish"],
+    "responses": [
+      "Language profile: German (B1), English (C1), and Turkish (native).",
+      "He works in multilingual settings with English (C1), German (B1), and native Turkish.",
+      "Language skills listed are German B1, English C1, and Turkish Native."
+    ],
+    "followups": ["Contact details", "Education details", "Work experience", "Show portfolio categories"]
   }
 ]

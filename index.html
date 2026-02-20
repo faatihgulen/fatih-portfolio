@@ -2787,53 +2787,43 @@ async function handleQuery() {
     const navCategory = detectNavigationalCategory(normalized);
     let answerText = "";
     let followups = aiFallbackFollowups;
-    let isLocalAnswer = false;
-
-    // Always return a direct answer for simple greetings.
-    if (isGreetingQuery(query)) {
-      const grounded = getSiteGroundedAnswer(query);
-      renderAiAnswer(query, slightlyExpandAnswer(grounded.answer), grounded.followups);
-      const results = projects.slice(0, 9);
-      renderProjects(results, 'Showing a quick overview of the portfolio.');
-      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      return;
-    }
+    let shouldUseLocalFallback = false;
 
     try {
-      const kb = await loadAiKb();
-      const match = matchKbIntent(query, kb);
-      if (match && match.entry && Array.isArray(match.entry.responses) && match.entry.responses.length) {
-        answerText = pickRandom(match.entry.responses);
-        followups = Array.isArray(match.entry.followups) && match.entry.followups.length
-          ? match.entry.followups
-          : aiFallbackFollowups;
-        isLocalAnswer = true;
+      const proxyResult = await askProxy(query);
+      const proxyAnswer = proxyResult.answer;
+      if (proxyAnswer && !proxyResult.fallback) {
+        answerText = proxyAnswer;
+        followups = aiFallbackFollowups;
+        setAiServiceStatus(true);
+      } else {
+        shouldUseLocalFallback = true;
+        setAiServiceStatus(false);
       }
     } catch (err) {
-      console.warn("KB matching failed:", err);
+      console.warn("Proxy fallback failed:", err);
+      shouldUseLocalFallback = true;
+      setAiServiceStatus(false);
     }
 
-    if (!isLocalAnswer) {
+    // Use local KB only when Gemini is unavailable/offline.
+    if (shouldUseLocalFallback) {
       try {
-        const proxyResult = await askProxy(query);
-        const proxyAnswer = proxyResult.answer;
-        if (proxyAnswer) {
-          answerText = proxyAnswer;
-          followups = aiFallbackFollowups;
-          setAiServiceStatus(!proxyResult.fallback);
-        } else {
-          const grounded = getQueryAwareFallback(query, "empty");
-          answerText = grounded.answer;
-          followups = grounded.followups;
-          setAiServiceStatus(false);
+        const kb = await loadAiKb();
+        const match = matchKbIntent(query, kb);
+        if (match && match.entry && Array.isArray(match.entry.responses) && match.entry.responses.length) {
+          answerText = pickRandom(match.entry.responses);
+          followups = Array.isArray(match.entry.followups) && match.entry.followups.length
+            ? match.entry.followups
+            : aiFallbackFollowups;
         }
       } catch (err) {
-        console.warn("Proxy fallback failed:", err);
-        const reason = err && err.status === 429 ? "rate_limited" : "unavailable";
-        const grounded = getQueryAwareFallback(query, reason);
+        console.warn("KB matching failed:", err);
+      }
+      if (!answerText) {
+        const grounded = getQueryAwareFallback(query, "unavailable");
         answerText = grounded.answer;
         followups = grounded.followups;
-        setAiServiceStatus(false);
       }
     }
 

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const imagesDir = path.join(__dirname, 'images');
+const resumeDir = 'C:/Users/Casper/Downloads/Resumes';
 
 // Scan a directory for webp/image files
 function scanDir(dir) {
@@ -94,8 +95,8 @@ const siteData = {
       avatarImage: "images/Fatih_Gulen/1767480367261.webp",
       avatarFallback: "FG",
       name: "Fatih Gulen",
-      title: "Multidisciplinary Designer",
-      bio: "Multidisciplinary designer working across UI/UX, 3D, AI workflows, VR/AR experiences, and architectural visualization. I blend design thinking with emerging technologies to create meaningful, immersive digital experiences. Based in Germany.",
+      title: "Real-Time Experience Designer",
+      bio: "Real-Time Experience Designer working across UI/UX, 3D, AI workflows, VR/AR experiences, and architectural visualization. I blend design thinking with emerging technologies to create meaningful, immersive digital experiences. Based in Germany.",
       links: [
         { type: "website", label: "Website", value: "fatihgulen.com", url: "https://fatihgulen.com" },
         { type: "linkedin", label: "LinkedIn", value: "in/faatihgulen", url: "https://www.linkedin.com/in/faatihgulen/" },
