@@ -4,4 +4,4 @@ compatibility_date = "2025-01-01"
 workers_dev = true
 
 [vars]
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-1.5-flash"

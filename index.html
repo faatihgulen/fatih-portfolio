@@ -2383,6 +2383,7 @@ const aiFallbackFollowups = [
   "Show VR projects",
   "Contact details"
 ];
+const AI_ENDPOINT = "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask";
 const aiUnknownFallback = "I could not find an exact match, but this portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects. I can also guide you to the closest category and show related work.";
 const aiThreshold = 0.58;
 let aiKbCache = null;
@@ -2679,12 +2680,7 @@ function setAiServiceStatus(isOnline) {
 }
 
 async function askProxy(query) {
-  const isProdDomain = window.location.hostname === "fatihgulen.com" || window.location.hostname === "www.fatihgulen.com";
-  const defaultEndpoint = isProdDomain
-    ? "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask"
-    : "/api/ask";
-  const endpoint = (window.__AI_ENDPOINT && String(window.__AI_ENDPOINT).trim()) || defaultEndpoint;
-  const res = await fetch(endpoint, {
+  const res = await fetch(AI_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query: query })
