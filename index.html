@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fatih Gulen — Portfolio</title>
+<title>Fatih Gulen - Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -48,16 +48,68 @@
   .ambient-glow {
     position: fixed; width: 600px; height: 600px; border-radius: 50%;
     background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
-    top: -200px; right: -100px; pointer-events: none; z-index: 0;
+    top: -200px; right: -100px; pointer-events: none; z-index: 1;
     animation: ambientPulse 8s ease-in-out infinite;
+  }
+  .bg-objects {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .bg-orb {
+    position: absolute;
+    border-radius: 48% 52% 60% 40% / 52% 46% 54% 48%;
+    filter: blur(24px);
+    opacity: 0.28;
+    mix-blend-mode: screen;
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+  .bg-orb.one {
+    width: 340px;
+    height: 300px;
+    left: -70px;
+    top: 18vh;
+    background: radial-gradient(circle at 35% 30%, rgba(196,240,77,0.30), rgba(196,240,77,0.06) 58%, transparent 72%);
+    animation: orbDriftOne 20s ease-in-out infinite;
+  }
+  .bg-orb.two {
+    width: 280px;
+    height: 340px;
+    right: 8vw;
+    top: 54vh;
+    background: radial-gradient(circle at 62% 38%, rgba(120,170,255,0.18), rgba(120,170,255,0.05) 58%, transparent 72%);
+    animation: orbDriftTwo 24s ease-in-out infinite;
+  }
+  .bg-orb.three {
+    width: 250px;
+    height: 250px;
+    right: -40px;
+    top: 8vh;
+    background: radial-gradient(circle at 45% 45%, rgba(255,255,255,0.14), rgba(255,255,255,0.03) 60%, transparent 74%);
+    animation: orbDriftThree 26s ease-in-out infinite;
   }
   @keyframes ambientPulse {
     0%, 100% { opacity: 0.4; transform: scale(1); }
     50% { opacity: 0.7; transform: scale(1.1); }
   }
-  .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 1; }
+  @keyframes orbDriftOne {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+    50% { transform: translate3d(26px, -22px, 0) rotate(8deg) scale(1.06); }
+  }
+  @keyframes orbDriftTwo {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 0.15; }
+    50% { transform: translate3d(-24px, 20px, 0) rotate(-10deg) scale(1.08); opacity: 0.22; }
+  }
+  @keyframes orbDriftThree {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 0.14; }
+    50% { transform: translate3d(-18px, -16px, 0) rotate(12deg) scale(1.05); opacity: 0.2; }
+  }
+  .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 3; }
 
-  /* ─── Header ─── */
+  /* --- Header --- */
   header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 24px 40px; border-bottom: 1px solid var(--border);
@@ -83,7 +135,7 @@
   }
   .header-link:hover { color: var(--text-secondary); }
 
-  /* ─── Hero ─── */
+  /* --- Hero --- */
   .hero {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 100px 40px 60px; text-align: center; animation: fadeUp 1s ease-out;
@@ -105,7 +157,7 @@
     line-height: 1.7; font-weight: 300; animation: fadeUp 1s ease-out 0.3s both;
   }
 
-  /* ─── Category Pills ─── */
+  /* --- Category Pills --- */
   .categories {
     display: flex; justify-content: center; gap: 10px; padding: 0 40px 40px;
     flex-wrap: wrap; animation: fadeUp 1s ease-out 0.4s both;
@@ -129,7 +181,7 @@
   .cat-pill.active { border-color: var(--accent); color: var(--bg); background: var(--accent); }
   .cat-pill .pill-count { margin-left: 6px; opacity: 0.5; font-size: 0.6rem; }
 
-  /* ─── Chat Input ─── */
+  /* --- Chat Input --- */
   .chat-input-wrap {
     display: flex; justify-content: center; padding: 0 40px 20px;
     animation: fadeUp 1s ease-out 0.5s both;
@@ -157,7 +209,7 @@
   .chat-submit:hover { transform: translateY(-50%) scale(1.05); }
   .chat-submit svg { width: 16px; height: 16px; }
 
-  /* ─── Suggested Prompts ─── */
+  /* --- Suggested Prompts --- */
   .suggested {
     display: flex; justify-content: center; gap: 8px; padding: 0 40px 60px;
     flex-wrap: wrap; animation: fadeUp 1s ease-out 0.6s both;
@@ -171,7 +223,7 @@
     color: var(--text-secondary); border-color: var(--border-hover); background: var(--surface);
   }
 
-  /* ─── Response Area ─── */
+  /* --- Response Area --- */
   .response-area { padding: 0 40px 60px; max-width: 1200px; margin: 0 auto; width: 100%; min-height: 200px; }
   .response-header {
     display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
@@ -186,7 +238,7 @@
   .response-text { font-size: 0.95rem; color: var(--text-secondary); font-weight: 300; }
   .response-text strong { color: var(--text-primary); font-weight: 500; }
 
-  /* ─── Project Grid ─── */
+  /* --- Project Grid --- */
   .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
   .project-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
@@ -239,8 +291,26 @@
   }
   .project-card:hover .card-arrow { border-color: var(--accent); color: var(--accent); transform: translateX(2px); }
   .card-arrow svg { width: 12px; height: 12px; }
+  .related-works {
+    margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px;
+  }
+  .related-works h4 {
+    font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .related-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;
+  }
+  .related-card {
+    border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    background: var(--surface); cursor: pointer; transition: all 0.25s;
+  }
+  .related-card:hover { border-color: var(--accent-mid); transform: translateY(-2px); }
+  .related-thumb { width: 100%; aspect-ratio: 16/10; background: var(--surface-2); }
+  .related-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .related-name { padding: 8px 10px; font-size: 0.76rem; color: var(--text-secondary); line-height: 1.35; }
 
-  /* ─── Typing ─── */
+  /* --- Typing --- */
   .typing-indicator { display: flex; gap: 4px; padding: 20px 0; justify-content: center; }
   .typing-dot {
     width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted);
@@ -263,7 +333,7 @@
   .no-results h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; font-weight: 400; }
   .no-results p { color: var(--text-muted); font-size: 0.95rem; font-weight: 300; }
 
-  /* ─── Footer ─── */
+  /* --- Footer --- */
   footer {
     margin-top: auto; padding: 24px 40px; border-top: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
@@ -276,7 +346,7 @@
   }
   .footer-links a:hover { color: var(--accent); }
 
-  /* ═══════════ ABOUT MODAL ═══════════ */
+  /* =========== ABOUT MODAL =========== */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(12px); z-index: 1000;
@@ -308,6 +378,7 @@
     width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--border);
     overflow: hidden; margin-bottom: 20px; background: var(--surface-2); position: relative;
   }
+  .modal-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .modal-avatar-placeholder {
     width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
     font-family: var(--font-display); font-size: 2.2rem; color: var(--accent);
@@ -357,7 +428,7 @@
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
   }
 
-  /* ═══════════ PROJECT DETAIL MODAL ═══════════ */
+  /* =========== PROJECT DETAIL MODAL =========== */
   .project-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(12px); z-index: 1000;
@@ -370,7 +441,14 @@
     background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
     width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; position: relative;
     transform: translateY(30px) scale(0.96);
-    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 50% 8%;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.45);
+    will-change: transform, max-width, max-height;
+    transition:
+      transform 0.58s cubic-bezier(0.16, 1, 0.3, 1),
+      max-width 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+      max-height 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.52s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .project-overlay.open .project-modal { transform: translateY(0) scale(1); }
   .project-modal::-webkit-scrollbar { width: 4px; }
@@ -387,16 +465,36 @@
     width: 100%; aspect-ratio: 16/9; background: var(--surface-2); position: relative;
     border-radius: 20px 20px 0 0; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
+    transition:
+      aspect-ratio 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.52s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .pm-hero-img {
     position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   }
+  .pm-hero-video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    background: #0b0c0f;
+  }
   .pm-hero-emoji { font-size: 4rem; opacity: 0.15; }
+  .pm-hero-embed {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: #0c0d10;
+  }
+  .pm-hero-embed > script {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   .pm-hero-gradient {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, var(--accent-dim) 0%, transparent 50%);
   }
-  .pm-body { padding: 28px 32px 32px; }
+  .pm-body {
+    padding: 28px 32px 32px;
+    transition: padding 0.52s cubic-bezier(0.16, 1, 0.3, 1), transform 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+  }
   .pm-tags { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .pm-tag {
     font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em;
@@ -410,6 +508,15 @@
   .pm-title {
     font-family: var(--font-display); font-size: 2rem; font-weight: 400;
     line-height: 1.25; margin-bottom: 16px;
+  }
+  .pm-title-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px;
+  }
+  .pm-title-row .pm-title { margin-bottom: 0; }
+  .pm-gallery-chip {
+    font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 10px; white-space: nowrap;
   }
   .pm-desc {
     font-size: 1rem; color: var(--text-secondary); line-height: 1.8; font-weight: 300;
@@ -430,6 +537,54 @@
     border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem;
     margin: 2px 4px 2px 0; color: var(--text-secondary);
   }
+  .pm-embed-block {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .pm-embed-title {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .pm-embed-host {
+    width: 100%;
+    min-height: 640px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #0c0d10;
+  }
+  .pm-embed-host > script { display: block; width: 100%; height: 100%; }
+  .pm-embed-host > iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    border: 0;
+  }
+  .pm-embed-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .pm-embed-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .pm-embed-credit {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
   .pm-tags-list { display: flex; flex-wrap: wrap; gap: 4px; }
   .pm-tags-list span {
     font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.04em;
@@ -448,8 +603,155 @@
   }
   .pm-nav-btn:hover { color: var(--text-primary); border-color: var(--accent-mid); }
   .pm-nav-btn svg { width: 14px; height: 14px; }
+  .pm-hero-controls {
+    position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 3;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .pm-hero-left { display: flex; align-items: center; gap: 8px; }
+  .pm-hero-btn {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border); background: rgba(17,17,19,0.84);
+    color: var(--text-secondary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+  }
+  .pm-hero-btn:hover { border-color: var(--accent-mid); color: var(--text-primary); }
+  .pm-hero-btn svg { width: 14px; height: 14px; }
+  .pm-image-count {
+    font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em;
+    color: var(--text-primary); background: rgba(17,17,19,0.84);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 12px; min-width: 56px; text-align: center;
+  }
+  .pm-preview-close {
+    display: none;
+    font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-primary);
+    background: rgba(17,17,19,0.84); border: 1px solid var(--border);
+    border-radius: 999px; padding: 8px 12px; cursor: pointer; transition: all 0.25s;
+  }
+  .pm-preview-close:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .pm-expand-btn {
+    font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-primary);
+    background: rgba(17,17,19,0.84); border: 1px solid var(--border);
+    border-radius: 999px; padding: 8px 12px; cursor: pointer; transition: all 0.25s;
+  }
+  .pm-expand-btn:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .project-overlay.expanded .project-modal {
+    max-width: min(1120px, 96vw); max-height: 96vh;
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 28px 72px rgba(0,0,0,0.56), 0 0 0 1px rgba(196,240,77,0.08);
+  }
+  .project-overlay.expanded .pm-hero { aspect-ratio: 16/8.55; transform: translateY(-2px); filter: saturate(1.03); }
+  .project-overlay.expanded .pm-body { padding: 30px 36px 34px; transform: translateY(-1px); }
 
-  /* ─── Responsive ─── */
+  .pm-gallery {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 12px 32px 0;
+  }
+  .pm-gallery-thumb {
+    width: 76px; height: 52px; border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border); background: var(--surface-2);
+    flex: 0 0 auto; cursor: pointer; transition: all 0.25s;
+  }
+  .pm-gallery-thumb.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim) inset; }
+  .pm-gallery-thumb:hover { border-color: var(--accent-mid); transform: translateY(-1px); }
+  .pm-gallery-thumb img,
+  .pm-gallery-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .pm-story {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 18px;
+    position: relative;
+  }
+  .pm-story-item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 2px 0;
+    flex: 0 0 100%;
+  }
+  .pm-story-item::before {
+    content: '';
+    position: absolute;
+    inset: -4px 8%;
+    border-radius: 16px;
+    background: radial-gradient(circle at 50% 20%, rgba(196,240,77,0.08), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .pm-story-item:hover::before { opacity: 1; }
+  .pm-story-media {
+    width: min(88%, 860px);
+    aspect-ratio: 16/10;
+    border-radius: 14px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.28);
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pm-story-item:nth-child(odd) .pm-story-media { transform: rotate(-0.35deg); }
+  .pm-story-item:nth-child(even) .pm-story-media { transform: rotate(0.35deg); }
+  .pm-story-item:hover .pm-story-media {
+    transform: rotate(0deg) translateY(-2px);
+    box-shadow: 0 20px 44px rgba(0,0,0,0.36);
+  }
+  .pm-story-item.is-portrait .pm-story-media {
+    width: 100%;
+    aspect-ratio: auto;
+    max-height: min(72vh, 760px);
+    object-fit: contain;
+    background: linear-gradient(180deg, #111216 0%, #0b0c0f 100%);
+    border-radius: 22px;
+    padding: 8px;
+    transform: none;
+  }
+  .pm-story-item.is-portrait {
+    flex: 0 1 calc((100% - 32px) / 3);
+    max-width: 260px;
+    min-width: 180px;
+    padding: 0;
+  }
+  .pm-story-item.is-portrait:hover .pm-story-media { transform: translateY(-2px); }
+  .pm-story-item.is-portrait .pm-story-caption {
+    width: 100%;
+    border-radius: 0 0 22px 22px;
+  }
+  .pm-story-caption {
+    position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 4px);
+    width: min(88%, 860px);
+    padding: 10px 12px; border-radius: 0 0 10px 10px;
+    background: linear-gradient(180deg, rgba(10,10,11,0) 0%, rgba(10,10,11,0.88) 70%);
+    font-size: 0.76rem; color: var(--text-primary);
+    opacity: 0;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    pointer-events: none;
+  }
+  .pm-story-item:hover .pm-story-caption { opacity: 1; transform: translate(-50%, 0); }
+  .image-lightbox {
+    position: fixed; inset: 0; z-index: 11000; background: rgba(0,0,0,0.86);
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .image-lightbox.open { display: flex; }
+  .image-lightbox img,
+  .image-lightbox video {
+    max-width: min(94vw, 1400px); max-height: 90vh; border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .image-lightbox-close {
+    position: absolute; top: 18px; right: 18px; width: 36px; height: 36px;
+    border-radius: 50%; border: 1px solid var(--border);
+    background: rgba(17,17,19,0.8); color: var(--text-primary); cursor: pointer;
+  }
+
+  /* --- Responsive --- */
   @media (max-width: 768px) {
     header { padding: 16px 20px; }
     .hero { padding: 60px 20px 40px; }
@@ -461,6 +763,20 @@
     .modal-header { padding: 32px 24px 0; }
     .modal-body { padding: 0 24px 24px; }
     .header-meta { gap: 14px; }
+    .pm-gallery { padding: 10px 20px 0; }
+    .pm-body { padding: 22px 20px 22px; }
+    .pm-title-row { flex-direction: column; align-items: flex-start; }
+    .pm-story-media { width: 100%; border-radius: 10px; transform: none !important; }
+    .pm-story-item.is-portrait { flex: 0 1 calc((100% - 12px) / 2); max-width: 260px; min-width: 140px; }
+    .pm-story-item.is-portrait .pm-story-media { width: 100%; border-radius: 16px; padding: 6px; }
+    .pm-story-caption { width: 100%; left: 50%; }
+    .pm-story-item.is-portrait .pm-story-caption { width: 100%; border-radius: 0 0 16px 16px; }
+    .pm-hero-controls { left: 10px; right: 10px; bottom: 10px; }
+    .pm-embed-host { min-height: 440px; }
+    .pm-embed-grid { grid-template-columns: 1fr; }
+    .pm-image-count, .pm-preview-close, .pm-expand-btn { font-size: 0.58rem; }
+    .project-overlay.expanded .project-modal { transform: translateY(0) scale(1); }
+    .project-overlay.expanded .pm-body { padding: 22px 20px 24px; transform: none; }
   }
   @media (max-width: 480px) {
     .hero h1 { font-size: 2.2rem; }
@@ -472,13 +788,13 @@
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 
-  /* ═══════════ NEON STAR PARTICLES ═══════════ */
+  /* =========== NEON STAR PARTICLES =========== */
   .neon-stars-canvas {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.82;
   }
 
-  /* ═══════════ 3D NEON CURSOR ═══════════ */
-  * { cursor: none !important; }
+  /* =========== 3D NEON CURSOR =========== */
+  body.cursor-enabled * { cursor: none !important; }
   .neon-cursor {
     position: fixed; pointer-events: none; z-index: 99999;
     width: 20px; height: 20px;
@@ -541,7 +857,7 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ═══════════ SKELETON LOADING ═══════════ */
+  /* =========== SKELETON LOADING =========== */
   .skeleton-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;
   }
@@ -592,23 +908,58 @@
     100% { transform: translateX(100%); }
   }
 
-  /* ═══════════ ONBOARDING BOT TOUR ═══════════ */
+  /* =========== ONBOARDING BOT TOUR =========== */
   .tour-overlay {
     position: fixed; inset: 0; z-index: 10000;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    clip-path: none;
     opacity: 0; pointer-events: none;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.32s ease, clip-path 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .tour-overlay.active { opacity: 1; pointer-events: all; }
+  .tour-overlay.active {
+    opacity: 1; pointer-events: all;
+    -webkit-mask:
+      linear-gradient(#000 0 0) 0 0 / 100% var(--tour-top, 100%) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--tour-top, 0) / var(--tour-left, 0) calc(var(--tour-bottom, 100%) - var(--tour-top, 0)) no-repeat,
+      linear-gradient(#000 0 0) var(--tour-right, 100%) var(--tour-top, 0) / calc(100% - var(--tour-right, 100%)) calc(var(--tour-bottom, 100%) - var(--tour-top, 0)) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--tour-bottom, 100%) / 100% calc(100% - var(--tour-bottom, 100%)) no-repeat;
+    mask:
+      linear-gradient(#000 0 0) 0 0 / 100% var(--tour-top, 100%) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--tour-top, 0) / var(--tour-left, 0) calc(var(--tour-bottom, 100%) - var(--tour-top, 0)) no-repeat,
+      linear-gradient(#000 0 0) var(--tour-right, 100%) var(--tour-top, 0) / calc(100% - var(--tour-right, 100%)) calc(var(--tour-bottom, 100%) - var(--tour-top, 0)) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--tour-bottom, 100%) / 100% calc(100% - var(--tour-bottom, 100%)) no-repeat;
+  }
+  .tour-focus {
+    position: fixed; z-index: 10001; pointer-events: none;
+    border: 2px solid var(--accent); border-radius: 10px;
+    box-shadow:
+      0 0 16px rgba(196,240,77,0.45),
+      0 0 28px rgba(196,240,77,0.2),
+      inset 0 0 0 1px rgba(196,240,77,0.45);
+    opacity: 0; transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .tour-focus.active { opacity: 1; }
+  .tour-focus::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border: 1px solid rgba(196, 240, 77, 0.55);
+    border-radius: inherit;
+    box-shadow: 0 0 14px rgba(196, 240, 77, 0.35);
+  }
   .tour-bot {
-    position: absolute; z-index: 10001;
-    right: 30px;
+    position: fixed; z-index: 10001;
+    bottom: 96px; right: 24px;
     perspective: 800px;
   }
   .tour-bot.floating {
-    position: fixed;
-    bottom: 30px; right: 30px;
+    position: fixed; bottom: 96px; right: 24px;
+  }
+  .tour-bot.pinned .tour-bot-avatar {
+    animation: none;
+    transform: none;
   }
   .tour-bot-avatar {
     width: 64px; height: 64px; border-radius: 20px;
@@ -629,6 +980,9 @@
       0 8px 25px rgba(196, 240, 77, 0.4),
       0 0 50px rgba(196, 240, 77, 0.2),
       inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .tour-bot.pinned .tour-bot-avatar:hover {
+    transform: none;
   }
   .tour-bot-avatar svg { width: 32px; height: 32px; fill: var(--bg); }
   .tour-bot-avatar::after {
@@ -740,18 +1094,9 @@
   }
   .tour-btn-next:hover { box-shadow: 0 4px 15px rgba(196, 240, 77, 0.3); transform: translateY(-1px); }
   .tour-btn svg { width: 12px; height: 12px; }
-  .tour-pointer {
-    position: fixed; z-index: 10001;
-    pointer-events: none;
-    opacity: 0; transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .tour-pointer.active { opacity: 1; }
-  .tour-pointer-ring {
-    width: 60px; height: 60px; border-radius: 50%;
-    border: 2px solid var(--accent);
-    animation: pointerPulse 1.5s ease-in-out infinite;
-    box-shadow: 0 0 20px rgba(196, 240, 77, 0.2);
-  }
+  .tour-pointer { display: none; }
+  .tour-pointer.active { opacity: 0; }
+  .tour-pointer-ring { display: none; }
   @keyframes pointerPulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.2); opacity: 0.4; }
@@ -759,18 +1104,29 @@
 
   @media (max-width: 768px) {
     .tour-dialog { width: calc(100vw - 30px); bottom: 100px !important; right: 15px !important; left: 15px !important; }
-    .tour-bot { bottom: 20px; right: 20px; }
+    .tour-bot { bottom: 76px; right: 14px; }
     .neon-cursor, .neon-cursor-trail { display: none !important; }
     * { cursor: auto !important; }
     .skeleton-grid { grid-template-columns: 1fr; }
+    .modal { max-height: 92vh; overflow-y: auto; }
+    .modal-body { max-height: 64vh; overflow-y: auto; }
+    .modal-bio { text-align: left; }
+    .related-works { display: none !important; }
+    .bg-orb.two { display: none; }
+    .bg-orb { filter: blur(22px); opacity: 0.14; }
   }
 </style>
 </head>
 <body>
 <div class="ambient-glow"></div>
+<div class="bg-objects" aria-hidden="true">
+  <div class="bg-orb one"></div>
+  <div class="bg-orb two"></div>
+  <div class="bg-orb three"></div>
+</div>
 <canvas class="neon-stars-canvas" id="neonStarsCanvas"></canvas>
 
-<!-- ═══════════ ABOUT MODAL ═══════════ -->
+<!-- =========== ABOUT MODAL =========== -->
 <div class="modal-overlay" id="aboutModal" onclick="if(event.target===this)closeAbout()">
   <div class="modal">
     <button class="modal-close" onclick="closeAbout()">
@@ -780,7 +1136,7 @@
     </button>
     <div class="modal-header">
       <div class="modal-avatar">
-        <div class="modal-avatar-placeholder">FG</div>
+        <img src="images/Fatih_Gulen/1767480367261.webp" alt="Fatih Gulen">
       </div>
       <div class="modal-name">Fatih Gulen</div>
       <div class="modal-title">Real-Time Experience Designer</div>
@@ -841,26 +1197,33 @@
   </div>
 </div>
 
-<!-- ═══════════ PROJECT DETAIL MODAL ═══════════ -->
+<!-- =========== PROJECT DETAIL MODAL =========== -->
 <div class="project-overlay" id="projectModal" onclick="if(event.target===this)closeProject()">
   <div class="project-modal" id="projectModalContent"></div>
 </div>
 
-<!-- ═══════════ 3D NEON CURSOR ═══════════ -->
+<!-- =========== 3D NEON CURSOR =========== -->
 <div class="neon-cursor" id="neonCursor">
   <div class="neon-cursor-ring"></div>
   <div class="neon-cursor-core"></div>
 </div>
 
-<!-- ═══════════ TOUR OVERLAY ═══════════ -->
+<!-- =========== TOUR OVERLAY =========== -->
 <div class="tour-overlay" id="tourOverlay"></div>
+<div class="tour-focus" id="tourFocus"></div>
 
-<!-- ═══════════ TOUR POINTER ═══════════ -->
+<div class="image-lightbox" id="imageLightbox" onclick="if(event.target===this)closeImageLightbox()">
+  <button class="image-lightbox-close" onclick="closeImageLightbox()">✕</button>
+  <img id="imageLightboxImg" src="" alt="Expanded preview">
+  <video id="imageLightboxVideo" controls playsinline style="display:none;"></video>
+</div>
+
+<!-- =========== TOUR POINTER =========== -->
 <div class="tour-pointer" id="tourPointer">
   <div class="tour-pointer-ring"></div>
 </div>
 
-<!-- ═══════════ TOUR DIALOG ═══════════ -->
+<!-- =========== TOUR DIALOG =========== -->
 <div class="tour-dialog" id="tourDialog">
   <div class="tour-dialog-header">
     <div class="tour-dialog-bot">
@@ -880,10 +1243,10 @@
   <div class="tour-dialog-footer" id="tourFooter"></div>
 </div>
 
-<!-- ═══════════ MAIN APP ═══════════ -->
+<!-- =========== MAIN APP =========== -->
 <div class="app">
   <header>
-    <div class="logo" onclick="resetView()"><span>●</span> Fatih Gulen</div>
+    <div class="logo" onclick="resetView()"><span>*</span> Fatih Gulen</div>
     <div class="header-meta">
       <span class="header-link" onclick="resetView()"><span class="status-dot"></span>&nbsp; Online</span>
       <span class="header-link" onclick="openAbout()">About</span>
@@ -896,8 +1259,8 @@
     <p class="hero-sub">Browse by category or describe what you're looking for. This portfolio understands context, tools, and intent.</p>
   </section>
 
-  <!-- ═══════════ TOUR BOT (below hero) ═══════════ -->
-  <div class="tour-bot" id="tourBot" style="display:none;">
+  <!-- =========== TOUR BOT (below hero) =========== -->
+  <div class="tour-bot" id="tourBot">
     <div class="tour-bot-avatar" onclick="startTour()">
       <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7v1H3v-1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2zM5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2H5zm4 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm6 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
     </div>
@@ -944,7 +1307,7 @@
     <div class="footer-left">&copy; 2026 Fatih Gulen</div>
     <div class="footer-links">
       <a href="https://www.linkedin.com/in/faatihgulen/" target="_blank">LinkedIn</a>
-      <a href="https://https://www.artstation.com/fatihgulen" target="_blank">Artstation</a>
+      <a href="https://www.artstation.com/fatihgulen" target="_blank">Artstation</a>
       <a href="https://fatihgulen.com" target="_blank">Website</a>
       <a href="mailto:faatihgulen@gmail.com">Email</a>
     </div>
@@ -952,7 +1315,7 @@
 </div>
 
 <script>
-// ─── ABOUT MODAL ───
+// --- ABOUT MODAL ---
 function openAbout() {
   document.getElementById('aboutModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -963,21 +1326,493 @@ function closeAbout() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAbout(); closeProject(); } });
 
-// ─── PROJECT DETAIL MODAL ───
+// --- PROJECT DETAIL MODAL ---
 let currentProjectIndex = -1;
 let currentFilteredProjects = [];
+let currentProject = null;
+let currentProjectGallery = [];
+let currentProjectCaptions = {};
+let currentProjectImageIndex = 0;
+let coverProjectImageIndex = 0;
+let storyPreviewActive = false;
+const preferredImageCache = new Map();
+const preferredImagePending = new Map();
+
+function onProjectModalScroll() {
+  const modal = document.getElementById('projectModalContent');
+  if (!modal) return;
+  setProjectExpanded(modal.scrollTop > 56);
+}
+
+function toggleProjectExpanded() {
+  const overlay = document.getElementById('projectModal');
+  if (!overlay) return;
+  overlay.classList.toggle('expanded');
+}
+
+function openImageLightbox(src) {
+  if (!src) return;
+  const lightbox = document.getElementById('imageLightbox');
+  const img = document.getElementById('imageLightboxImg');
+  const video = document.getElementById('imageLightboxVideo');
+  if (!lightbox || !img || !video) return;
+  const mediaSrc = normalizeImagePath(src);
+  if (isVideoMedia(mediaSrc)) {
+    img.style.display = 'none';
+    img.src = '';
+    video.style.display = 'block';
+    video.src = mediaSrc;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  } else {
+    video.pause();
+    video.style.display = 'none';
+    video.removeAttribute('src');
+    img.style.display = 'block';
+    setImageWithPreferredQuality(img, mediaSrc);
+  }
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeImageLightbox() {
+  const lightbox = document.getElementById('imageLightbox');
+  const img = document.getElementById('imageLightboxImg');
+  const video = document.getElementById('imageLightboxVideo');
+  if (img) img.src = '';
+  if (video) {
+    video.pause();
+    video.removeAttribute('src');
+    video.style.display = 'none';
+  }
+  if (lightbox) lightbox.classList.remove('open');
+  if (document.getElementById('projectModal').classList.contains('open')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+
+function setProjectExpanded(expanded) {
+  const overlay = document.getElementById('projectModal');
+  if (!overlay) return;
+  overlay.classList.toggle('expanded', !!expanded);
+}
+
+function normalizeImagePath(path) {
+  return String(path || '').trim().replace(/\\/g, '/');
+}
+
+function isVideoMedia(src) {
+  return /\.mp4(\?.*)?$/i.test(normalizeImagePath(src));
+}
+
+function buildPreferredCandidates(src) {
+  const clean = normalizeImagePath(src);
+  const m = clean.match(/^(.*)\.([a-zA-Z0-9]+)(\?.*)?$/);
+  if (!m) return [clean];
+  const base = m[1];
+  const ext = m[2].toLowerCase();
+  const query = m[3] || '';
+  if (ext !== 'webp') return [clean];
+  return [
+    `${base}.png${query}`,
+    `${base}.jpg${query}`,
+    `${base}.jpeg${query}`,
+    clean
+  ];
+}
+
+function probeImageExists(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+function resolvePreferredImage(src) {
+  const clean = normalizeImagePath(src);
+  if (!clean) return Promise.resolve(clean);
+  if (preferredImageCache.has(clean)) return Promise.resolve(preferredImageCache.get(clean));
+  if (preferredImagePending.has(clean)) return preferredImagePending.get(clean);
+  const pending = (async () => {
+    const candidates = buildPreferredCandidates(clean);
+    for (const candidate of candidates) {
+      const ok = await probeImageExists(candidate);
+      if (ok) {
+        preferredImageCache.set(clean, candidate);
+        preferredImagePending.delete(clean);
+        return candidate;
+      }
+    }
+    preferredImageCache.set(clean, clean);
+    preferredImagePending.delete(clean);
+    return clean;
+  })();
+  preferredImagePending.set(clean, pending);
+  return pending;
+}
+
+function setImageWithPreferredQuality(imgEl, source) {
+  if (!imgEl) return;
+  const baseSrc = normalizeImagePath(source || imgEl.getAttribute('data-base-src') || imgEl.getAttribute('src') || '');
+  if (!baseSrc) return;
+  imgEl.dataset.baseSrc = baseSrc;
+  imgEl.src = baseSrc;
+  resolvePreferredImage(baseSrc).then((bestSrc) => {
+    if (imgEl.dataset.baseSrc !== baseSrc) return;
+    if (bestSrc && bestSrc !== imgEl.src) imgEl.src = bestSrc;
+  });
+}
+
+function normalizeGalleryEntry(entry) {
+  if (!entry) return null;
+  if (typeof entry === 'string') {
+    const src = normalizeImagePath(entry);
+    return src ? { src, caption: '' } : null;
+  }
+  if (typeof entry === 'object') {
+    const src = normalizeImagePath(entry.src || entry.image || '');
+    if (!src) return null;
+    return { src, caption: String(entry.caption || '').trim() };
+  }
+  return null;
+}
+
+const galleryConfig = {
+  p01: [
+    'images/UI/AERONIX/1.webp',
+    'images/UI/AERONIX/2.webp',
+    'images/UI/AERONIX/Charge.webp',
+    'images/UI/AERONIX/Drive.webp',
+    'images/UI/AERONIX/ian-tan-db10-comp-v003-100.webp',
+    'images/UI/AERONIX/ian-tan-fronttop-v001.webp',
+    'images/UI/AERONIX/ian-tan-reartop-v001.webp',
+    'images/UI/AERONIX/ezgif-545218b14e7a7379.gif',
+    'images/UI/AERONIX/Image 1.webp',
+    'images/UI/AERONIX/2.webp',
+    'images/UI/AERONIX/Slide 16_9 - 1.webp',
+    'images/UI/AERONIX/Slide 16_9 - 2.webp',
+    'images/UI/AERONIX/Slide 16_9 - 3.webp',
+    'images/UI/AERONIX/Slide 16_9 - 5.webp',
+    'images/UI/AERONIX/Slide 16_9 - 4.webp',
+    'images/UI/AERONIX/Slide 16_9 - 8.webp',
+    'images/UI/AERONIX/Slide 16_9 - 9.webp',
+  ],
+  p02: [
+    'images/UI/GroceryMate/app (1).webp',
+    'images/UI/GroceryMate/app (2).webp',
+    'images/UI/GroceryMate/app (3).webp',
+    'images/UI/GroceryMate/app (4).webp',
+    'images/UI/GroceryMate/app (5).webp',
+    'images/UI/GroceryMate/app (6).webp',
+    'images/UI/GroceryMate/app (7).webp',
+    'images/UI/GroceryMate/app (8).webp',
+    'images/UI/GroceryMate/app (9).webp',
+    'images/UI/GroceryMate/app (10).webp',
+    'images/UI/GroceryMate/app (11).webp',
+    'images/UI/GroceryMate/app (12).webp',
+    'images/UI/GroceryMate/2.webp',
+    'images/UI/GroceryMate/97904e66-e477-45d4-83e3-7d4c48d9c22a.webp',
+    'images/UI/GroceryMate/0497cc64-cf65-4204-98d6-902663d07a5c.webp',
+    'images/UI/GroceryMate/5740d681-f772-48ed-8763-10d15c4f36dd.webp',
+    'images/UI/GroceryMate/464399c8-5ed4-4de5-bbcc-3a2d23274799.webp',
+    'images/UI/GroceryMate/59f161fb-231b-42a6-bf4e-e623642d7077.webp',
+    'images/UI/GroceryMate/96c6bd06-1cd4-4e2c-a9b0-ff6327eb993c.webp',
+    'images/UI/GroceryMate/1ccd81f7-2f0d-4039-927c-b5c300b88d64.webp',
+    'images/UI/GroceryMate/4b546f7f-3a77-4f15-bb71-5e7e7f6a8e6b.webp',
+    'images/UI/GroceryMate/77694e4b-eea4-4a2b-acb2-d80ce1ac1b4f.webp',
+    'images/UI/GroceryMate/73a2f167-73a3-4e0c-b0ce-1c7f4b0a8d07.webp',
+    'images/UI/GroceryMate/5c053a12-60e1-4717-9618-521d6e9e6e52.webp',
+  ],
+  p03: [
+    'images/UI/Hipicon/3045a34b-7d15-4e97-80b1-7c4169b84e62_rw_1200.webp',
+    'images/UI/Hipicon/0e563a5d-167c-4d7c-849c-d97b0bd2d4e3_rw_600.webp',
+    'images/UI/Hipicon/8acf3de6-e781-4c73-8ced-a6497bcaf2b6_rw_600.webp',
+    'images/UI/Hipicon/40ca1d0a-9c16-42e9-8ad3-9ccb47228f54_rw_1920.webp',
+    'images/UI/Hipicon/291b574d-dbe2-4579-b2ec-55d3d56dee8b_rw_600.webp',
+    'images/UI/Hipicon/296f373f-15a9-4417-b93f-2921529aa5c5_rw_1200.webp',
+  ],
+  p04: [
+    'images/3D/Material/untitled-002 (1).mp4',
+    'images/3D/Material/e2d7dd6b-e78f-44f8-9c6f-aa3b12e30d8f_rw_1920.webp',
+    'images/3D/Material/substance.png',
+    'images/3D/Material/296bbee6-2962-4ffa-940d-deba4744484e_rw_1920.webp',
+    'images/3D/Material/518f25f6-43d9-4828-871a-8c53ee994ada_rw_1920.webp',
+    'images/3D/Material/761c1a94-4679-498b-8b6d-c16150a59055_rw_1920.webp',
+
+  ],
+  p05: [
+    'images/3D/Material/material-main-camera-002.mp4',
+    'images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp',
+    'images/3D/Material/6e5a781c-d5df-411b-97c7-46dc6fe055d6_rw_1920.webp',
+    'images/3D/Material/e6f5edd8-5370-4f05-a00a-602fc3c4cd4e_rw_1920.webp',
+  ],
+  p06: [
+
+  ],
+  p07: [
+    'images/Architecture/BSH/4fb15cfe-b554-4711-8bba-7dcf136a7cd7_rw_1920.webp',
+    'images/Architecture/BSH/792aea8b-993a-4724-bcca-b5434e2c2421_rw_1920.webp',
+    'images/Architecture/BSH/43aa829e-e07a-4002-a06f-d806d88016d1_rw_1920.webp',
+    'images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp',
+    'images/Architecture/BSH/c58faca5-df89-4f49-a727-1c0666711960_rw_1920.webp',
+  ],
+  p08: [
+    
+  ],
+  p09: [
+    'images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp',
+    'images/UI/Resorsus/28bb304b-afce-4e50-ad74-4b851da333e2_rw_1920.webp',
+  ],
+  p10: [
+    'images/3D/Whaf/image (3).png',
+    'images/3D/Whaf/image (4).png',
+    'images/3D/Whaf/New0028.jpg',
+    'images/3D/Whaf/Whaf1.webp',
+    'images/3D/Whaf/Whaf2.webp',
+    'images/3D/Whaf/Whaf3.webp',
+    
+  ],
+  p11: [
+    'images/Architecture/Gym/0a7f0928-088b-4935-b340-184a4e98b039_rw_600.webp',
+    'images/Architecture/Gym/2 (1) (2).webp',
+    'images/Architecture/Gym/5 (10).webp',
+    'images/Architecture/Gym/5f77331b-13b5-4882-a916-90307e1d6550_rw_600.webp',
+    'images/Architecture/Gym/18f789de-20be-4ecb-a2e4-429b5524ac75_rw_600.webp',
+  ],
+  p12: [
+    'images/AI/Thesis/15.07.2024_18.59.31_REC_2_1.mp4',
+    'images/AI/Thesis/6da01b3c-5d56-4d91-aa01-73d61b043644_rw_1920.webp',
+    'images/AI/Thesis/1 (1).jpeg',
+    'images/AI/Thesis/1 (1).webp',
+    'images/AI/Thesis/1 (2).webp',
+    'images/AI/Thesis/1 (3).webp',
+    'images/AI/Thesis/1 (4).webp',
+    'images/AI/Thesis/1 (5).webp',
+    'images/AI/Thesis/15a8a83e-8261-4348-b715-97d9986655d2_rw_1200.webp',
+  
+  ],
+  p13: [
+    'images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp',
+    'images/Architecture/Dollvet/9c55d376-8336-49a0-83d9-45f38b9067a3_rw_1920.webp',
+    'images/Architecture/Dollvet/02738ee6-b568-4781-88c2-ca4c459f3e5c_rw_1920.webp',
+    'images/Architecture/Dollvet/20f1a349-0fd5-4ad2-bd22-25c811d2fc8f_rw_1920.webp',
+    'images/Architecture/Dollvet/cb79d933-f8c3-4705-a249-353506df548c_rw_1920.webp',
+    'images/Architecture/Dollvet/c8f2e1a5-c541-4e4f-8d8c-dbf6ffe0a39e_rw_1920.webp',
+    'images/Architecture/Dollvet/8867060b-1e4f-4c5e-a43f-7bae23e99cca_rw_1920.webp',
+    'images/Architecture/Dollvet/e1e8243a-f42a-4678-93f4-79ddcf625cac_rw_1920.webp',
+    'images/Architecture/Dollvet/d1f1ac3b-4068-46d7-8f74-dbe68fdc6b4d_rw_1920.webp',
+  ],
+  p14: [
+    'images/Architecture/Istanbloom/ff1 (1).webp',
+    'images/Architecture/Istanbloom/ff2 (1).webp',
+    'images/Architecture/Istanbloom/ff3 (1).webp',
+    'images/Architecture/Istanbloom/Banyo (2).webp',
+  ],
+  p17: [
+    'images/VR/Huawei/4.webp',
+    'images/VR/Huawei/3.webp',
+    'images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp',
+    'images/VR/Huawei/20230815-170122(WeLinkPC).webp',
+    'images/VR/Huawei/2.webp',
+    'images/VR/Huawei/Unity4.webp',
+    'images/VR/Huawei/Unity6.webp',
+    'images/VR/Huawei/u3.webp',
+    'images/VR/Huawei/1.webp',
+    'images/VR/Huawei/Racket_Training_1st.webp',
+    'images/VR/Huawei/Racket_Training_5th.webp',  
+  ],
+  p18: [],
+  p19: [
+    'images/Architecture/Balikesir/12345 (2).webp',
+    'images/Architecture/Balikesir/123456 (2).webp',
+    'images/Architecture/Balikesir/12345678 (2).webp',
+    'images/Architecture/Balikesir/12345 (2).webp',
+  ],
+  p20: [],
+  p21: [
+    'images/3D/VFX/2 (1) (3).webp',
+    'imagesEB055C3B-930B-43BC-B21A-82ABD9A06B89 (1).webp',
+    'images/3D/EFD15A56-B0E5-41F8-8F8C-2D48C5023A8B.webp',
+    'images/3D/VFX/posst.webp',
+    'images/3D/VFX/s.webp',
+  ],
+};
+
+const projectEmbeds = {
+  p06: {
+    type: 'iframe',
+    useAsCover: false,
+    src: 'https://kuula.co/share/collection/7DK1N?logo=1&info=1&fs=1&vr=0&sd=1&thumbs=1',
+    width: '100%',
+    height: '640',
+    allow: 'xr-spatial-tracking; gyroscope; accelerometer',
+    allowFullscreen: true,
+    scrolling: 'no'
+  },
+  p13: {
+    type: 'iframe',
+    useAsCover: false,
+    src: 'https://kuula.co/share/collection/7v3LL?logo=1&info=1&fs=1&vr=0&sd=1&thumbs=1',
+    width: '100%',
+    height: '640',
+    allow: 'xr-spatial-tracking; gyroscope; accelerometer',
+    allowFullscreen: true,
+    scrolling: 'no'
+  },
+  p20: {
+    type: 'multi-iframe',
+    useAsCover: false,
+    items: [
+      {
+        title: 'Unicycle',
+        src: 'https://sketchfab.com/models/8b5d32b5cbad48cea6598baaee648ed5/embed',
+        width: '100%',
+        height: '640',
+        allow: 'autoplay; fullscreen; xr-spatial-tracking',
+        allowFullscreen: true,
+        scrolling: 'no'
+      },
+      {
+        title: 'Cap',
+        src: 'https://sketchfab.com/models/a79defd0306741879e664b12246eb6c1/embed',
+        width: '100%',
+        height: '640',
+        allow: 'autoplay; fullscreen; xr-spatial-tracking',
+        allowFullscreen: true,
+        scrolling: 'no'
+      }
+    ]
+  }
+};
+
+const projects = [
+  { id:"p01", title:"AERONIX - EV Dashboard UI", description:"End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive interior and HMI visualizations.", categories:["ui-ux","ai"], tags:["dashboard","ev","automotive","dark-mode","figma","design-system","car"], tools:["Figma","VizcomAI","ComfyUI","Procreate"], thumbnail:"UI", image:"images/UI/AERONIX/Drive.webp", year:2026 },
+  { id:"p02", title:"GroceryMate - Mobile App", description:"Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.", categories:["ui-ux"], tags:["mobile","grocery","app","ios","figma","prototype","ecommerce"], tools:["Figma"], thumbnail:"APP", image:"images/UI/GroceryMate/26e8c458-b65e-4b0e-b1c0-8372f63651b9.webp", year:2025 },
+  { id:"p03", title:"Hipicon - Brand Identity", description:"Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.", categories:["ui-ux"], tags:["branding","identity","ui","web","interaction","design"], tools:["Figma","Photoshop","Canva"], thumbnail:"BRAND", image:"images/UI/Hipicon/3045a34b-7d15-4e97-80b1-7c4169b84e62_rw_1200.webp", year:2024 },
+  { id:"p04", title:"3D Materials - Trim Sheet Material", description:"**Featured by Adobe**, Custom Trim Sheet material. This trim sheet was created for use in a fantasy-style castle environment set in a harsh winter landscape. Designed with rich ornamentation and classical motifs, it enhances architectural elements such as walls, road edges, and decorative corners. The material blends icy wear with intricate sculptural details and golden accents, giving a sense of both elegance and age in a frozen world.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Material/e2d7dd6b-e78f-44f8-9c6f-aa3b12e30d8f_rw_1920.webp", year:2025 },
+  { id:"p05", title:"3D Materials - PBR Material", description:"This material artwork explores a stylized interpretation of a snow-covered, weathered stone path. Designed to emphasize the interplay between natural erosion and human interaction, the piece incorporates intricate surface details such as, bootprints, and scattered leaves. The contrast between snow accumulation and exposed rock highlights the passage of time and movement.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp", year:2025 },
+  { id:"p06", title:"Ogut Tarabya - Villa Design ", description:"This project represents a holistic design approach that blends classic touches and, contemporary living requirements with a timeless design language. The spatial layout is shaped around user experience, creating open, balanced, and fluid environments.Beyond aesthetics, the design process prioritizes real-life usage scenarios. Each space is designed not only to be visually compelling but also to provide comfort, clarity, and long-term usability.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Tarabya_Villa", year:2026 },
+  { id:"p07", title:"BSH - Office Interior Design", description:"The BSH office project is a seamless blend of functionality, comfort, and modern aesthetics, designed to foster a dynamic and collaborative work environment. The open-plan workspace is meticulously arranged with ergonomic furniture and warm-toned seating areas, creating a balanced atmosphere that enhances productivity and well-being.", categories:["architecture"], tags:["spatial","architecture","office","BSH","interior"], tools:["Blender"], thumbnail:"ARCH", image:"images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp", year:2025 },
+  { id:"p08", title:"AI Character - ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"AI", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2025 },
+  { id:"p09", title:"Resorsus - Platform UI", description:"UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.", categories:["ui-ux"], tags:["platform","saas","interface","dashboard","web","design","dark-mode"], tools:["Figma","HTML", "CSS"], thumbnail:"UI", image:"images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp", year:2025 },
+  { id:"p10", title:"Whaf - 3D Product Visualization", description:"3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.", categories:["3d"], tags:["3d","product","visualization","rendering","blender","materials","ecommerce"], tools:["Cinema4D","Substance Painter","Photoshop","After Effects"], thumbnail:"3D", image:"images/3D/Whaf/image (4).png", year:2022 },
+  { id:"p11", title:"Gym - Fitness Center Design", description:"Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.", categories:["architecture",], tags:["gym","fitness","interior","visualization","rendering","archviz","commercial"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Gym/2 (1) (2).webp", year:2024 },
+  { id:"p12", title:"AI Thesis - Research Project", description:"The project aims to provide integrated innovative preferences that can enhance the gaming experience and benefit the user with advancing technologies, based theoretically on the historical development of in-game user preferences. This will provide users with the opportunity to build the game, making them a part of the design process, ensuring the production of an endless experience. This game leverages the capabilities of the AI, which allows players to create and customize their canvases through their prompt, offering a unique interactive experience.", categories:["ai","vr-ar"], tags:["ai","research","thesis","generative","automation","academic","design"], tools:["OpenAI - API","Unity","Hanyuan3D","C#"], thumbnail:"AI", image:"images/AI/Thesis/1 (1).webp", year:2024 },
+  { id:"p13", title:"Dollvet  - Villa-Office Design", description:"The building was completely designed using 3DsMax and imported into Unreal Engine to allow the client to see every detail of the building giving options to change the colors, objects, and lightnings depending on the needs.", categories:["architecture","ar-vr"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["V-Ray","VR","3DsMax","Unreal Engine"], thumbnail:"ARCH", image:"images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp", year:2022 },
+  { id:"p14", title:"Istanbloom - Interior Design", description:"Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Istanbloom/ff1 (1).webp", year:2021 },
+  { id:"p17", title:"Huawei VR - Racket Training", description:"VR Game Prototyping (Huawei R&D), I handle the full production pipeline from concept to final engine integration. I work with both real-time and pre-rendered projects, ensuring visual quality, technical efficiency, and creative consistency.", categories:["vr-ar","3d","ui-ux"], tags:["vr","training","unity","immersive","spatial-ui","hand-tracking","huawei"], tools:["Unity","C#","VR","Blender"], thumbnail:"VR", image:"images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp", year:2025 },
+  { id:"p18", title:"3D Concept - 3D Bathroom Stylized", description:"Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.", categories:["3d"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["ZBrush","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp", year:2020 },
+  { id:"p19", title:"Balikesir - Architectural Viz", description:"Architectural visualization for Balikesir residential project. Photorealistic renders from concept to final presentation.", categories:["architecture"], tags:["parametric","residential","archviz","grasshopper","3dsmax","rendering"], tools:["Blender","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Balıkesir/12345678 (2).webp", year:2021 },
+  { id:"p20", title:"Mid poly 3D Assets", description:"Mid-poly asset collection presented with interactive Sketchfab embeds.", categories:["3d"], tags:["mid-poly","3d-assets","sketchfab","interactive","modeling"], tools:["Blender","Sketchfab"], thumbnail:"3D", image:"images/3D/Mid-Poly/midpoly.png", year:2026 },
+  { id:"p21", title:"VFX - 3D Visual Effects", description:"Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.", categories:["3d"], tags:["vfx","visual-effects","shaders","3d","particles","compositing",], tools:["Houdini","After Effects","Touchdesigner"], thumbnail:"VFX", image:"images/3D/VFX/posst.webp", year:2020 },
+
+];
+
+function getProjectGallery(p) {
+  const fromConfig = (Array.isArray(galleryConfig[p.id]) ? galleryConfig[p.id] : []).map(normalizeGalleryEntry).filter(Boolean);
+  const fromProject = (Array.isArray(p.images) ? p.images : []).map(normalizeGalleryEntry).filter(Boolean);
+  const merged = [...fromConfig, ...fromProject].map(e => e.src);
+  const mainImage = normalizeImagePath(p.image);
+  if (mainImage && !merged.includes(mainImage)) merged.unshift(mainImage);
+  return [...new Set(merged)];
+}
+
+function getProjectCaptionMap(p) {
+  const map = {};
+  const fromConfig = (Array.isArray(galleryConfig[p.id]) ? galleryConfig[p.id] : []).map(normalizeGalleryEntry).filter(Boolean);
+  const fromProject = (Array.isArray(p.images) ? p.images : []).map(normalizeGalleryEntry).filter(Boolean);
+  [...fromConfig, ...fromProject].forEach(e => {
+    if (e.caption && !map[e.src]) map[e.src] = e.caption;
+  });
+  return map;
+}
+
+function mountKuulaEmbed(container, cfg) {
+  if (!container || !cfg) return;
+  container.innerHTML = '';
+  const script = document.createElement('script');
+  script.src = cfg.scriptSrc || 'https://static.kuula.io/embed.js';
+  script.dataset.kuula = cfg.kuula || '';
+  script.dataset.width = cfg.width || '100%';
+  script.dataset.height = cfg.height || '640px';
+  container.appendChild(script);
+}
+
+function mountIframeEmbed(container, cfg) {
+  if (!container || !cfg) return;
+  container.innerHTML = '';
+  const iframe = createEmbedIframe(cfg);
+  container.appendChild(iframe);
+}
+
+function createEmbedIframe(cfg) {
+  const iframe = document.createElement('iframe');
+  iframe.width = cfg.width || '100%';
+  iframe.height = cfg.height || '640';
+  iframe.frameBorder = '0';
+  iframe.setAttribute('allow', cfg.allow || 'xr-spatial-tracking; gyroscope; accelerometer');
+  iframe.setAttribute('scrolling', cfg.scrolling || 'no');
+  if (cfg.allowFullscreen !== false) iframe.setAttribute('allowfullscreen', '');
+  iframe.src = cfg.src || '';
+  return iframe;
+}
+
+function mountMultiIframeEmbed(container, cfg) {
+  if (!container || !cfg || !Array.isArray(cfg.items)) return;
+  container.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'pm-embed-grid';
+  cfg.items.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'pm-embed-card';
+    const frameWrap = document.createElement('div');
+    frameWrap.className = 'pm-embed-host';
+    frameWrap.appendChild(createEmbedIframe(item));
+    const cap = document.createElement('div');
+    cap.className = 'pm-embed-credit';
+    cap.textContent = item.title || '3D Asset';
+    card.appendChild(frameWrap);
+    card.appendChild(cap);
+    wrap.appendChild(card);
+  });
+  container.appendChild(wrap);
+}
+
+function mountProjectEmbeds(projectId) {
+  const cfg = projectEmbeds[projectId];
+  if (!cfg) return;
+  document.querySelectorAll(`[data-project-embed="${projectId}"]`).forEach((host) => {
+    if (cfg.type === 'kuula') mountKuulaEmbed(host, cfg);
+    if (cfg.type === 'iframe') mountIframeEmbed(host, cfg);
+    if (cfg.type === 'multi-iframe') mountMultiIframeEmbed(host, cfg);
+  });
+}
 
 function openProject(projectId) {
   const p = projects.find(pr => pr.id === projectId);
   if (!p) return;
+  currentProject = p;
+  currentProjectGallery = getProjectGallery(p);
+  currentProjectCaptions = getProjectCaptionMap(p);
+  currentProjectImageIndex = 0;
+  coverProjectImageIndex = 0;
+  storyPreviewActive = false;
+  setProjectExpanded(false);
   currentProjectIndex = currentFilteredProjects.findIndex(pr => pr.id === projectId);
   renderProjectModal(p);
   document.getElementById('projectModal').classList.add('open');
   document.body.style.overflow = 'hidden';
+  onProjectModalScroll();
 }
 
 function closeProject() {
+  closeImageLightbox();
   document.getElementById('projectModal').classList.remove('open');
+  setProjectExpanded(false);
   document.body.style.overflow = '';
 }
 
@@ -985,14 +1820,113 @@ function navProject(dir) {
   if (currentFilteredProjects.length === 0) return;
   currentProjectIndex = (currentProjectIndex + dir + currentFilteredProjects.length) % currentFilteredProjects.length;
   const p = currentFilteredProjects[currentProjectIndex];
+  currentProject = p;
+  currentProjectGallery = getProjectGallery(p);
+  currentProjectCaptions = getProjectCaptionMap(p);
+  currentProjectImageIndex = 0;
+  coverProjectImageIndex = 0;
+  storyPreviewActive = false;
+  setProjectExpanded(false);
   renderProjectModal(p);
 }
 
+function syncProjectImageState() {
+  const activeImage = currentProjectGallery[currentProjectImageIndex] || '';
+  const hero = document.getElementById('pmHeroImage');
+  const heroVideo = document.getElementById('pmHeroVideo');
+  const activeIsVideo = isVideoMedia(activeImage);
+  const embedCfg = currentProject ? projectEmbeds[currentProject.id] : null;
+  const usingEmbedCover = !!(embedCfg && embedCfg.useAsCover);
+  if (!usingEmbedCover && ((activeIsVideo && !heroVideo) || (!activeIsVideo && !hero))) {
+    if (currentProject) renderProjectModal(currentProject);
+    return;
+  }
+  if (!usingEmbedCover && hero && activeImage && !activeIsVideo) setImageWithPreferredQuality(hero, activeImage);
+  if (!usingEmbedCover && heroVideo && activeImage && activeIsVideo) {
+    heroVideo.src = normalizeImagePath(activeImage);
+    heroVideo.currentTime = 0;
+    heroVideo.play().catch(() => {});
+  }
+  const counter = document.getElementById('pmImageCount');
+  if (counter) counter.textContent = (currentProjectImageIndex + 1) + ' / ' + currentProjectGallery.length;
+  document.querySelectorAll('.pm-gallery-thumb').forEach((thumb, i) => {
+    thumb.classList.toggle('active', i === currentProjectImageIndex);
+  });
+  const previewBtn = document.getElementById('pmPreviewClose');
+  if (previewBtn) previewBtn.style.display = storyPreviewActive ? 'inline-flex' : 'none';
+}
+
+function applyStoryImageLayout() {
+  document.querySelectorAll('.pm-story-item').forEach((item) => {
+    const media = item.querySelector('.pm-story-media');
+    if (!media) return;
+    const setMode = () => {
+      const w = media.tagName === 'VIDEO' ? (media.videoWidth || 0) : (media.naturalWidth || 0);
+      const h = media.tagName === 'VIDEO' ? (media.videoHeight || 0) : (media.naturalHeight || 0);
+      if (!w || !h) return;
+      const ratio = w / h;
+      item.classList.toggle('is-portrait', ratio < 0.95);
+    };
+    if ((media.tagName === 'VIDEO' && media.readyState >= 1) || (media.tagName !== 'VIDEO' && media.complete)) {
+      setMode();
+    } else {
+      const ev = media.tagName === 'VIDEO' ? 'loadedmetadata' : 'load';
+      media.addEventListener(ev, setMode, { once: true });
+    }
+  });
+}
+
+function enhanceModalImageQuality() {
+  const hero = document.getElementById('pmHeroImage');
+  if (hero) setImageWithPreferredQuality(hero, hero.getAttribute('data-base-src') || hero.src);
+  document.querySelectorAll('.pm-gallery-thumb img, .pm-story-image').forEach((img) => {
+    setImageWithPreferredQuality(img, img.getAttribute('data-base-src') || img.src);
+  });
+}
+
+function setProjectImage(idx) {
+  if (!currentProjectGallery.length) return;
+  if (idx < 0 || idx >= currentProjectGallery.length) return;
+  storyPreviewActive = false;
+  currentProjectImageIndex = idx;
+  syncProjectImageState();
+}
+
+function navProjectImage(dir) {
+  if (!currentProjectGallery.length) return;
+  storyPreviewActive = false;
+  currentProjectImageIndex = (currentProjectImageIndex + dir + currentProjectGallery.length) % currentProjectGallery.length;
+  syncProjectImageState();
+}
+
+function previewStoryImage(idx) {
+  if (!currentProjectGallery.length) return;
+  if (idx < 0 || idx >= currentProjectGallery.length) return;
+  if (!storyPreviewActive) coverProjectImageIndex = currentProjectImageIndex;
+  storyPreviewActive = true;
+  currentProjectImageIndex = idx;
+  setProjectExpanded(true);
+  syncProjectImageState();
+  const modal = document.getElementById('projectModalContent');
+  if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeStoryPreview() {
+  if (!storyPreviewActive) return;
+  storyPreviewActive = false;
+  currentProjectImageIndex = coverProjectImageIndex;
+  syncProjectImageState();
+}
+
 function renderProjectModal(p) {
+  const embedCfg = projectEmbeds[p.id] || null;
+  const useEmbedAsCover = !!(embedCfg && embedCfg.useAsCover);
+  const activeImage = currentProjectGallery[currentProjectImageIndex] || p.image || '';
+  const activeIsVideo = isVideoMedia(activeImage);
   const prevIdx = (currentProjectIndex - 1 + currentFilteredProjects.length) % currentFilteredProjects.length;
   const nextIdx = (currentProjectIndex + 1) % currentFilteredProjects.length;
-  const prevTitle = currentFilteredProjects[prevIdx]?.title.split('—')[0].trim() || '';
-  const nextTitle = currentFilteredProjects[nextIdx]?.title.split('—')[0].trim() || '';
+  const prevTitle = currentFilteredProjects[prevIdx]?.title.split(' - ')[0].trim() || '';
+  const nextTitle = currentFilteredProjects[nextIdx]?.title.split(' - ')[0].trim() || '';
 
   document.getElementById('projectModalContent').innerHTML = `
     <button class="pm-close" onclick="closeProject()">
@@ -1001,14 +1935,50 @@ function renderProjectModal(p) {
       </svg>
     </button>
     <div class="pm-hero">
-      ${p.image ? '<img class="pm-hero-img" src="'+p.image+'" alt="'+p.title+'">' : '<div class="pm-hero-emoji">'+p.thumbnail+'</div>'}
+      ${useEmbedAsCover
+        ? `<div class="pm-hero-embed" data-project-embed="${p.id}"></div>`
+        : (activeImage ? (
+        activeIsVideo
+          ? '<video class="pm-hero-video" id="pmHeroVideo" src="'+activeImage+'" playsinline muted loop autoplay controls onclick="openImageLightbox(this.currentSrc || this.src)"></video>'
+          : '<img class="pm-hero-img" id="pmHeroImage" src="'+activeImage+'" data-base-src="'+activeImage+'" alt="'+p.title+'" onclick="openImageLightbox(this.currentSrc || this.src)">'
+      ) : '<div class="pm-hero-emoji">'+p.thumbnail+'</div>')}
       <div class="pm-hero-gradient"></div>
+      ${activeImage && !useEmbedAsCover ? `
+      <div class="pm-hero-controls">
+        <div class="pm-hero-left">
+          <button class="pm-hero-btn" onclick="navProjectImage(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <div class="pm-image-count" id="pmImageCount">${currentProjectImageIndex + 1} / ${currentProjectGallery.length}</div>
+          <button class="pm-hero-btn" onclick="navProjectImage(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="pm-expand-btn" onclick="toggleProjectExpanded()">Expand</button>
+          <button class="pm-preview-close" id="pmPreviewClose" onclick="closeStoryPreview()">Cover</button>
+        </div>
+      </div>` : ''}
     </div>
+    ${currentProjectGallery.length > 1 ? `
+    <div class="pm-gallery">
+      ${currentProjectGallery.map((img, i) => `
+        <button class="pm-gallery-thumb ${i === currentProjectImageIndex ? 'active' : ''}" onclick="setProjectImage(${i})">
+          ${isVideoMedia(img)
+            ? `<video src="${img}" muted loop autoplay playsinline preload="metadata"></video>`
+            : `<img src="${img}" data-base-src="${img}" alt="${p.title + ' ' + (i + 1)}" loading="lazy">`
+          }
+        </button>
+      `).join('')}
+    </div>` : ''}
     <div class="pm-body">
       <div class="pm-tags" style="display:flex;align-items:center;">
         ${p.categories.map(c => '<span class="pm-tag">'+(catLabels[c]||c)+'</span>').join('')}
       </div>
-      <div class="pm-title">${p.title}</div>
+      <div class="pm-title-row">
+        <div class="pm-title">${p.title}</div>
+        ${currentProjectGallery.length > 1 ? '<div class="pm-gallery-chip">Projects Gallery</div>' : ''}
+      </div>
       <div class="pm-desc">${p.description}</div>
       <div class="pm-details">
         <div class="pm-detail-row">
@@ -1016,6 +1986,23 @@ function renderProjectModal(p) {
           <div class="pm-detail-value">${p.tools.map(t => '<span class="tool-chip">'+t+'</span>').join('')}</div>
         </div>
       </div>
+      ${embedCfg && !useEmbedAsCover ? `
+      <div class="pm-embed-block">
+        <div class="pm-embed-title">360 Tour</div>
+        <div class="pm-embed-host" data-project-embed="${p.id}"></div>
+      </div>` : ''}
+      ${currentProjectGallery.length > 1 ? `
+      <div class="pm-story">
+        ${currentProjectGallery.map((img, i) => `
+          <article class="pm-story-item">
+            ${isVideoMedia(img)
+              ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="previewStoryImage(${i})" ondblclick="openImageLightbox(this.currentSrc || this.src)"></video>`
+              : `<img class="pm-story-media pm-story-image" src="${img}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="previewStoryImage(${i})" ondblclick="openImageLightbox(this.currentSrc || this.src)">`
+            }
+            ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
+          </article>
+        `).join('')}
+      </div>` : ''}
       ${currentFilteredProjects.length > 1 ? `
       <div class="pm-nav">
         <button class="pm-nav-btn" onclick="navProject(-1)">
@@ -1028,32 +2015,14 @@ function renderProjectModal(p) {
         </button>
       </div>` : ''}
     </div>`;
+  const modal = document.getElementById('projectModalContent');
+  if (modal) modal.onscroll = onProjectModalScroll;
+  syncProjectImageState();
+  applyStoryImageLayout();
+  enhanceModalImageQuality();
+  mountProjectEmbeds(p.id);
 }
-
-// ─── PROJECT DATABASE (5 categories) ───
-const projects = [
-  { id:"p01", title:"AERONIX — EV Dashboard UI", description:"End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive interior and HMI visualizations.", categories:["ui-ux","ai"], tags:["dashboard","ev","automotive","dark-mode","figma","design-system","car"], tools:["Figma","VizcomAI","ComfyUI","Procreate"], thumbnail:"📊", image:"images/UI/AERONIX/Drive.webp", year:2026 },
-  { id:"p02", title:"GroceryMate — Mobile App", description:"Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.", categories:["ui-ux"], tags:["mobile","grocery","app","ios","figma","prototype","ecommerce"], tools:["Figma"], thumbnail:"📱", image:"images/UI/GroceryMate/26e8c458-b65e-4b0e-b1c0-8372f63651b9.webp", year:2025 },
-  { id:"p03", title:"Hipicon — Brand Identity", description:"Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.", categories:["ui-ux"], tags:["branding","identity","ui","web","interaction","design"], tools:["Figma","Photoshop","Canva"], thumbnail:"🛍", image:"images/UI/Hipicon/3045a34b-7d15-4e97-80b1-7c4169b84e62_rw_1200.webp", year:2024 },
-  { id:"p04", title:"3D Materials — Trim Sheet Material", description:"**Featured by Adobe**, Custom Trim Sheet material. This trim sheet was created for use in a fantasy-style castle environment set in a harsh winter landscape. Designed with rich ornamentation and classical motifs, it enhances architectural elements such as walls, road edges, and decorative corners. The material blends icy wear with intricate sculptural details and golden accents, giving a sense of both elegance and age in a frozen world.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"📈", image:"images/3D/Material/e2d7dd6b-e78f-44f8-9c6f-aa3b12e30d8f_rw_1920.webp", year:2025 },
-  { id:"p05", title:"3D Materials — PBR Material", description:"This material artwork explores a stylized interpretation of a snow-covered, weathered stone path. Designed to emphasize the interplay between natural erosion and human interaction, the piece incorporates intricate surface details such as, bootprints, and scattered leaves. The contrast between snow accumulation and exposed rock highlights the passage of time and movement.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"📈", image:"images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp", year:2025 },
-  { id:"p06", title:"Ogut Tarabya — Villa Design ", description:"This project represents a holistic design approach that blends classic touches and, contemporary living requirements with a timeless design language. The spatial layout is shaped around user experience, creating open, balanced, and fluid environments.Beyond aesthetics, the design process prioritizes real-life usage scenarios. Each space is designed not only to be visually compelling but also to provide comfort, clarity, and long-term usability.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"🏠", image:"images/Architecture/Tarabya_Villa", year:2026 },
-  { id:"p07", title:"BSH - Office Interior Design", description:"The BSH office project is a seamless blend of functionality, comfort, and modern aesthetics, designed to foster a dynamic and collaborative work environment. The open-plan workspace is meticulously arranged with ergonomic furniture and warm-toned seating areas, creating a balanced atmosphere that enhances productivity and well-being.", categories:["architecture"], tags:["spatial","architecture","office","BSH","interior"], tools:["Blender"], thumbnail:"🥽", image:"images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp", year:2025 },
-  { id:"p08", title:"AI Character — ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"🎨", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2025 },
-  { id:"p09", title:"Resorsus — Platform UI", description:"UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.", categories:["ui-ux"], tags:["platform","saas","interface","dashboard","web","design","dark-mode"], tools:["Figma","HTML", "CSS"], thumbnail:"💬", image:"images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp", year:2025 },
-  { id:"p10", title:"Whaf — 3D Product Visualization", description:"3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.", categories:["3d"], tags:["3d","product","visualization","rendering","blender","materials","ecommerce"], tools:["Cinema4D","Substance Painter","Photoshop","After Effects"], thumbnail:"💎", image:"images/3D/Whaf/image (4).png", year:2022 },
-  { id:"p11", title:"Gym — Fitness Center Design", description:"Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.", categories:["architecture",], tags:["gym","fitness","interior","visualization","rendering","archviz","commercial"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"🏛", image:"images/Architecture/Gym/2 (1) (2).webp", year:2024 },
-  { id:"p12", title:"AI Thesis — Research Project", description:"The project aims to provide integrated innovative preferences that can enhance the gaming experience and benefit the user with advancing technologies, based theoretically on the historical development of in-game user preferences. This will provide users with the opportunity to build the game, making them a part of the design process, ensuring the production of an endless experience. This game leverages the capabilities of the AI, which allows players to create and customize their canvases through their prompt, offering a unique interactive experience.", categories:["ai","vr-ar"], tags:["ai","research","thesis","generative","automation","academic","design"], tools:["OpenAI - API","Unity","Hanyuan3D","C#"], thumbnail:"🎞", image:"images/AI/Thesis/1 (1).webp", year:2024 },
-  { id:"p13", title:"Dollvet  — Villa-Office Design", description:"The building was completely designed using 3DsMax and imported into Unreal Engine to allow the client to see every detail of the building giving options to change the colors, objects, and lightnings depending on the needs.", categories:["architecture","ar-vr"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["V-Ray","VR","3DsMax","Unreal Engine"], thumbnail:"🌆", image:"images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp", year:2022 },
-  { id:"p14", title:"Istanbloom — Interior Design", description:"Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"🏠", image:"images/Architecture/Istanbloom/ff1 (1).webp", year:2021 },
-  { id:"p17", title:"Huawei VR — Racket Training", description:"VR Game Prototyping (Huawei R&D), I handle the full production pipeline from concept to final engine integration. I work with both real-time and pre-rendered projects, ensuring visual quality, technical efficiency, and creative consistency.", categories:["vr-ar","3d"], tags:["vr","training","unity","immersive","spatial-ui","hand-tracking","huawei"], tools:["Unity","C#","VR","Blender"], thumbnail:"🥽", image:"images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp", year:2025 },
-  { id:"p18", title:"3D Concept — 3D Bathroom Stylized", description:"Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.", categories:["3d"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["ZBrush","Blender","Photoshop"], thumbnail:"🌆", image:"images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp", year:2020 },
-  { id:"p19", title:"Balıkesir — Architectural Viz", description:"Architectural visualization for Balıkesir residential project. Photorealistic renders from concept to final presentation.", categories:["architecture"], tags:["parametric","residential","archviz","grasshopper","3dsmax","rendering"], tools:["Blender","Photoshop"], thumbnail:"🏗", image:"images/Architecture/Balıkesir/12345 (2).webp", year:2021 },
-  { id:"p20", title:"VFX — 3D Visual Effects", description:"Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.", categories:["3d"], tags:["vfx","visual-effects","shaders","3d","particles","compositing",], tools:["Houdini","After Effects","Touchdesigner"], thumbnail:"🌊", image:"images/3D/VFX/2 (1) (3).webp", year:2020 },
-
-];
-
-// ─── KEYWORD MAP ───
+// --- KEYWORD MAP ---
 const keywordMap = {
   "ui":"ui-ux","ux":"ui-ux","interface":"ui-ux","design":"ui-ux","app":"ui-ux","web":"ui-ux",
   "3d":"3d","three":"3d","modeling":"3d","render":"3d","rendering":"3d","webgl":"3d","blender":"3d",
@@ -1087,7 +2056,7 @@ const keywordMap = {
 
 const catLabels = {"ui-ux":"UI/UX","3d":"3D","ai":"AI","vr-ar":"VR/AR","architecture":"Architecture"};
 
-// ─── SEARCH ───
+// --- SEARCH ---
 function searchProjects(query) {
   const q = query.toLowerCase().trim();
   const words = q.split(/\s+/);
@@ -1119,17 +2088,31 @@ function searchProjects(query) {
 }
 function filterByCategory(catId) { return projects.filter(p=>p.categories.includes(catId)); }
 
+const promptCategoryMap = {
+  'dashboard ui examples': 'ui-ux',
+  'vr projects in unreal': 'vr-ar',
+  'generative ai': 'ai',
+  'architectural visualizations': 'architecture',
+  '3d assets': '3d'
+};
+
+function splitPrimaryRelatedByCategory(results, category, primaryLimit = 9, relatedLimit = 6) {
+  const primary = results.filter(p => p.categories.includes(category)).slice(0, primaryLimit);
+  const related = results.filter(p => !p.categories.includes(category)).slice(0, relatedLimit);
+  return { primary, related };
+}
+
 function generateResponse(query, count) {
   if (count === 0) return null;
   const t = [
     `Found <strong>${count} project${count>1?'s':''}</strong> matching "${query}"`,
     `Here ${count>1?'are':'is'} <strong>${count} result${count>1?'s':''}</strong> for "${query}"`,
-    `Showing <strong>${count}</strong> relevant project${count>1?'s':''} — sorted by relevance`,
+    `Showing <strong>${count}</strong> relevant project${count>1?'s':''} - sorted by relevance`,
   ];
   return t[Math.floor(Math.random()*t.length)];
 }
 
-// ─── RENDER ───
+// --- RENDER ---
 function renderProjects(filteredProjects, responseHtml) {
   currentFilteredProjects = filteredProjects;
   const area = document.getElementById('responseArea');
@@ -1161,14 +2144,14 @@ function renderProjects(filteredProjects, responseHtml) {
   }, 600);
 }
 
-// ─── HANDLERS ───
+// --- HANDLERS ---
 function handleQuery() {
   const input = document.getElementById('chatInput');
   const query = input.value.trim();
   if (!query) return;
   const results = searchProjects(query);
   const response = results.length > 0 ? generateResponse(query, results.length) : null;
-  renderProjects(results, response || 'No matches for "'+query+'" — try broader terms or pick a category.');
+  renderProjects(results, response || 'No matches for "'+query+'" - try broader terms or pick a category.', []);
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
 }
 
@@ -1180,15 +2163,29 @@ function filterCategory(el) {
   el.classList.add('active');
   const results = filterByCategory(cat);
   const catName = catLabels[cat] || cat;
-  renderProjects(results, 'Browsing <strong>'+catName+'</strong> — '+results.length+' project'+(results.length>1?'s':'')+' in this category');
+  renderProjects(results, 'Browsing <strong>'+catName+'</strong> - '+results.length+' project'+(results.length>1?'s':'')+' in this category');
   document.getElementById('chatInput').value = '';
   toggleSubmit();
 }
 
 function usePrompt(el) {
-  document.getElementById('chatInput').value = el.textContent;
+  const prompt = el.textContent.trim();
+  document.getElementById('chatInput').value = prompt;
   toggleSubmit();
-  handleQuery();
+  const key = prompt.toLowerCase();
+  const category = promptCategoryMap[key];
+  if (!category) {
+    handleQuery();
+    return;
+  }
+  const results = searchProjects(prompt);
+  const split = splitPrimaryRelatedByCategory(results, category);
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const primary = split.primary.length ? split.primary : filterByCategory(category);
+  const related = isMobile ? [] : split.related;
+  const catName = catLabels[category] || category;
+  renderProjects(primary, 'Showing <strong>'+catName+'</strong> projects for "<strong>'+prompt+'</strong>".', related);
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
 }
 
 function toggleSubmit() {
@@ -1203,7 +2200,7 @@ function resetView() {
   document.getElementById('responseArea').innerHTML = '<div class="initial-state" id="initialState">Select a category or type a query to explore projects. Press <span class="keystroke">Enter</span> to search.</div>';
 }
 
-// ═══════════ SKELETON LOADING UI ═══════════
+// =========== SKELETON LOADING UI ===========
 function buildSkeletonHTML(count) {
   let html = '<div class="skeleton-grid">';
   for (let i = 0; i < count; i++) {
@@ -1227,7 +2224,7 @@ function buildSkeletonHTML(count) {
 
 // Override renderProjects to use skeleton loading
 const _originalRenderProjects = renderProjects;
-renderProjects = function(filteredProjects, responseHtml) {
+renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) {
   currentFilteredProjects = filteredProjects;
   const area = document.getElementById('responseArea');
   const init = document.getElementById('initialState');
@@ -1250,6 +2247,13 @@ renderProjects = function(filteredProjects, responseHtml) {
         html += '<div class="project-card" onclick="openProject(\''+p.id+'\')" style="transition-delay:'+i*0.08+'s"><div class="card-thumbnail">'+(p.image ? '<img class="card-thumbnail-img" src="'+p.image+'" alt="'+p.title+'" loading="lazy">' : '<div class="card-thumbnail-inner">'+p.thumbnail+'</div>')+'<div class="card-gradient"></div></div><div class="card-body"><div class="card-tags">'+p.categories.map(c=>'<span class="card-tag">'+(catLabels[c]||c)+'</span>').join('')+'</div><div class="card-title">'+p.title+'</div><div class="card-desc">'+p.description+'</div><div class="card-meta"><span class="card-tools">'+p.tools.join(' · ')+'</span><div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></div></div></div>';
       });
       html += '</div>';
+      if (relatedProjects && relatedProjects.length) {
+        html += '<section class="related-works"><h4>Related Works</h4><div class="related-grid">';
+        relatedProjects.forEach((p) => {
+          html += '<article class="related-card" onclick="openProject(\''+p.id+'\')"><div class="related-thumb">'+(p.image ? '<img src="'+p.image+'" alt="'+p.title+'" loading="lazy">' : '')+'</div><div class="related-name">'+p.title+'</div></article>';
+        });
+        html += '</div></section>';
+      }
     }
     area.innerHTML = html;
     requestAnimationFrame(() => {
@@ -1262,14 +2266,15 @@ renderProjects = function(filteredProjects, responseHtml) {
   }, 800);
 };
 
-// ═══════════ 3D NEON CURSOR ═══════════
+// =========== 3D NEON CURSOR ===========
 (function() {
   const cursor = document.getElementById('neonCursor');
   if (!cursor || window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window) {
     if (cursor) cursor.style.display = 'none';
-    document.documentElement.style.cssText += '* { cursor: auto !important; }';
+    document.body.classList.remove('cursor-enabled');
     return;
   }
+  document.body.classList.add('cursor-enabled');
 
   let mouseX = -100, mouseY = -100, curX = -100, curY = -100;
   const trails = [];
@@ -1327,37 +2332,211 @@ renderProjects = function(filteredProjects, responseHtml) {
   });
 })();
 
-// ═══════════ 3D BOT ONBOARDING TOUR ═══════════
+// =========== 3D BOT ONBOARDING TOUR ===========
 (function() {
   const TOUR_KEY = 'portfolio_tour_seen';
+  const BOT_RIGHT = 24;
+  const BOT_BOTTOM = 96;
+  const BOT_RIGHT_MOBILE = 14;
+  const BOT_BOTTOM_MOBILE = 76;
+  const DIALOG_MOBILE_BOTTOM = 100;
+
   const tourSteps = [
     {
-      target: '#categories',
-      title: 'Browse Categories',
-      content: 'You can <strong>select directly from these categories</strong> to instantly filter projects by <span class="tour-highlight">UI/UX, 3D, AI, VR/AR,</span> or <span class="tour-highlight">Architecture</span>.',
-      position: 'below'
+      target: '#categories .cat-pill[data-cat="ui-ux"]',
+      content: 'Start here: <strong>category filters</strong> instantly narrow projects by discipline.',
+      pad: 4,
+      radius: 10,
+      scroll: 'center'
+    },
+    {
+      targetAll: '#suggestedPrompts .suggest-chip',
+      content: 'These are ready prompts: <span class="tour-highlight">Dashboard UI examples</span>, <span class="tour-highlight">VR projects in Unreal</span>, <span class="tour-highlight">Generative AI</span>, <span class="tour-highlight">Architectural visualizations</span>, <span class="tour-highlight">3D Assets</span>.',
+      pad: 4,
+      radius: 10,
+      scroll: 'center'
     },
     {
       target: '.chat-input-container',
-      title: 'Search by Intent',
-      content: 'You can <strong>directly type here</strong> which categories or topics you\'d like to see. Try something like <span class="tour-highlight">"VR projects in Unreal"</span> or <span class="tour-highlight">"AI workflows"</span>.',
-      position: 'below'
+      content: 'Type your own query in <strong>search</strong>. Example: <span class="tour-highlight">"VR projects in Unreal"</span>.',
+      pad: 6,
+      radius: 12,
+      scroll: 'center'
     },
     {
-      target: '.footer-links',
-      title: 'Get in Touch',
-      content: 'You can <strong>directly contact me</strong> via these links — <span class="tour-highlight">LinkedIn</span>, <span class="tour-highlight">Website</span>, or <span class="tour-highlight">Email</span>. Or click <span class="tour-highlight">About</span> in the header for full details.',
-      position: 'above'
+      targetAll: 'footer .footer-links a',
+      content: 'You can directly reach <strong>LinkedIn, Email and other links</strong> from this footer section.',
+      pad: 4,
+      radius: 10,
+      scroll: 'end'
+    },
+    {
+      target: '.header-meta .header-link:last-child',
+      content: '<strong>About</strong> opens profile photo, bio, and contact links.',
+      pad: 4,
+      radius: 10,
+      scroll: 'start'
     }
   ];
 
   let currentStep = 0;
   let tourActive = false;
+  const storage = {
+    get(key) {
+      try { return window.sessionStorage.getItem(key); } catch (_) { return null; }
+    },
+    set(key, value) {
+      try { window.sessionStorage.setItem(key, value); } catch (_) {}
+    }
+  };
+
+  function isMobileTour() {
+    return window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function pinTourBot() {
+    const bot = document.getElementById('tourBot');
+    if (!bot) return;
+    const mobile = isMobileTour();
+    bot.style.right = (mobile ? BOT_RIGHT_MOBILE : BOT_RIGHT) + 'px';
+    bot.style.bottom = (mobile ? BOT_BOTTOM_MOBILE : BOT_BOTTOM) + 'px';
+    bot.style.left = 'auto';
+    bot.style.top = 'auto';
+    bot.style.display = 'block';
+    bot.classList.add('floating');
+    bot.classList.add('pinned');
+  }
+
+  function clearOverlayHole() {
+    const overlay = document.getElementById('tourOverlay');
+    if (!overlay) return;
+    overlay.style.removeProperty('--tour-left');
+    overlay.style.removeProperty('--tour-top');
+    overlay.style.removeProperty('--tour-right');
+    overlay.style.removeProperty('--tour-bottom');
+  }
+
+  function setOverlayHole(rect, pad) {
+    const overlay = document.getElementById('tourOverlay');
+    if (!overlay || !rect) return null;
+    const l = Math.max(8, Math.round(rect.left - pad));
+    const t = Math.max(8, Math.round(rect.top - pad));
+    const r = Math.min(window.innerWidth - 8, Math.round(rect.right + pad));
+    const b = Math.min(window.innerHeight - 8, Math.round(rect.bottom + pad));
+    overlay.style.setProperty('--tour-left', l + 'px');
+    overlay.style.setProperty('--tour-top', t + 'px');
+    overlay.style.setProperty('--tour-right', r + 'px');
+    overlay.style.setProperty('--tour-bottom', b + 'px');
+    return { l, t, r, b };
+  }
+
+  function getStepTargets(step) {
+    const list = step.targetAll
+      ? Array.from(document.querySelectorAll(step.targetAll))
+      : (step.target ? [document.querySelector(step.target)] : []);
+    return list.filter(Boolean).filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+  }
+
+  function getCombinedRect(elements) {
+    if (!elements || !elements.length) return null;
+    let left = Infinity;
+    let top = Infinity;
+    let right = -Infinity;
+    let bottom = -Infinity;
+    elements.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      left = Math.min(left, r.left);
+      top = Math.min(top, r.top);
+      right = Math.max(right, r.right);
+      bottom = Math.max(bottom, r.bottom);
+    });
+    return {
+      left,
+      top,
+      right,
+      bottom,
+      width: Math.max(0, right - left),
+      height: Math.max(0, bottom - top)
+    };
+  }
+
+  function positionDialogNearTarget(rect) {
+    const dialog = document.getElementById('tourDialog');
+    if (!dialog) return;
+
+    if (isMobileTour()) {
+      dialog.style.left = '15px';
+      dialog.style.right = '15px';
+      dialog.style.bottom = DIALOG_MOBILE_BOTTOM + 'px';
+      dialog.style.top = 'auto';
+      dialog.classList.add('active');
+      return;
+    }
+
+    const dialogWidth = Math.min(360, window.innerWidth - 40);
+    const spacing = 14;
+
+    if (!rect) {
+      dialog.style.left = 'auto';
+      dialog.style.top = 'auto';
+      dialog.style.right = '24px';
+      dialog.style.bottom = '120px';
+      dialog.classList.add('active');
+      return;
+    }
+
+    let left = rect.right + spacing;
+    if (left + dialogWidth > window.innerWidth - 14) {
+      left = rect.left - dialogWidth - spacing;
+    }
+    left = Math.max(14, Math.min(left, window.innerWidth - dialogWidth - 14));
+
+    let top = rect.top;
+    const maxTop = window.innerHeight - 260;
+    top = Math.max(14, Math.min(top, maxTop));
+
+    dialog.style.left = left + 'px';
+    dialog.style.top = top + 'px';
+    dialog.style.right = 'auto';
+    dialog.style.bottom = 'auto';
+    dialog.classList.add('active');
+  }
+
+  function updateStepVisual(step, rect) {
+    const focus = document.getElementById('tourFocus');
+    const pointer = document.getElementById('tourPointer');
+    if (!focus) return;
+
+    if (!rect) {
+      clearOverlayHole();
+      focus.classList.remove('active');
+      if (pointer) pointer.classList.remove('active');
+      return;
+    }
+
+    const pad = step.pad ?? 6;
+    const radius = step.radius ?? 10;
+    const hole = setOverlayHole(rect, pad);
+    if (!hole) return;
+
+    focus.style.left = hole.l + 'px';
+    focus.style.top = hole.t + 'px';
+    focus.style.width = Math.max(24, hole.r - hole.l) + 'px';
+    focus.style.height = Math.max(20, hole.b - hole.t) + 'px';
+    focus.style.borderRadius = radius + 'px';
+    focus.classList.add('active');
+    if (pointer) pointer.classList.remove('active');
+  }
 
   window.startTour = function() {
     tourActive = true;
     currentStep = 0;
-    document.getElementById('tourBot').style.display = 'none';
+    const bot = document.getElementById('tourBot');
+    bot.style.display = 'none';
+    bot.classList.remove('pinned');
     document.getElementById('tourOverlay').classList.add('active');
     showStep(0);
   };
@@ -1367,26 +2546,26 @@ renderProjects = function(filteredProjects, responseHtml) {
     document.getElementById('tourOverlay').classList.remove('active');
     document.getElementById('tourDialog').classList.remove('active');
     document.getElementById('tourPointer').classList.remove('active');
-    document.getElementById('tourBot').style.display = 'none';
-    sessionStorage.setItem(TOUR_KEY, '1');
+    document.getElementById('tourFocus').classList.remove('active');
+    clearOverlayHole();
+    pinTourBot();
+    storage.set(TOUR_KEY, '1');
   };
 
   function showStep(idx) {
     currentStep = idx;
     const step = tourSteps[idx];
-    const targetEl = document.querySelector(step.target);
+    const targets = getStepTargets(step);
+    const primaryTarget = targets[0] || null;
 
-    // Update step indicator
     const indicator = document.getElementById('tourStepIndicator');
     indicator.innerHTML = tourSteps.map((_, i) =>
       `<div class="tour-step-dot ${i === idx ? 'active' : i < idx ? 'completed' : ''}"></div>`
     ).join('');
 
-    // Update content
     document.getElementById('tourStepContent').innerHTML =
       `<span class="tour-step-num">Step ${idx + 1} of ${tourSteps.length}</span>${step.content}`;
 
-    // Update footer buttons
     const footer = document.getElementById('tourFooter');
     let footerHtml = `<button class="tour-btn tour-btn-skip" onclick="closeTour()">Skip</button><div style="display:flex;gap:8px;">`;
     if (idx > 0) {
@@ -1400,37 +2579,20 @@ renderProjects = function(filteredProjects, responseHtml) {
     footerHtml += '</div>';
     footer.innerHTML = footerHtml;
 
-    // Position pointer on target
-    const pointer = document.getElementById('tourPointer');
-    if (targetEl) {
-      const rect = targetEl.getBoundingClientRect();
-      pointer.style.left = (rect.left + rect.width / 2 - 30) + 'px';
-      pointer.style.top = (rect.top + rect.height / 2 - 30) + 'px';
-      pointer.classList.add('active');
-
-      // Scroll target into view
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (primaryTarget) {
+      primaryTarget.scrollIntoView({ behavior: 'smooth', block: step.scroll || 'center' });
+      setTimeout(() => {
+        const nextRect = getCombinedRect(getStepTargets(step));
+        updateStepVisual(step, nextRect);
+      }, 230);
+    } else {
+      updateStepVisual(step, null);
     }
 
-    // Position dialog
-    const dialog = document.getElementById('tourDialog');
     setTimeout(() => {
-      if (targetEl) {
-        const rect = targetEl.getBoundingClientRect();
-        if (step.position === 'above') {
-          dialog.style.bottom = (window.innerHeight - rect.top + 20) + 'px';
-          dialog.style.top = 'auto';
-          dialog.style.right = '20px';
-          dialog.style.left = 'auto';
-        } else {
-          dialog.style.top = (rect.bottom + 20) + 'px';
-          dialog.style.bottom = 'auto';
-          dialog.style.right = 'auto';
-          dialog.style.left = Math.max(20, Math.min(rect.left, window.innerWidth - 380)) + 'px';
-        }
-      }
-      dialog.classList.add('active');
-    }, 100);
+      const nextRect = getCombinedRect(getStepTargets(step));
+      positionDialogNearTarget(nextRect);
+    }, 260);
   }
 
   window.tourNav = function(dir) {
@@ -1439,21 +2601,26 @@ renderProjects = function(filteredProjects, responseHtml) {
     const dialog = document.getElementById('tourDialog');
     dialog.classList.remove('active');
     document.getElementById('tourPointer').classList.remove('active');
+    document.getElementById('tourFocus').classList.remove('active');
     setTimeout(() => showStep(next), 300);
   };
 
-  // Auto-show tour on first visit (delayed for page load animations)
-  if (!sessionStorage.getItem(TOUR_KEY)) {
+  window.addEventListener('resize', () => {
+    pinTourBot();
+    if (!tourActive) return;
+    showStep(currentStep);
+  });
+
+  if (!storage.get(TOUR_KEY)) {
     setTimeout(() => {
-      const bot = document.getElementById('tourBot');
-      bot.style.display = 'block';
-      // Auto-start after a short pause
+      pinTourBot();
       setTimeout(() => startTour(), 1200);
     }, 2000);
+  } else {
+    pinTourBot();
   }
 })();
-
-// ═══════════ NEON STAR PARTICLES ═══════════
+// =========== NEON STAR PARTICLES ===========
 (function() {
   const canvas = document.getElementById('neonStarsCanvas');
   if (!canvas) return;
@@ -1514,7 +2681,7 @@ renderProjects = function(filteredProjects, responseHtml) {
     ctx.arc(x, y, g, 0, Math.PI * 2);
     ctx.fill();
 
-    // Bright core — 4-point star shape for feature stars
+    // Bright core - 4-point star shape for feature stars
     if (isBright) {
       ctx.save();
       ctx.globalAlpha = a * 0.8;
@@ -1568,3 +2735,5 @@ renderProjects = function(filteredProjects, responseHtml) {
 </script>
 </body>
 </html>
+
+
