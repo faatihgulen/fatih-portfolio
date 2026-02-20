@@ -913,6 +913,10 @@
   /* =========== NEON STAR PARTICLES =========== */
   .neon-stars-canvas {
     position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.82;
+    filter: saturate(1.05) contrast(1.03);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .neon-stars-canvas { display: none; }
   }
 
   /* =========== 3D NEON CURSOR =========== */
@@ -1740,6 +1744,7 @@ const galleryConfig = {
     'images/UI/AERONIX/Drive.webp',
     'images/UI/AERONIX/1.webp',
     'images/UI/AERONIX/2.webp',
+    'fe022a73-4746-4b02-a481-e89392b3561b_rw_1920.png',
     'images/UI/AERONIX/ezgif-545218b14e7a7379.gif',
     'images/UI/AERONIX/Image 1.webp',
     'images/UI/AERONIX/2.webp',
@@ -1823,6 +1828,7 @@ const galleryConfig = {
   p10: [
     'images/3D/Whaf/image (3).png',
     'images/3D/Whaf/image (4).png',
+    'images/3D/Whaf/image (5).png',
     'images/3D/Whaf/New0028.jpg',
     'images/3D/Whaf/Whaf1.webp',
     'images/3D/Whaf/Whaf2.webp',
@@ -1865,6 +1871,14 @@ const galleryConfig = {
     'images/Architecture/Istanbloom/ff3 (1).webp',
     'images/Architecture/Istanbloom/Banyo (2).webp',
   ],
+  p15: [
+    'images/3D/3D Badge Design/512x512_Frontside.png',
+    'images/3D/3D Badge Design/512x512_backside.png',
+],
+p16: [
+    'images/VR/GazeGarden/Sequence 01_2.mp4',
+    'images/VR/GazeGarden/PHOTO-2024-06-18-17-28-53.jpg',
+],
   p17: [
     'images/VR/Huawei/4.webp',
     'images/VR/Huawei/3.webp',
@@ -1905,6 +1919,31 @@ const projectEmbeds = {
     allow: 'xr-spatial-tracking; gyroscope; accelerometer',
     allowFullscreen: true,
     scrolling: 'no'
+  },
+
+  p10: {
+    type: 'multi-iframe',
+    useAsCover: false,
+    items: [
+      {
+        title: 'Concept1',
+        src: 'https://player.vimeo.com/video/734998143?h=38c45703ac',
+        width: '100%',
+        height: '640',
+        allow: 'autoplay; fullscreen; picture-in-picture; encrypted-media',
+        allowFullscreen: true,
+        scrolling: 'no'
+      },
+      {
+        title: 'Concept2',
+        src: 'https://player.vimeo.com/video/821976916?h=1af925331c',
+        width: '100%',
+        height: '640',
+        allow: 'autoplay; fullscreen; picture-in-picture; encrypted-media',
+        allowFullscreen: true,
+        scrolling: 'no'
+      }
+    ]
   },
   p13: {
     type: 'iframe',
@@ -1984,6 +2023,8 @@ const projects = [
   { id:"p12", title:"AI Thesis - Research Project", description:"The project aims to provide integrated innovative preferences that can enhance the gaming experience and benefit the user with advancing technologies, based theoretically on the historical development of in-game user preferences. This will provide users with the opportunity to build the game, making them a part of the design process, ensuring the production of an endless experience. This game leverages the capabilities of the AI, which allows players to create and customize their canvases through their prompt, offering a unique interactive experience.", categories:["ai","vr-ar"], tags:["ai","research","thesis","generative","automation","academic","design"], tools:["OpenAI - API","Unity","Hanyuan3D","C#"], thumbnail:"AI", image:"images/AI/Thesis/1 (1).webp", year:2024 },
   { id:"p13", title:"Dollvet  - Villa-Office Design", description:"The building was completely designed using 3DsMax and imported into Unreal Engine to allow the client to see every detail of the building giving options to change the colors, objects, and lightnings depending on the needs.", categories:["architecture","ar-vr"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["V-Ray","VR","3DsMax","Unreal Engine"], thumbnail:"ARCH", image:"images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp", year:2022 },
   { id:"p14", title:"Istanbloom - Interior Design", description:"Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Istanbloom/ff1 (1).webp", year:2021 },
+  { id:"p15", title:"3D Badge Design - Token", description:"3D badge asset represents intelligence, focus, and mastery. The glowing brain icon symbolizes sharp thinking and deep knowledge. Players earn this badge by correctly answering a high number of questions, proving their expertise and consistent performance. It highlights achievement, accuracy, and cognitive excellence within the game. ", categories:["3d"], tags:["3D","Game","visualization","asset","stylized"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"Game", image:"images/3D/3D Badge Design/512x512_Frontside.png", year:2025 },
+  { id:"p16", title:"Gaze Garden - AR Tiktok Project", description:"This AR Project Was created using TikTok Effect House for TikTok effects. You can try it by scanning the QR code on the TikTok app.", categories:["vr-ar"], tags:["immersive","media design","tiktok","berlin"], tools:["tiktok","AR","image tracking"], thumbnail:"AR", image:"images/VR/GazeGarden/PHOTO-2024-06-18-17-28-53.jpg", year:2024 },
   { id:"p17", title:"Huawei VR - VR Game Projects", description:"VR Game Prototyping (Huawei R&D), I handle the full production pipeline from concept to final engine integration. I work with both real-time and pre-rendered projects, ensuring visual quality, technical efficiency, and creative consistency.", categories:["vr-ar","3d","ui-ux"], tags:["vr","training","unity","immersive","spatial-ui","hand-tracking","huawei"], tools:["Unity","C#","VR","Blender"], thumbnail:"VR", image:"images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp", year:2025 },
   { id:"p18", title:"3D Concept - 3D Bathroom Stylized", description:"Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.", categories:["3d"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["ZBrush","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp", year:2020 },
   { id:"p19", title:"Balikesir - Architectural Viz", description:"Architectural visualization for Balikesir residential project. Photorealistic renders from concept to final presentation.", categories:["architecture"], tags:["parametric","residential","archviz","grasshopper","3dsmax","rendering"], tools:["Blender","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Balıkesir/12345678 (2).webp", year:2021 },
@@ -3325,7 +3366,9 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
   window.addEventListener('resize', resize);
 
   const STAR_COUNT = 60;
+  const OBJECT_COUNT = 8;
   const stars = [];
+  const objects = [];
 
   const colors = [
     { r: 196, g: 240, b: 77 },   // accent green
@@ -3351,6 +3394,29 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
       glowSize: Math.random() * 8 + 4,
       isBright: Math.random() < 0.15 // 15% chance of being a brighter "feature" star
     });
+  }
+
+  function createObject(initial = false) {
+    const col = colors[Math.floor(Math.random() * colors.length)];
+    const z = Math.random();
+    return {
+      x: Math.random() * w,
+      y: initial ? (Math.random() * Math.min(h, 520)) : Math.random() * h,
+      z,
+      baseSize: 16 + Math.random() * 36,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.15,
+      wobblePhase: Math.random() * Math.PI * 2,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.01,
+      trail: [],
+      color: col,
+      alpha: 0.14 + z * 0.2
+    };
+  }
+
+  for (let i = 0; i < OBJECT_COUNT; i++) {
+    objects.push(createObject(true));
   }
 
   function drawStar(star) {
@@ -3397,10 +3463,69 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     ctx.fill();
   }
 
+  function drawObject(obj, focusY) {
+    const perspective = 0.55 + obj.z * 0.95;
+    const size = obj.baseSize * perspective;
+    const yDist = Math.abs(obj.y - focusY);
+    const focusFade = Math.max(0.12, 1 - (yDist / (h * 0.95)));
+    const baseAlpha = obj.alpha * focusFade;
+    if (baseAlpha < 0.02) return;
+
+    // Motion blur trail
+    for (let i = 0; i < obj.trail.length; i++) {
+      const t = obj.trail[i];
+      const progress = i / obj.trail.length;
+      const a = t.a * (1 - progress) * 0.55 * focusFade;
+      ctx.strokeStyle = `rgba(${obj.color.r},${obj.color.g},${obj.color.b},${a})`;
+      ctx.lineWidth = (size * 0.22) * (1 - progress * 0.7);
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y);
+      ctx.lineTo(obj.x, obj.y);
+      ctx.stroke();
+    }
+
+    // Soft glow body
+    const grad = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, size * 1.35);
+    grad.addColorStop(0, `rgba(${obj.color.r},${obj.color.g},${obj.color.b},${baseAlpha * 0.45})`);
+    grad.addColorStop(1, `rgba(${obj.color.r},${obj.color.g},${obj.color.b},0)`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(obj.x, obj.y, size * 1.35, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Fake 3D wireframe sphere with rotating rings
+    ctx.save();
+    ctx.translate(obj.x, obj.y);
+    ctx.rotate(obj.rotation);
+    ctx.scale(1, 0.62);
+    ctx.strokeStyle = `rgba(${obj.color.r},${obj.color.g},${obj.color.b},${baseAlpha * 0.9})`;
+    ctx.lineWidth = Math.max(0.6, size * 0.045);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size, size, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.rotate(Math.PI / 2.8);
+    ctx.strokeStyle = `rgba(${obj.color.r},${obj.color.g},${obj.color.b},${baseAlpha * 0.55})`;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.78, size * 0.78, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // Core highlight
+    ctx.fillStyle = `rgba(255,255,255,${baseAlpha * 0.35})`;
+    ctx.beginPath();
+    ctx.arc(obj.x - size * 0.22, obj.y - size * 0.18, Math.max(1, size * 0.09), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   let time = 0;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   function animate() {
+    if (prefersReducedMotion.matches) return;
     ctx.clearRect(0, 0, w, h);
     time += 0.016;
+    const hero = document.querySelector('.hero');
+    const heroRect = hero ? hero.getBoundingClientRect() : null;
+    const focusY = heroRect ? Math.min(h * 0.56, heroRect.top + heroRect.height * 0.6) : h * 0.45;
 
     for (const star of stars) {
       // Twinkle
@@ -3418,9 +3543,31 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 
       drawStar(star);
     }
+
+    for (const obj of objects) {
+      const speed = 0.35 + obj.z * 0.8;
+      obj.x += obj.vx * speed;
+      obj.y += (obj.vy * speed) + (Math.sin(time * 1.1 + obj.wobblePhase) * 0.1);
+      obj.rotation += obj.rotSpeed * (0.4 + obj.z);
+
+      obj.trail.unshift({ x: obj.x, y: obj.y, a: obj.alpha });
+      if (obj.trail.length > 8) obj.trail.pop();
+
+      if (obj.x < -100) obj.x = w + 100;
+      if (obj.x > w + 100) obj.x = -100;
+      if (obj.y < -120) obj.y = h + 120;
+      if (obj.y > h + 120) obj.y = -120;
+
+      drawObject(obj, focusY);
+    }
     requestAnimationFrame(animate);
   }
-  animate();
+
+  if (!prefersReducedMotion.matches) animate();
+  prefersReducedMotion.addEventListener('change', () => {
+    if (!prefersReducedMotion.matches) animate();
+    else ctx.clearRect(0, 0, w, h);
+  });
 })();
 </script>
 </body>
