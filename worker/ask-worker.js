@@ -9,6 +9,7 @@
  */
 
 import profileMarkdown from "./profile.txt";
+import projectMarkdown from "./project.txt";
 
 const ALLOWED_ORIGINS = new Set([
   "https://fatihgulen.com",
@@ -52,15 +53,124 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX = 60;
 const ipBuckets = new Map();
 const PROFILE_DOCUMENT = String(profileMarkdown || "").trim();
+const PROJECT_DOCUMENT = String(projectMarkdown || "").trim();
+function pickOne(options) {
+  if (!Array.isArray(options) || !options.length) return "";
+  return options[Math.floor(Math.random() * options.length)];
+}
+function parseProjectEntryFields(body) {
+  const fields = {};
+  let currentKey = "";
+  String(body || "").split(/\r?\n/).forEach((rawLine) => {
+    const line = rawLine.trimEnd();
+    const match = line.match(/^([a-z_]+):\s*(.*)$/i);
+    if (match) {
+      currentKey = String(match[1] || "").toLowerCase();
+      fields[currentKey] = String(match[2] || "").trim();
+      return;
+    }
+    if (!currentKey) return;
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    fields[currentKey] = fields[currentKey]
+      ? `${fields[currentKey]} ${trimmed}`
+      : trimmed;
+  });
+  return fields;
+}
+
+function parseProjectEntries(documentText) {
+  const entries = [];
+  const regex = /^##\s+(p\d+)\s+\|\s+(.+)\r?\n([\s\S]*?)(?=^##\s+p\d+\s+\||\Z)/gim;
+  let match;
+  while ((match = regex.exec(String(documentText || "")))) {
+    const id = String(match[1] || "").toLowerCase().trim();
+    const title = String(match[2] || "").trim();
+    const body = String(match[3] || "").trim();
+    const alias = title.split(" - ")[0].trim();
+    entries.push({
+      id,
+      title,
+      alias,
+      body,
+      fields: parseProjectEntryFields(body)
+    });
+  }
+  return entries;
+}
+
+const PROJECT_ENTRIES = parseProjectEntries(PROJECT_DOCUMENT);
+
+function scoreProjectEntry(query, entry) {
+  const normalizedQuery = normalizeQuery(query);
+  if (!normalizedQuery || !entry) return 0;
+  const explicitIdRegex = new RegExp(`\\b${entry.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+  if (explicitIdRegex.test(normalizedQuery)) return 1000;
+
+  const titleVariants = [entry.title, entry.alias].filter(Boolean).map(normalizeQuery);
+  let best = 0;
+  titleVariants.forEach((variant) => {
+    if (!variant) return;
+    if (normalizedQuery.includes(variant)) {
+      best = Math.max(best, 200);
+      return;
+    }
+    const tokens = variant.split(" ").filter((token) => token.length > 2);
+    const overlap = tokens.reduce((acc, token) => acc + (normalizedQuery.includes(token) ? 1 : 0), 0);
+    best = Math.max(best, overlap * 18);
+  });
+  return best;
+}
+
+function findRelevantProjectEntry(query) {
+  const normalizedQuery = normalizeQuery(query);
+  if (!normalizedQuery || !PROJECT_ENTRIES.length) return null;
+  const explicitProjectIntent = /\b(project|case study|goal|problem|approach|result|impact|detail|details|summary|explain|breakdown)\b/i.test(normalizedQuery);
+  let best = null;
+  PROJECT_ENTRIES.forEach((entry) => {
+    const score = scoreProjectEntry(normalizedQuery, entry);
+    if (!best || score > best.score) best = { entry, score };
+  });
+  if (!best || best.score <= 0) return null;
+  if (best.score >= 200) return best.entry;
+  if (explicitProjectIntent && best.score >= 54) return best.entry;
+  return null;
+}
+
+function formatProjectEntry(entry) {
+  if (!entry) return "";
+  return [
+    `Project ID: ${entry.id}`,
+    `Project Title: ${entry.title}`,
+    entry.body
+  ].filter(Boolean).join("\n");
+}
+
+function buildProjectDetailFallback(entry) {
+  if (!entry) return "";
+  const fields = entry.fields || {};
+  const pieces = [];
+  if (fields.current_portfolio_summary) pieces.push(fields.current_portfolio_summary);
+  if (fields.goal) pieces.push(`Goal: ${fields.goal}`);
+  if (fields.problem) pieces.push(`Problem: ${fields.problem}`);
+  if (fields.approach) pieces.push(`Approach: ${fields.approach}`);
+  if (fields.result) pieces.push(`Result: ${fields.result}`);
+  if (fields.impact) pieces.push(`Impact: ${fields.impact}`);
+  if (fields.notes) pieces.push(`Notes: ${fields.notes}`);
+  if (!pieces.length) {
+    return `Project details are available for ${entry.title}, but the detailed fields have not been filled in yet.`;
+  }
+  return `${entry.title}: ${pieces.join(" ")}`;
+}
 const PROFILE_FACTS = {
   identity:
-    "Fatih G\u00fclen is a Digital Experience Designer based in Germany, in the Frankfurt area.",
+    "Fatih G\u00fclen is a Digital Realtime Experience Designer based in Germany, in the Frankfurt area.",
   experienceYears:
-    "Experience level: 3+ years of professional experience in game-adjacent and real-time production environments.",
+    "Experience level: 4+ years of professional experience in game-adjacent, real-time, and interactive production environments.",
   contact:
     "Contact details: Email faatihgulen@gmail.com, phone +49 17637160838, LinkedIn https://www.linkedin.com/in/faatihgulen.",
   education:
-    "Education: Bachelor's degree in Interior Architecture in Turkey, and a Master's degree in New Media Design in Berlin, Germany.",
+    "Education: Bachelor's degree in Interior Architecture from Mimar Sinan Fine Arts University in Turkey, and a Master's degree in New Media Design from the University of Europe for Applied Sciences in Berlin, Germany.",
   profile:
     "Professional profile: a hybrid background across UI/UX design, real-time and interactive design, 3D visualization, motion design, and AI-assisted creative production.",
   focusAreas:
@@ -72,7 +182,7 @@ const PROFILE_FACTS = {
   storytelling:
     "Work qualities: strong visual storytelling, user engagement, and a confident use of emerging technologies, especially AI combined with real-time workflows.",
   experience:
-    "Work experience highlights: worked as a Game Designer at Huawei R&D, created 2D and 3D assets for VR experiences, built UI elements and game scenes, and used Blender, Figma, and Jira in team workflows. Freelance work includes VR interior design, motion design, visual content, and client work across different design fields.",
+    "Work experience highlights: worked as a Realtime Experience Designer at Huawei R&D, created 2D and 3D assets for VR experiences, built UI elements and game scenes, and used Blender, Figma, and Jira in team workflows. Freelance work includes VR interior design, motion design, visual content, and client work across different design fields.",
   tools:
     "Design and creative tools: Figma, Adobe Creative Suite including Photoshop, Illustrator, After Effects, and Premiere, plus Blender, Maya, 3ds Max, and Substance.",
   realTime:
@@ -84,7 +194,7 @@ const PROFILE_FACTS = {
   aiTools:
     "AI tools and workflows: Midjourney, Flux, Ideogram, ComfyUI including ControlNet, OpenPose, and LoRA workflows, plus image-to-video tools such as Sora, VEO, and Wan AI.",
   languages:
-    "Languages: English at an Fluent level, Turkish native, and German at intermediate B1 level and improving.",
+    "Languages: English at a fluent level, Turkish native, and German at intermediate B1 level and improving.",
   strengths:
     "Strengths: strong team coordination and collaboration, translating complex ideas into clear visuals, learning new tools quickly, combining design, technology, and storytelling, and being punctual and reliable.",
   industryAlignment:
@@ -177,8 +287,26 @@ function normalizeQuery(value) {
     .trim();
 }
 
+function isToolsQuery(query) {
+  const q = normalizeQuery(query);
+  return (
+    q.includes("what tools") ||
+    q.includes("tools") ||
+    q.includes("software") ||
+    q.includes("tool stack") ||
+    q.includes("stack") ||
+    q.includes("technologies") ||
+    q.includes("design tools")
+  );
+}
+
 function buildFallbackAnswer(query) {
   const q = normalizeQuery(query);
+  const projectEntry = findRelevantProjectEntry(query);
+
+  if (projectEntry) {
+    return buildProjectDetailFallback(projectEntry);
+  }
 
   if (
     q.includes("contact") ||
@@ -189,7 +317,11 @@ function buildFallbackAnswer(query) {
     q.includes("phone") ||
     q.includes("reach")
   ) {
-    return "You can reach Fatih at faatihgulen@gmail.com or +49 17637160838. You can also connect with him on LinkedIn at https://www.linkedin.com/in/faatihgulen.";
+    return pickOne([
+      "You can reach Fatih at faatihgulen@gmail.com or +49 17637160838. You can also connect with him on LinkedIn at https://www.linkedin.com/in/faatihgulen.",
+      "Fatih's contact details are faatihgulen@gmail.com, +49 17637160838, and https://www.linkedin.com/in/faatihgulen on LinkedIn.",
+      "The best ways to contact Fatih are email at faatihgulen@gmail.com, phone at +49 17637160838, or LinkedIn at https://www.linkedin.com/in/faatihgulen."
+    ]);
   }
 
   if (
@@ -199,7 +331,11 @@ function buildFallbackAnswer(query) {
     q.includes("fatih profile") ||
     q === "fatih"
   ) {
-    return "Fatih Gülen is a Digital Experience Designer based in Frankfurt, Germany, with a hybrid background spanning UI/UX design, real-time interaction, 3D visualization, motion design, and AI-assisted creative production. He transforms complex ideas into clear, functional digital experiences, with strong focus on interactive systems, data-driven interfaces, and immersive VR/AR environments. He is actively seeking roles in product design, real-time systems, and AI-driven creative work.";
+    return pickOne([
+      "Fatih Gulen is a Digital Realtime Experience Designer based in the Frankfurt area of Germany, with a hybrid background spanning UI/UX design, real-time interaction, 3D visualization, motion design, and AI-assisted creative production.",
+      "Fatih Gulen works at the intersection of design, technology, and interactive systems. His profile brings together UI/UX, real-time experiences, 3D visualization, motion, and AI-assisted workflows.",
+      "Fatih Gulen is a multidisciplinary designer focused on clear, functional, and visually strong digital experiences, especially across interactive systems, immersive environments, and real-time design."
+    ]);
   }
 
   if (
@@ -276,7 +412,11 @@ function buildFallbackAnswer(query) {
     q.includes("freelance") ||
     q.includes("game designer")
   ) {
-    return "Fatih worked as a Realtime Experience Designer at Huawei R&D, creating 2D and 3D assets for VR experiences, building UI elements and game scenes while using Blender, Figma, and Jira in team workflows. He also has extensive freelance experience in VR interior design, motion design, visual content, and multidisciplinary client work across various design fields.";
+    return pickOne([
+      "Fatih worked as a Realtime Experience Designer at Huawei R&D, creating 2D and 3D assets for VR experiences, building UI elements and game scenes, and working with Blender, Figma, and Jira in collaborative workflows.",
+      "His professional background includes Huawei R&D, where he worked as a Realtime Experience Designer on VR-focused production, along with freelance work across VR interior design, motion design, visual content, and interactive presentations.",
+      "Fatih's experience combines real-time design work at Huawei R&D with freelance multidisciplinary projects. That includes immersive environments, visual storytelling, client-facing production, and interactive presentation work."
+    ]);
   }
 
   if (
@@ -284,7 +424,11 @@ function buildFallbackAnswer(query) {
     q.includes("how many years") ||
     q.includes("experience years")
   ) {
-    return "Fatih has 3+ years of professional experience, particularly in game-adjacent, real-time, and interactive production environments, including his work at Huawei R&D and diverse freelance projects.";
+    return pickOne([
+      "Fatih has 4+ years of professional experience, especially across game-adjacent, real-time, and interactive production environments, including Huawei R&D and freelance multidisciplinary work.",
+      "The verified profile points to 4+ years of professional experience across real-time design, immersive production, and interactive digital work.",
+      "Fatih brings 4+ years of professional experience, with a background that combines Huawei R&D work and independent projects across real-time, VR, motion, and interactive design."
+    ]);
   }
 
   if (
@@ -294,7 +438,11 @@ function buildFallbackAnswer(query) {
     q.includes("hangi arac") ||
     q.includes("hangi program")
   ) {
-    return "Fatih works with Figma, Adobe Creative Suite (Photoshop, Illustrator, After Effects, Premiere), Blender, Maya, 3ds Max, and Substance for design and creative work. For real-time systems, he uses Unreal Engine with Blueprints and UMG, plus Unity at a foundational level. He's also proficient with AI tools including ComfyUI, Midjourney, Flux, Ideogram, and image-to-video platforms like Sora, VEO, and Wan AI.";
+    return pickOne([
+      "Fatih's tools are easiest to read by category:\n- UI / Design: Figma, Adobe Creative Suite\n- 3D: Blender, Maya, 3ds Max, Substance\n- Real-time: Unreal Engine with Blueprints and UMG, Unity (basic)\n- AI: ComfyUI, Midjourney, Flux, Ideogram, Sora, VEO, Wan AI",
+      "A clean breakdown would be:\n- UI / UX: Figma, Adobe tools\n- 3D: Blender, Maya, 3ds Max, Substance\n- Interactive: Unreal Engine, Blueprints, UMG, Unity (basic)\n- AI workflows: ComfyUI, ControlNet, OpenPose, LoRA, Midjourney, Flux, Ideogram",
+      "The core stack is:\n- Design: Figma, Photoshop, Illustrator, After Effects, Premiere\n- 3D: Blender, Maya, 3ds Max, Substance\n- Real-time: Unreal Engine and Unity\n- AI: ComfyUI-based pipelines plus Midjourney, Flux, Ideogram, and image-to-video tools"
+    ]);
   }
 
   if (
@@ -332,7 +480,7 @@ async function callOpenAI(model, apiKey, promptText) {
     body: JSON.stringify({
       model,
       input: promptText,
-      temperature: 0.75,
+      temperature: 0.9,
       max_output_tokens: 360
     })
   });
@@ -387,6 +535,8 @@ export default {
     }
 
     const model = String(env.OPENAI_MODEL || "gpt-5.4").trim();
+    const relevantProjectEntry = findRelevantProjectEntry(query);
+    const toolsQuestion = isToolsQuery(query);
 
     if (query === "__status_ping__") {
       try {
@@ -426,14 +576,27 @@ export default {
     "Only answer in another language if the user explicitly asks for that language.",
     "",
     "=== PRIMARY SOURCE: PROFILE DOCUMENT ===",
-    "Below is Fatih's comprehensive profile document. This is your PRIMARY source. Use it as the foundation for all answers.",
+    "Below is Fatih's comprehensive profile document. This is your CANONICAL and PRIMARY source.",
+    "Use the profile document as the foundation for all answers about Fatih.",
+    "If there is any difference between the profile document and supplementary facts, the profile document always wins.",
+    "Prefer the profile document for titles, years of experience, education, work history, strengths, career goals, and wording.",
     "Study the voice, context, style, and details carefully.",
     "",
     "PROFILE DOCUMENT:",
     PROFILE_DOCUMENT,
+    ...(relevantProjectEntry ? [
+      "",
+      "=== PROJECT-SPECIFIC SOURCE ===",
+      "The following project entry is the canonical source for this specific project.",
+      "For project goals, problems, approach, results, impact, or case-study style details, prefer this project entry over all supplementary facts.",
+      "",
+      "PROJECT ENTRY:",
+      formatProjectEntry(relevantProjectEntry)
+    ] : []),
     "",
     "=== SUPPLEMENTARY FACTS (for quick reference) ===",
-    "These key facts reinforce and supplement the profile document above:",
+    "These key facts reinforce and supplement the profile document above.",
+    "They are secondary helpers only and must never override the profile document.",
     `- Identity & Location: ${PROFILE_FACTS.identity}`,
     `- Experience: ${PROFILE_FACTS.experienceYears}`,
     `- Contact: ${PROFILE_FACTS.contact}`,
@@ -465,6 +628,13 @@ export default {
     "",
     "=== ANSWERING GUIDELINES ===",
     "- If the user asks about tools, don't always list them; sometimes explain what they're *used for*, sometimes discuss philosophy, sometimes connect them to specific projects.",
+    ...(toolsQuestion ? [
+      "- This is a tools question. Make the answer clean and organized.",
+      "- Prefer a short grouped format with labels such as UI / Design, 3D, Real-time, and AI.",
+      "- Write the tools answer as bullet points, one group per bullet.",
+      "- Keep it compact and scannable instead of one long paragraph.",
+      "- Mention only the most relevant tools in each group."
+    ] : []),
     "- If asked about strengths, sometimes frame as 'what he brings to teams', sometimes as 'how he approaches design', sometimes as 'technical execution ability'.",
     "- If asked about projects, vary between describing scope, describing methodology, describing visual quality, describing user impact.",
     "- When discussing Huawei experience, sometimes emphasize the game-adjacent aspect, sometimes the VR focus, sometimes the team collaboration.",
@@ -472,6 +642,9 @@ export default {
     "- Only answer using information from the profile document and facts above. If the user asks outside these sources, offer related portfolio topics instead.",
     "- Do not invent personal details, project names, dates, or tools not listed in sources.",
     "- If the profile document contains the answer, provide it directly and confidently—never say information is 'unavailable' or 'not specified'.",
+    "- When the answer exists in the profile document, do not hedge and do not ask the user to verify it elsewhere.",
+    "- For project-specific questions, if a matching project entry is included above, use that entry as the canonical source for the project.",
+    "- If the user asks for goal, problem, approach, result, impact, or case-study insight, structure the answer around those dimensions when the project entry provides them.",
     "",
     `User query: ${query}`
   ].join("\n");

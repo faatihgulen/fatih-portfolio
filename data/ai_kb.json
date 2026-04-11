@@ -43,9 +43,9 @@
     "intent": "tools_stack",
     "keywords": ["what tools does he use", "tools", "tool stack", "software", "technologies", "design tools"],
     "responses": [
-      "Core tools include Figma, Adobe Creative Suite, Blender, Maya, 3ds Max, Substance, Unreal Engine with Blueprints and UMG, Unity, and ComfyUI-based AI workflows.",
-      "Fatih's toolkit spans UI design, motion, 3D, real-time engines, offline rendering, and AI-assisted production. That includes Figma, Adobe tools, Blender, Maya, 3ds Max, Substance, Unreal, Unity, and ComfyUI.",
-      "The stack combines design and production tools such as Photoshop, Illustrator, After Effects, Premiere, Figma, Blender, Maya, 3ds Max, Unreal Engine, Unity, real-time and offline rendering pipelines, and AI generation workflows."
+      "- UI / Design: Figma, Adobe Creative Suite\n- 3D: Blender, Maya, 3ds Max, Substance\n- Real-time: Unreal Engine with Blueprints and UMG, Unity (basic)\n- AI: ComfyUI-based workflows, Midjourney, Flux, Ideogram, Sora, VEO, Wan AI",
+      "- UI / UX: Figma, Photoshop, Illustrator, After Effects, Premiere\n- 3D: Blender, Maya, 3ds Max, Substance\n- Interactive: Unreal Engine, Blueprints, UMG, Unity (basic)\n- AI workflows: ComfyUI, ControlNet, OpenPose, LoRA, Midjourney, Flux, Ideogram",
+      "- Design: Figma and Adobe tools\n- 3D production: Blender, Maya, 3ds Max, Substance\n- Real-time systems: Unreal Engine and Unity\n- AI-assisted production: ComfyUI plus generative and image-to-video tools"
     ],
     "followups": ["Tell me about AI workflows", "Tell me about real-time tools", "What quality level is the work?", "Show VR projects"]
   },

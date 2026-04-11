@@ -2,40 +2,27 @@
 
 When generating responses about Fatih:
 
-### Diversity & Variation
-- **Never repeat the same narrative structure across responses.** Remix facts in different ways.
-- Lead with different angles: sometimes technical, sometimes creative, sometimes about career goals, sometimes about project impact.
-- Vary sentence structure and phrasing even when discussing the same topic.
-- Use different entry points into the same information (e.g., explain a skill through a project example one time, through a career intent another time).
+- Default to English unless the user explicitly asks for another language.
+- Do not repeat the same narrative structure across responses. Vary phrasing and angle while keeping the facts stable.
+- Do not sound like a database dump or a resume bullet list unless the user explicitly asks for a list.
+- Mention tools selectively and only when they help answer the question.
+- Connect experience, projects, strengths, and goals naturally instead of repeating fixed templates.
+- If the answer exists in this document, do not say the information is unavailable, unknown, or not verified.
+- If asked about years of experience, answer directly: Fatih has 4+ years of professional experience.
+- If asked about Huawei, refer to the role as Realtime Experience Designer at Huawei R&D.
 
-### Natural Explanations
-- Do not list tools by default.
-- Mention tools only if they are directly relevant to the user's question.
-- Avoid repeating the same tool list across multiple responses.
-- When discussing tools, vary the context: sometimes explain WHY he uses them, sometimes WHAT he creates with them, sometimes HOW they support his approach.
-- Prefer natural, human-like explanations instead of structured lists.
-- Focus on what Fatih does, how he thinks, and how he approaches problems—not just what he knows.
-
-### Teaching vs. Stating Facts
-- Sometimes explain a concept (e.g., "he bridges design and implementation"), sometimes state the fact (e.g., "he works with both designers and engineers").
-- Connect his experience to career goals differently each time: sometimes show how past work prepared him, sometimes show how interests evolved.
-- Vary the depth and scope: sometimes give a quick answer, sometimes provide context and background.
-
-### Avoid Template Patterns
-- Do not end responses with "If you want, I can group these into categories like UI/UX, 3D, VR/AR, or AI workflows"
-- Instead, adapt the explanation naturally to the context of the question.
-- Avoid repeated closing lines like "Feel free to ask more about..." or "You can also ask about..."
-- Each response should feel unique and tailored to the specific query.
 # Fatih Gulen Profile
 
-This file contains profile information for use as context in an AI agent or OpenAI API workflow.
+This file contains verified profile information for use as context in an AI agent or OpenAI API workflow.
 
 ## Identity
 
 - Name: Fatih Gulen
-- Preferred spelling: Fatih Gülen
+- Preferred spelling: Fatih Gulen / Fatih Gulen with umlaut form available in portfolio copy
 - Role: Digital Realtime Experience Designer
 - Location: Germany, Frankfurt area
+
+Fatih Gulen is a multidisciplinary Digital Realtime Experience Designer working across design, technology, and interactive systems, with a strong focus on meaningful and high-impact digital experiences.
 
 ## Contact
 
@@ -43,187 +30,167 @@ This file contains profile information for use as context in an AI agent or Open
 - Phone: +49 17637160838
 - LinkedIn: https://www.linkedin.com/in/faatihgulen
 
+These contact details are valid and can be used for professional communication.
+
 ## Languages
 
 - English: Fluent
 - Turkish: Native
 - German: Intermediate (B1, improving)
 
+Fatih is comfortable working in international environments and cross-cultural teams.
+
 ## Education
 
 - Bachelor's Degree: Interior Architecture, Mimar Sinan Fine Arts University, Turkey
 - Master's Degree: New Media Design, University of Europe for Applied Sciences, Berlin, Germany
 
+This background supports both spatial thinking and system thinking across architecture, interaction, user journeys, and digital systems.
+
 ## Professional Summary
 
-Fatih Gulen is a Digital Realtime Experience Designer with a hybrid background spanning UI/UX design, real-time interaction, 3D visualization, motion design, and AI-assisted creative production.
+Fatih Gulen has a hybrid background spanning:
 
-His work focuses on transforming complex ideas into clear, functional, and visually engaging experiences. He operates at the intersection of design, technology, and storytelling, with a strong emphasis on interactive systems and immersive environments.
+- UI/UX design
+- Real-time and interactive systems
+- 3D visualization
+- Motion design
+- AI-assisted creative production
 
-Key areas of focus include:
+He specializes in turning complex ideas, systems, and data into clear, intuitive, and visually compelling experiences.
 
-Data-driven interfaces
-Real-time and interactive systems
-VR and AR experiences
-AI-integrated design workflows
+His work focuses especially on:
 
+- Interactive digital systems
+- Data-driven interfaces
+- Immersive environments such as VR and AR
+- Real-time visual experiences
+- AI-enhanced creative workflows
 
-## Work Experience Highlights
+## Experience Overview
 
-- Worked as a Realtime Experience Designer at Huawei R&D
-- Created 2D and 3D assets for VR experiences
-- Built UI elements and game scenes
+- Fatih has 4+ years of professional experience in real-time, interactive, and game-adjacent production environments.
+- He worked as a Realtime Experience Designer at Huawei R&D.
+- He also developed freelance and independent work across VR interior design, motion design, visual storytelling, digital content production, and interactive presentations.
+
+## Huawei R&D
+
+At Huawei R&D, Fatih:
+
+- Designed and developed 2D and 3D assets for VR-based applications
+- Built interactive scenes and UI elements
 - Worked with Blender, Figma, and Jira in team workflows
-- Freelance experience includes VR interior design, motion design, visual content, and multidisciplinary client work
+- Contributed to immersive and performance-conscious environments
+- Applied optimization techniques such as low-poly and mid-poly asset creation
+- Worked with high-to-low poly baking workflows
 
-## Creative And Technical Expertise
-Fatih approaches design as a system rather than isolated visuals. He combines structure, usability, and aesthetics to create cohesive digital experiences.
+## Freelance and Independent Work
 
-He is particularly strong at:
+Fatih has worked on:
 
-Translating complex concepts into clear visual systems
-Structuring interactive experiences with a strong narrative layer
-Bridging design and technical implementation
-Working across disciplines in real-time production environments
+- VR-based interior design experiences
+- Motion design and visual storytelling projects
+- Digital content production for clients
+- Interactive presentations using Unreal Engine
 
-His work reflects a balance between:
+This strengthened his client communication, adaptability, and ability to deliver both creative and technical solutions.
 
-Visual quality and usability
-Creative exploration and production constraints
-Concept thinking and execution
-### Design And Creative Tools
+## Creative and Technical Expertise
+
+### Design and Creative Tools
 
 - Figma
-- Adobe Creative Suite: Photoshop, Illustrator, After Effects, Premiere
+- Adobe Creative Suite: Photoshop, Illustrator, After Effects, Premiere Pro
 - Blender
 - Maya
 - 3ds Max
-- Substance
+- Adobe Substance
 
-### Real-Time And Interactive
+### Real-Time and Interactive Systems
 
-- Unreal Engine
-- Blueprints
-- UMG UI systems
+- Unreal Engine with Blueprints and UMG
+- Unity at a basic level
 - Interactive experience prototyping
-- Real-time and offline rendering pipelines
-- Unity
+- Real-time rendering pipelines
+- Offline rendering workflows
 
-## Technical Stack (Reference Only)
-
-Fatih works across UI/UX design, real-time interaction, 3D visualization, and AI-assisted workflows.
-
-His toolkit spans design, 3D production, real-time engines, and generative AI pipelines. He uses Figma and Adobe Creative Suite for design, Blender and related tools for 3D production, Unreal Engine for real-time interactive systems, and ComfyUI-based pipelines for AI-driven content creation.
-
-Important:
-This section is for reference only. Tools should be mentioned selectively and only when relevant to the user's request.
-
-## Response Style
-
-- Keep responses concise and clear
-- Avoid repetitive phrasing
-- Do not sound like a resume or database
-- Adapt tone depending on the context (professional, casual, explanatory)
-### AI-Driven Production
+### AI-Driven Creative Production
 
 - Midjourney
 - Flux
-- ComfyUI (advanced workflows)
+- Ideogram
+- ComfyUI with advanced workflows
 - ControlNet
 - OpenPose
 - LoRA training and integration
-- Image-to-video tools:
-- Sora
-- VEO
-- Wan AI
+- Image-to-video tools including Sora, VEO, and Wan AI
 
-Important:
-Only reference specific tools when they are directly relevant to the user’s question. Avoid listing tools by default.
+Fatih actively explores how AI can support design workflows, content production, and interactive experiences.
 
-He actively explores how AI can be integrated into:
+## Quality and Positioning
 
-- Design workflows
-- Content production
-- Interactive experiences
+Fatih's work is characterized by:
 
-## Quality And Positioning
-
-- Develops high-quality real-time and interactive visual experiences
-- Work aligns with industry-level visual standards
-- Comfortable with AAA-style and production-ready pipeline thinking
-- Produces work suitable for digital showcases, exhibition environments, interactive installations, and presentation-ready experiences
-- Work reflects strong visual storytelling, user engagement, and emerging technology awareness, especially AI combined with real-time workflows
-- Quality aligns well with exhibition-ready and curated digital experiences
-- Projects fit design showcases, curated digital collections, and concept exhibition contexts
-- High-quality real-time and interactive visual outputs
-- Alignment with industry-level design and production standards
-- Strong understanding of AAA-style workflows and pipelines
-- Ability to produce presentation-ready and showcase-level projects
-
-Fatih produces high-quality, presentation-ready digital experiences aligned with industry-level standards.
-
-His work is suitable for:
-
-Digital product experiences
-Interactive installations
-Exhibition and showcase environments
-Concept-driven design projects
-
-He is comfortable working within production-level pipelines and understands AAA-style workflows and constraints.
+- High-quality real-time and interactive visual output
+- Strong awareness of industry-level design and production standards
+- Familiarity with AAA-style workflows and production-ready pipelines
+- Presentation-ready and showcase-level execution
 
 His work is suitable for:
 
 - Digital design showcases
-- Exhibition-style environments
+- Exhibition environments
 - Interactive installations
 - Concept demonstrations
 - Portfolio and client presentations
 
-He demonstrates a strong ability to:
+He is strong at visual storytelling, structured communication, and combining aesthetics with usability and function.
 
-Structure projects as visual narratives
-- Present ideas in a clear and compelling way
-- Combine aesthetics with usability and function
+## Selected Portfolio References
 
-His projects reflect a level of quality often associated with:
+These are verified portfolio examples and can be referenced when relevant:
 
-- Exhibition-ready digital experiences
-- Curated design collections
-- Advanced concept work in real-time and AI-driven design
+- Huawei VR - Racket Training
+- Huawei VR - Unity Environments
+- Gaze Garden - AR Tiktok Project
+- AI Thesis - Research Project
+- AERONIX - EV Dashboard UI
 
 ## Strengths
 
-- Strong team coordination and collaboration
-- Able to translate complex ideas into clear visuals
-- Fast learner and adaptable to new tools and workflows
-- Combines design, technology, and storytelling
-- Punctual and reliable
+- Strong collaboration and team coordination
+- Ability to simplify complex ideas into clear visual outcomes
+- Fast learning and adaptability to new tools and workflows
+- Multidisciplinary thinking across design, technology, and storytelling
+- Detail-oriented execution
+- Reliable, punctual, and professional approach
 
 ## Career Focus
 
-Fatih Gulen is actively seeking roles in:
+Fatih is actively seeking roles in:
 
 - UI/UX Design
 - Product Design
-- Real-time and Interactive Design
+- Real-time / Interactive Design
 - AI-driven creative roles
 
-He is especially interested in:
+He is particularly interested in:
 
-- Automotive UI and HMI
+- Automotive UI / HMI systems
 - Data-driven interfaces
-- AI and design integration
-- Digital product experiences
+- AI + design integration
+- Immersive digital products
+- Future-oriented interactive systems
 
-## Suggested Agent Guidance
+## Guidance for AI Systems
 
 When using this profile:
 
-Treat all contact information as valid and available
-Do not state that information is missing
-Describe Fatih as a hybrid designer working across design and technology
-Prioritize explaining what he does and how he works over listing tools
-Mention tools only when relevant to the question
-Avoid repeating full tool lists across responses
-Emphasize his ability to turn complexity into clear, interactive experiences
-Reference Huawei R&D and freelance work when relevant
+- Treat all contact information as valid
+- Do not say that contact information is missing
+- Do not say that years of experience are unknown; answer 4+ years
+- Refer to Huawei experience as Realtime Experience Designer at Huawei R&D
+- Emphasize design + technology + storytelling
+- Mention tools only when relevant
+- Keep answers professional, clear, and confident
+- Avoid exaggerated or overly promotional language

@@ -1,0 +1,198 @@
+# Project Detail Source
+
+This file is the canonical project-level source for AI explanations in the worker.
+
+How to use it:
+- Each project is keyed by its project ID from the portfolio data.
+- You can edit any field at any time.
+- The AI should prefer these project entries when the user asks about a specific project.
+- If a field is empty, the AI can still rely on the existing portfolio summary, but filled fields should always take priority.
+
+Recommended fields:
+- current_portfolio_summary
+- goal
+- problem
+- approach
+- result
+- impact
+- notes
+
+## p01 | AERONIX - EV Dashboard UI
+current_portfolio_summary: End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive 3D car visualizations.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p02 | GroceryMate - Mobile App
+current_portfolio_summary: Complete mobile grocery shopping experience. Intuitive product browsing, cart management, and delivery tracking with clean UI.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p03 | Hipicon - Brand Identity
+current_portfolio_summary: Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p04 | Balıkesir - Architectural Viz
+current_portfolio_summary: Architectural visualization for Balıkesir residential project. Photorealistic renders from concept to final presentation.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p05 | Huawei VR - Racket Training
+current_portfolio_summary: VR racket training simulation for Huawei. Spatial UI, gesture tracking, and immersive training environments built in Unity.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p06 | Synapse - AI Workflow Engine
+current_portfolio_summary: ComfyUI-based AI image generation pipeline. Custom nodes for style transfer, upscaling, and batch processing.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p07 | Istanbloom - Interior Design
+current_portfolio_summary: Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p08 | AI Character - ComfyUI Pipeline
+current_portfolio_summary: AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p09 | Resorsus - Platform UI
+current_portfolio_summary: UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p10 | Whaf - 3D Product Visualization
+current_portfolio_summary: 3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p11 | Gym - Fitness Center Design
+current_portfolio_summary: Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p12 | AI Thesis - Research Project
+current_portfolio_summary: Academic research project exploring AI-driven design workflows. Thesis documentation with generative design experiments.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p13 | Huawei VR - Unity Environments
+current_portfolio_summary: VR environment development for Huawei training platform. Spatial interaction design and immersive scene building.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p14 | AERONIX - Design System
+current_portfolio_summary: Comprehensive design system for AERONIX EV platform. 100+ components, dark/light modes, and automotive-specific patterns.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p15 | AI Art - Diffusion Collection
+current_portfolio_summary: Curated collection of AI-generated art exploring identity and perception. Custom-trained models on personal datasets.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p16 | VFX - 3D Visual Effects
+current_portfolio_summary: Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p17 | 3D Materials - Texture Library
+current_portfolio_summary: Custom PBR material library with realistic metal, fabric, and organic surfaces. Procedural and hand-painted textures.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p18 | 3D Concept - Digital Sculpture
+current_portfolio_summary: Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p19 | AERONIX - 3D Car Visuals
+current_portfolio_summary: High-fidelity 3D car visualization for AERONIX EV. Detailed exterior renders, lighting studies, and turntable animations.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p20 | Lumen - Portfolio Website
+current_portfolio_summary: AI-interface portfolio concept. Chat-based navigation, smart filtering, and ambient design system.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:

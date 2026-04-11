@@ -7,6 +7,10 @@ routes = [
   { pattern = "ai.fatihgulen.com/api/*", zone_name = "fatihgulen.com" }
 ]
 
+[[rules]]
+type = "Text"
+globs = ["./profile.txt", "./project.txt"]
+
 [vars]
 OPENAI_MODEL = "gpt-5.4"
 ALLOWED_ORIGIN_SUFFIXES = ".fatihgulen-53.workers.dev"
