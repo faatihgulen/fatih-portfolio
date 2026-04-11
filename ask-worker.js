@@ -8,7 +8,7 @@
  * - ALLOWED_ORIGIN_SUFFIXES (comma-separated, default: .fatihgulen-53.workers.dev)
  */
 
-import profileMarkdown from "../profile.md";
+import profileMarkdown from "./profile.md";
 
 const ALLOWED_ORIGINS = new Set([
   "https://fatihgulen.com",
@@ -84,7 +84,7 @@ const PROFILE_FACTS = {
   aiTools:
     "AI tools and workflows: Midjourney, Flux, Ideogram, ComfyUI including ControlNet, OpenPose, and LoRA workflows, plus image-to-video tools such as Sora, VEO, and Wan AI.",
   languages:
-    "Languages: English at an advanced level, Turkish native, and German at a basic A2 to B1 level and improving.",
+    "Languages: English at an Fluent level, Turkish native, and German at intermediate B1 level and improving.",
   strengths:
     "Strengths: strong team coordination and collaboration, translating complex ideas into clear visuals, learning new tools quickly, combining design, technology, and storytelling, and being punctual and reliable.",
   industryAlignment:
