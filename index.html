@@ -245,6 +245,15 @@
     opacity: 1;
     transform: translateY(0);
   }
+  .ai-answer-main {
+    display: block;
+  }
+  .ai-answer-main.profile-mode {
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
   .ai-answer-label {
     font-family: var(--font-mono);
     font-size: 0.66rem;
@@ -268,6 +277,68 @@
     font-size: 1.6rem;
     font-weight: 400;
     margin-bottom: 10px;
+  }
+  .ai-profile-panel {
+    display: none;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 4px);
+    background: linear-gradient(180deg, rgba(196, 240, 77, 0.08), rgba(255, 255, 255, 0.02));
+  }
+  .ai-answer-main.profile-mode .ai-profile-panel {
+    display: block;
+  }
+  .ai-profile-image-shell {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 8px);
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+  }
+  .ai-profile-image-shell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .ai-profile-meta {
+    margin-top: 14px;
+  }
+  .ai-profile-name {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .ai-profile-role,
+  .ai-profile-location {
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+  .ai-profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .ai-profile-links a {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 10px;
+    transition: all 0.22s ease;
+  }
+  .ai-profile-links a:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-mid);
+    background: var(--accent-dim);
   }
   .ai-answer-text {
     color: var(--text-primary);
@@ -310,6 +381,14 @@
     border-color: var(--accent-mid);
     color: var(--text-primary);
     background: var(--accent-dim);
+  }
+  @media (max-width: 768px) {
+    .ai-answer-main.profile-mode {
+      grid-template-columns: 1fr;
+    }
+    .ai-profile-panel {
+      max-width: 320px;
+    }
   }
 
   /* --- Response Area --- */
@@ -1270,7 +1349,7 @@
     </button>
     <div class="modal-header">
       <div class="modal-avatar">
-        <img src="images/Fatih_Gulen/1767480367261.webp" alt="Fatih Gulen">
+        <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih Gulen">
       </div>
       <div class="modal-name">Fatih Gulen</div>
       <div class="modal-title">Real-Time Experience Designer</div>
@@ -1436,8 +1515,27 @@
   <section class="ai-answer-container" id="aiAnswerContainer" aria-live="polite" hidden>
     <div class="ai-answer-label">AI Answer</div>
     <p class="ai-asked" id="aiAsked"></p>
-    <h2 class="ai-answer-title" id="aiAnswerHeading" tabindex="-1">Answer</h2>
-    <p class="ai-answer-text" id="aiAnswerText"></p>
+    <div class="ai-answer-main" id="aiAnswerMain">
+      <aside class="ai-profile-panel" id="aiProfilePanel" hidden>
+        <div class="ai-profile-image-shell">
+          <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih G&#252;len" loading="lazy">
+        </div>
+        <div class="ai-profile-meta">
+          <div class="ai-profile-name">Fatih G&#252;len</div>
+          <div class="ai-profile-role">Digital Experience Designer</div>
+          <div class="ai-profile-location">Germany &middot; Frankfurt area</div>
+          <div class="ai-profile-links">
+            <a href="mailto:faatihgulen@gmail.com">Email</a>
+            <a href="tel:+4917637160838">Call</a>
+            <a href="https://www.linkedin.com/in/faatihgulen/" target="_blank" rel="noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </aside>
+      <div class="ai-answer-copy">
+        <h2 class="ai-answer-title" id="aiAnswerHeading" tabindex="-1">Answer</h2>
+        <p class="ai-answer-text" id="aiAnswerText"></p>
+      </div>
+    </div>
     <div class="ai-followups">
       <div class="ai-followups-label">Suggested questions</div>
       <div class="ai-followup-chips" id="aiFollowupChips"></div>
@@ -1826,9 +1924,25 @@ const galleryConfig = {
     'images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp',
     'images/Architecture/BSH/c58faca5-df89-4f49-a727-1c0666711960_rw_1920.webp',
   ],
- // p08: [
-    
- // ],
+ p08: [
+  'images/AI/Character_Comfyui/AnimateDiff_00007.mp4',
+  'images/AI/Character_Comfyui/unit-reference.webp', 
+  'images/AI/Character_Comfyui/ComfyUI_temp_rbsdl_00001_.webp',
+  'images/AI/Character_Comfyui/Assignment-Workflow2_Explanation.jpeg',
+  'images/AI/Character_Comfyui/Deliverables_1.webp',
+  'images/AI/Character_Comfyui/Deliverables_2.webp',
+  'images/AI/Character_Comfyui/Deliverables_3.webp',
+  'images/AI/Character_Comfyui/Deliverables_4.webp',
+  'images/AI/Character_Comfyui/Assignment-Workflow_Explanation.jpeg',
+  'images/AI/Character_Comfyui/Deliverables_5.webp',
+  'images/AI/Character_Comfyui/ChatGPT-Image-14-sub-2026-20_32_29.webp',
+  'images/AI/Character_Comfyui/ChatGPT-Image-14-sub-2026-20_32_32.webp',
+  'images/AI/Character_Comfyui/Assignment-Workflow3_Explanation.jpeg',
+  'images/AI/Character_Comfyui/ChatGPT-Image-14-sub-2026-20_322_29.webp',
+  'images/AI/Character_Comfyui/Gemini_Generated_Image_qrcod7qrcod7qrco.webp',
+  'images/AI/Character_Comfyui/Wan2.2_image_to_video_00001_.mp4',
+  'images/AI/Character_Comfyui/Comp 1_1.mp4',
+ ],
   p09: [
     'images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp',
     'images/UI/Resorsus/28bb304b-afce-4e50-ad74-4b851da333e2_rw_1920.webp',
@@ -2000,6 +2114,11 @@ const projectImageDetails = {
   },
   p02: {
   },
+  p08: {
+    'images/AI/Character_Comfyui/unit-reference.webp': 'In this project, I designed and implemented a complete AI-driven pipeline for creating game-ready character assets and animations. The goal was to explore how generative AI can be integrated into a production workflow to rapidly generate, refine, and animate consistent game characters.',
+    'images/AI/Character_Comfyui/e6a72b21-b680-4f4f-a415-54a16554e6eb.webp': 'To make the character usable for production, I created a full multi-view character sheet. Used ComfyUI with FLUX model. Applied ControlNet (OpenPose) to standardize poses. Generated multiple consistent angles. Applied upscaling and noise reduction. Final manual polish in Photoshop. This step resulted in a clean and consistent dataset, suitable for training and animation workflows.',
+    'images/AI/Character_Comfyui/Gemini_Generated_Image_qrcod7qrcod7qrco.webp': 'For motion creation: Used WAN AI video model inside ComfyUI. Generated animations from start and end frames. Focused on loopable, game-ready motion sequence. The animations were designed to: Maintain character consistency. Avoid deformation and flickering. Be usable directly in game pipeline.',
+  },
   p17: {
   },
 };
@@ -2024,7 +2143,7 @@ const projects = [
   { id:"p05", title:"3D Materials - PBR Material", description:"This material artwork explores a stylized interpretation of a snow-covered, weathered stone path. Designed to emphasize the interplay between natural erosion and human interaction, the piece incorporates intricate surface details such as, bootprints, and scattered leaves. The contrast between snow accumulation and exposed rock highlights the passage of time and movement.", categories:["3d"], tags:["materials","textures","pbr","3d","substance","procedural","library"], tools:["Substance Painter","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Material/2d3133cf-a710-4b19-a40a-87e3d42f7656_rw_1920.webp", year:2025 },
   { id:"p06", title:"Ogut Tarabya - Villa Design ", description:"This project represents a holistic design approach that blends classic touches and, contemporary living requirements with a timeless design language. The spatial layout is shaped around user experience, creating open, balanced, and fluid environments.Beyond aesthetics, the design process prioritizes real-life usage scenarios. Each space is designed not only to be visually compelling but also to provide comfort, clarity, and long-term usability.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Tarabya_Villa/1.png", year:2026 },
   { id:"p07", title:"BSH - Office Interior Design", description:"The BSH office project is a seamless blend of functionality, comfort, and modern aesthetics, designed to foster a dynamic and collaborative work environment. The open-plan workspace is meticulously arranged with ergonomic furniture and warm-toned seating areas, creating a balanced atmosphere that enhances productivity and well-being.", categories:["architecture"], tags:["spatial","architecture","office","BSH","interior"], tools:["Blender"], thumbnail:"ARCH", image:"images/Architecture/BSH/28301583-fd49-4757-a222-8bb93a0fa824_rw_1920.webp", year:2025 },
- // { id:"p08", title:"AI Character - ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"AI", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2025 },
+  { id:"p08", title:"AI Character - ComfyUI Pipeline", description:"AI-assisted character creation pipeline using ComfyUI. Custom workflows for style-consistent character generation and animation.", categories:["ai"], tags:["ai","creative-tool","text-to-image","comfyui","character","FLUX","WanAI"], tools:["ComfyUI","RunPod","Flux","LoRA","WanAI"], thumbnail:"AI", image:"images/AI/Character_Comfyui/Deliverables_1.webp", year:2026 },
   { id:"p09", title:"Resorsus - Platform UI", description:"UI/UX design for Resorsus platform. Clean, modern interface with comprehensive design system and dark theme.", categories:["ui-ux"], tags:["platform","saas","interface","dashboard","web","design","dark-mode"], tools:["Figma","HTML", "CSS"], thumbnail:"UI", image:"images/UI/Resorsus/8e50e9a5-ad79-47a9-8529-8128556506cf_rw_1920.webp", year:2025 },
   { id:"p10", title:"Whaf - 3D Product Visualization", description:"3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.", categories:["3d"], tags:["3d","product","visualization","rendering","blender","materials","ecommerce"], tools:["Cinema4D","Substance Painter","Photoshop","After Effects"], thumbnail:"3D", image:"images/3D/Whaf/image (4).png", year:2022 },
   { id:"p11", title:"Gym - Fitness Center Design", description:"Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.", categories:["architecture",], tags:["gym","fitness","interior","visualization","rendering","archviz","commercial"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Gym/2 (1) (2).webp", year:2022 },
@@ -2428,16 +2547,44 @@ function filterByCategory(catId) { return projects.filter(p=>p.categories.includ
 
 const aiFallbackFollowups = [
   "Who is Fatih?",
-  "What kind of projects are in this portfolio?",
+  "How many years of experience?",
   "Show VR projects",
   "Contact details"
 ];
 const AI_ENDPOINT = (window.AI_ENDPOINT && String(window.AI_ENDPOINT).trim())
   ? String(window.AI_ENDPOINT).trim()
   : "https://fatih-portfolio-ai-proxy.fatihgulen-53.workers.dev/api/ask";
+const AI_HEALTH_ENDPOINT = (window.AI_HEALTH_ENDPOINT && String(window.AI_HEALTH_ENDPOINT).trim())
+  ? String(window.AI_HEALTH_ENDPOINT).trim()
+  : (AI_ENDPOINT === "/api/ask"
+    ? "/api/ask/health"
+    : "");
 const aiUnknownFallback = "I could not find an exact match, but this portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects. I can also guide you to the closest category and show related work.";
 const aiThreshold = 0.58;
 let aiKbCache = null;
+const aiProfileLayoutSignals = {
+  about: ["who is fatih", "about fatih", "tell me about fatih", "fatih profile", "who is he", "about him"],
+  contact: ["contact", "contact details", "email", "e mail", "mail", "linkedin", "phone", "phone number", "how to reach", "reach fatih"]
+};
+const localKbPriorityIntents = new Set();
+const inlinePriorityKb = [
+  {
+    intent: "about_fatih",
+    keywords: ["who is fatih", "about fatih", "tell me about fatih", "fatih profile", "who is he"],
+    responses: [
+      "Fatih Gulen is a Digital Experience Designer based in Germany, in the Frankfurt area. His background combines UI/UX design, real-time and interactive design, 3D visualization, motion design, and AI-assisted creative production."
+    ],
+    followups: ["Contact details", "What tools does he use?", "What roles is he looking for?", "Show VR projects"]
+  },
+  {
+    intent: "contact_info",
+    keywords: ["contact", "contact details", "email", "e mail", "mail", "linkedin", "phone", "phone number", "how to reach", "reach fatih"],
+    responses: [
+      "You can contact Fatih Gulen at faatihgulen@gmail.com, by phone at +49 17637160838, or via LinkedIn at https://www.linkedin.com/in/faatihgulen."
+    ],
+    followups: ["Who is Fatih?", "Where is he based?", "What roles is he looking for?", "What tools does he use?"]
+  }
+];
 
 const turkishCharMap = {
   "ı": "i",
@@ -2461,6 +2608,21 @@ function normalizeQuery(raw) {
   const mapped = lower.replace(/[ışğüöç]/g, ch => turkishCharMap[ch] || ch);
   const noPunctuation = mapped.replace(/[^a-z0-9\s]/g, " ");
   return noPunctuation.replace(/\s+/g, " ").trim();
+}
+
+function shouldUseProfileAnswerLayout(query) {
+  const normalized = normalizeQuery(query);
+  if (!normalized) return false;
+  return aiProfileLayoutSignals.about.some(signal => normalized.includes(signal)) ||
+    aiProfileLayoutSignals.contact.some(signal => normalized.includes(signal));
+}
+
+function syncAiAnswerPresentation(query) {
+  const answerMain = document.getElementById("aiAnswerMain");
+  const profilePanel = document.getElementById("aiProfilePanel");
+  const useProfileLayout = shouldUseProfileAnswerLayout(query);
+  if (answerMain) answerMain.classList.toggle("profile-mode", useProfileLayout);
+  if (profilePanel) profilePanel.hidden = !useProfileLayout;
 }
 
 function tokenize(text) {
@@ -2512,6 +2674,75 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function joinReadableList(items) {
+  const safeItems = (Array.isArray(items) ? items : []).filter(Boolean);
+  if (!safeItems.length) return "";
+  if (safeItems.length === 1) return safeItems[0];
+  if (safeItems.length === 2) return safeItems[0] + " and " + safeItems[1];
+  return safeItems.slice(0, -1).join(", ") + ", and " + safeItems[safeItems.length - 1];
+}
+
+function isProjectBrowseQuery(query, navCategory) {
+  const q = normalizeQuery(query);
+  if (!navCategory || !q) return false;
+  return q.includes("show") ||
+    q.includes("project") ||
+    q.includes("projects") ||
+    q.includes("example") ||
+    q.includes("examples") ||
+    q.includes("work") ||
+    q.includes("works") ||
+    q.includes("portfolio");
+}
+
+function getCategoryBrowseFollowups(catId) {
+  if (catId === "vr-ar") {
+    return ["What tools were used in VR?", "What was done at Huawei R&D?", "Show AI projects", "Contact details"];
+  }
+  if (catId === "ui-ux") {
+    return ["What tools does he use?", "What roles is he looking for?", "Show VR projects", "Contact details"];
+  }
+  if (catId === "ai") {
+    return ["Tell me about AI workflows", "Show VR projects", "What tools does he use?", "Contact details"];
+  }
+  if (catId === "architecture") {
+    return ["What is his education background?", "Show 3D projects", "Show VR projects", "Contact details"];
+  }
+  return aiFallbackFollowups;
+}
+
+function buildCategoryBrowseAnswer(catId) {
+  const matches = filterByCategory(catId);
+  if (!matches.length) return null;
+  const featured = matches.slice(0, 4);
+  const titles = featured.map(p => p.title);
+  const tools = Array.from(new Set(featured.flatMap(p => Array.isArray(p.tools) ? p.tools : []))).slice(0, 5);
+
+  let answer = "";
+  if (catId === "vr-ar") {
+    answer = `VR/AR projects in this portfolio include ${joinReadableList(titles)}. The strongest VR examples are Huawei VR - Racket Training and Huawei VR - Unity Environments, and Gaze Garden - AR Tiktok Project covers the AR side.`;
+  } else if (catId === "ui-ux") {
+    answer = `UI/UX projects in this portfolio include ${joinReadableList(titles)}. They cover dashboards, mobile flows, design systems, and interface-focused product work.`;
+  } else if (catId === "ai") {
+    answer = `AI-related projects in this portfolio include ${joinReadableList(titles)}. They combine generative workflows, research, and AI-assisted creative production.`;
+  } else if (catId === "architecture") {
+    answer = `Architecture projects in this portfolio include ${joinReadableList(titles)}. They focus on visualization, spatial design, and presentation-ready interior work.`;
+  } else if (catId === "3d") {
+    answer = `3D projects in this portfolio include ${joinReadableList(titles)}. They cover visualization, materials, concept work, and real-time presentation assets.`;
+  } else {
+    answer = `${catLabels[catId] || catId} projects in this portfolio include ${joinReadableList(titles)}.`;
+  }
+
+  if (tools.length) {
+    answer += ` Common tools here include ${joinReadableList(tools)}.`;
+  }
+
+  return {
+    answer,
+    followups: getCategoryBrowseFollowups(catId)
+  };
+}
+
 function isGreetingQuery(query) {
   const q = normalizeQuery(query);
   return ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"].includes(q);
@@ -2542,6 +2773,17 @@ function getSiteGroundedAnswer(query) {
     };
   }
 
+  if (
+    q.includes("years of experience") ||
+    q.includes("how many years") ||
+    q.includes("experience years")
+  ) {
+    return {
+      answer: "Fatih has 3+ years of professional experience, especially across game-adjacent, real-time, and interactive production environments, including Huawei R&D and freelance multidisciplinary work.",
+      followups: ["What is his work experience?", "What tools does he use?", "Who is Fatih?", "Contact details"]
+    };
+  }
+
   return {
     answer: aiUnknownFallback,
     followups: aiFallbackFollowups
@@ -2549,31 +2791,67 @@ function getSiteGroundedAnswer(query) {
 }
 
 function getQueryAwareFallback(query, reason) {
+  const q = normalizeQuery(query);
   const navCategory = detectNavigationalCategory(query);
   const matches = searchProjects(query).slice(0, 3);
-  const lead = reason === "rate_limited"
-    ? "The live AI service is temporarily rate-limited."
-    : "I could not reach the live AI service right now.";
+
+  if (
+    q.includes("years of experience") ||
+    q.includes("how many years") ||
+    q.includes("experience years")
+  ) {
+    return {
+      answer: "Fatih has 3+ years of professional experience, especially across game-adjacent, real-time, and interactive production environments, including Huawei R&D and freelance multidisciplinary work.",
+      followups: ["What is his work experience?", "What tools does he use?", "Who is Fatih?", "Contact details"]
+    };
+  }
 
   if (navCategory) {
-    const catName = catLabels[navCategory] || navCategory;
-    const topInCategory = filterByCategory(navCategory).slice(0, 2).map(p => p.title);
-    if (topInCategory.length) {
+    const categoryAnswer = buildCategoryBrowseAnswer(navCategory);
+    if (categoryAnswer) {
       return {
-        answer: `${lead} Based on the portfolio data, the best match is ${catName}. You can start with: ${topInCategory.join(" and ")}.`,
-        followups: ["Show more from this category", "What tools were used?", "Who is Fatih?", "Contact details"]
+        answer: categoryAnswer.answer,
+        followups: categoryAnswer.followups
       };
     }
   }
 
   if (matches.length) {
     return {
-      answer: `${lead} Based on your query, relevant projects include ${matches.map(p => p.title).join(", ")}.`,
+      answer: `Based on your query, relevant projects include ${matches.map(p => p.title).join(", ")}.`,
       followups: ["Show these projects", "Show related categories", "What tools does he use?", "Contact details"]
     };
   }
 
   return getSiteGroundedAnswer(query);
+}
+
+function getLiveAiUnavailableAnswer(reason) {
+  if (reason === "auth_invalid") {
+    return {
+      answer: "The live AI service is currently unavailable because the current OpenAI model or API access is rejecting requests. Please check the Worker's OpenAI project access and try again.",
+      followups: ["Who is Fatih?", "What tools does he use?", "Show VR projects", "Contact details"]
+    };
+  }
+
+  if (reason === "model_unavailable") {
+    return {
+      answer: "The live AI service is currently unavailable because the configured OpenAI model is not available to this API project. Please check the Worker's model setting and project model access.",
+      followups: ["Who is Fatih?", "What tools does he use?", "Show VR projects", "Contact details"]
+    };
+  }
+
+  if (reason === "rate_limited") {
+    return {
+      answer: "The live AI service is temporarily rate-limited. Please try again in a moment.",
+      followups: aiFallbackFollowups
+    };
+  }
+
+  return {
+    answer: "The live AI service is currently unavailable. Please try again shortly.",
+    followups: aiFallbackFollowups
+  };
 }
 
 function matchKbIntent(query, kb) {
@@ -2620,6 +2898,11 @@ function matchKbIntent(query, kb) {
   return best;
 }
 
+function queryHasSignal(normalizedQuery, normalizedSignal) {
+  if (!normalizedQuery || !normalizedSignal) return false;
+  return (` ${normalizedQuery} `).includes(` ${normalizedSignal} `);
+}
+
 function detectNavigationalCategory(query) {
   const normalized = normalizeQuery(query);
   let winner = null;
@@ -2630,7 +2913,7 @@ function detectNavigationalCategory(query) {
     let score = 0;
     signals.forEach(signal => {
       const normalizedSignal = normalizeQuery(signal);
-      if (normalized.includes(normalizedSignal)) score += normalizedSignal.length > 2 ? 2 : 1;
+      if (queryHasSignal(normalized, normalizedSignal)) score += normalizedSignal.length > 2 ? 2 : 1;
     });
     if (score > bestScore) {
       bestScore = score;
@@ -2639,6 +2922,13 @@ function detectNavigationalCategory(query) {
   });
 
   return bestScore > 0 ? winner : null;
+}
+
+function shouldPreferLocalKbMatch(match) {
+  const intent = match && match.entry && typeof match.entry.intent === "string"
+    ? match.entry.intent
+    : "";
+  return localKbPriorityIntents.has(intent);
 }
 
 function revealAnswerContainer() {
@@ -2654,6 +2944,7 @@ function setAnswerLoading(query) {
   const asked = document.getElementById("aiAsked");
   const answerText = document.getElementById("aiAnswerText");
   const followups = document.getElementById("aiFollowupChips");
+  syncAiAnswerPresentation(query);
   if (asked) asked.innerHTML = 'You asked: <strong>' + escapeHtml(query) + "</strong>";
   if (answerText) {
     answerText.classList.add("loading");
@@ -2690,6 +2981,7 @@ function renderFollowups(questions) {
 function renderAiAnswer(query, answer, suggestions) {
   const heading = document.getElementById("aiAnswerHeading");
   const asked = document.getElementById("aiAsked");
+  syncAiAnswerPresentation(query);
   if (asked) asked.innerHTML = 'You asked: <strong>' + escapeHtml(query) + "</strong>";
   typeAnswerText(answer);
   renderFollowups(suggestions);
@@ -2758,6 +3050,14 @@ async function askProxy(query) {
 let aiStatusTimer = null;
 async function refreshAiServiceStatus() {
   try {
+    if (AI_HEALTH_ENDPOINT === "/api/ask/health" || AI_HEALTH_ENDPOINT.endsWith("/api/ask/health")) {
+      const res = await fetch(AI_HEALTH_ENDPOINT, { cache: "no-store" });
+      if (!res.ok) throw new Error("Health request failed");
+      const data = await res.json();
+      setAiServiceStatus(Boolean(data && data.ok));
+      return;
+    }
+
     const ping = await askProxy("__status_ping__");
     const isOnline = Boolean(ping.answer);
     setAiServiceStatus(isOnline);
@@ -2843,40 +3143,71 @@ async function handleQuery() {
     let followups = aiFallbackFollowups;
     let shouldUseLocalFallback = false;
     let fallbackReason = "unavailable";
+    let localKbMatch = null;
+    let preferLocalKb = false;
 
-    try {
-      const proxyResult = await askProxy(query);
-      const proxyAnswer = proxyResult.answer;
-      if (proxyAnswer && !proxyResult.fallback) {
-        answerText = proxyAnswer;
-        followups = aiFallbackFollowups;
-        setAiServiceStatus(true);
-      } else {
-        shouldUseLocalFallback = true;
-        fallbackReason = proxyResult.reason || "unavailable";
-        if (proxyResult.fallback) {
-          console.warn("Worker returned fallback:", {
-            reason: proxyResult.reason || "",
-            upstreamStatus: proxyResult.upstream_status || ""
-          });
-        }
-        setAiServiceStatus(false);
-      }
-    } catch (err) {
-      console.warn("Proxy fallback failed:", err);
-      shouldUseLocalFallback = true;
-      setAiServiceStatus(false);
+    localKbMatch = matchKbIntent(query, inlinePriorityKb);
+    preferLocalKb = shouldPreferLocalKbMatch(localKbMatch);
+    if (preferLocalKb && localKbMatch && localKbMatch.entry && Array.isArray(localKbMatch.entry.responses) && localKbMatch.entry.responses.length) {
+      answerText = pickRandom(localKbMatch.entry.responses);
+      followups = Array.isArray(localKbMatch.entry.followups) && localKbMatch.entry.followups.length
+        ? localKbMatch.entry.followups
+        : aiFallbackFollowups;
     }
 
-    // Use local KB only when Gemini is unavailable/offline.
+    try {
+      if (!localKbMatch) {
+        const kb = await loadAiKb();
+        localKbMatch = matchKbIntent(query, kb);
+      }
+      preferLocalKb = shouldPreferLocalKbMatch(localKbMatch);
+      if (preferLocalKb && localKbMatch && localKbMatch.entry && Array.isArray(localKbMatch.entry.responses) && localKbMatch.entry.responses.length) {
+        answerText = pickRandom(localKbMatch.entry.responses);
+        followups = Array.isArray(localKbMatch.entry.followups) && localKbMatch.entry.followups.length
+          ? localKbMatch.entry.followups
+          : aiFallbackFollowups;
+      }
+    } catch (err) {
+      console.warn("KB preload failed:", err);
+    }
+
+    if (!preferLocalKb) {
+      try {
+        const proxyResult = await askProxy(query);
+        const proxyAnswer = proxyResult.answer;
+        if (proxyAnswer && !proxyResult.fallback) {
+          answerText = proxyAnswer;
+          followups = aiFallbackFollowups;
+          setAiServiceStatus(true);
+        } else {
+          shouldUseLocalFallback = true;
+          fallbackReason = proxyResult.reason || "unavailable";
+          if (proxyResult.fallback) {
+            console.warn("Worker returned fallback:", {
+              reason: proxyResult.reason || "",
+              upstreamStatus: proxyResult.upstream_status || ""
+            });
+          }
+          setAiServiceStatus(false);
+        }
+      } catch (err) {
+        console.warn("Proxy fallback failed:", err);
+        shouldUseLocalFallback = true;
+        setAiServiceStatus(false);
+      }
+    }
+
+    // Use local KB when preferred for profile/contact topics or when live AI is unavailable.
     if (shouldUseLocalFallback) {
       try {
-        const kb = await loadAiKb();
-        const match = matchKbIntent(query, kb);
-        if (match && match.entry && Array.isArray(match.entry.responses) && match.entry.responses.length) {
-          answerText = pickRandom(match.entry.responses);
-          followups = Array.isArray(match.entry.followups) && match.entry.followups.length
-            ? match.entry.followups
+        if (!localKbMatch) {
+          const kb = await loadAiKb();
+          localKbMatch = matchKbIntent(query, kb);
+        }
+        if (localKbMatch && localKbMatch.entry && Array.isArray(localKbMatch.entry.responses) && localKbMatch.entry.responses.length) {
+          answerText = pickRandom(localKbMatch.entry.responses);
+          followups = Array.isArray(localKbMatch.entry.followups) && localKbMatch.entry.followups.length
+            ? localKbMatch.entry.followups
             : aiFallbackFollowups;
         }
       } catch (err) {

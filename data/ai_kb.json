@@ -1,162 +1,182 @@
 [
   {
     "intent": "about_fatih",
-    "keywords": ["who is fatih", "about fatih", "profile", "tell me about fatih"],
+    "keywords": ["who is fatih", "about fatih", "tell me about fatih", "fatih profile", "who is he"],
     "responses": [
-      "Fatih Gulen is a multidisciplinary designer working across UI/UX, 3D, AI workflows, VR/AR experiences, and architectural visualization.",
-      "He combines design thinking with emerging technologies to create immersive and practical digital experiences.",
-      "Fatih's portfolio focuses on cross-disciplinary work that connects product design, 3D, AI, and spatial experiences."
+      "Fatih G\u00fclen is a Digital Experience Designer based in Germany, in the Frankfurt area. His background combines UI/UX design, real-time and interactive design, 3D visualization, motion design, and AI-assisted creative production.",
+      "Fatih G\u00fclen works across design and technology with a hybrid profile that includes UI/UX, immersive interaction, 3D, motion, and AI-supported creative workflows. He focuses on building clear, functional, and visually strong digital experiences.",
+      "Fatih G\u00fclen is a multidisciplinary digital designer focused on interactive systems, data-driven interfaces, and immersive VR/AR experiences. His work bridges design thinking, real-time tools, and emerging AI workflows."
     ],
-    "followups": ["What tools does he use?", "What categories are available?", "Show VR projects", "Contact details"]
-  },
-  {
-    "intent": "experience_years",
-    "keywords": ["years of experience", "how many years of experience", "experience duration"],
-    "responses": [
-      "Based on the provided timeline, experience starts from February 2022, which is about 4 years as of 2026.",
-      "From February 2022 to the present timeline, total experience is roughly 4 years.",
-      "Current profile timeline indicates approximately 4 years of experience (starting 02/2022)."
-    ],
-    "followups": ["What kind of projects are listed?", "Show AI projects", "Show UI/UX projects", "Contact details"]
-  },
-  {
-    "intent": "tools_stack",
-    "keywords": ["what tools does he use", "tools", "tool stack", "software", "technologies"],
-    "responses": [
-      "Common tools in the portfolio include Figma, Blender, Unity, ComfyUI, Python, React, Substance Painter, V-Ray, and Photoshop.",
-      "The project stack combines UI, 3D, AI, and architectural visualization tools.",
-      "Frequent tools include design platforms, 3D pipelines, and AI workflow tools depending on project type."
-    ],
-    "followups": ["Figma projects", "ComfyUI projects", "Show VR projects", "Architecture examples"]
+    "followups": ["Contact details", "What tools does he use?", "What roles is he looking for?", "Show VR projects"]
   },
   {
     "intent": "contact_info",
-    "keywords": ["contact", "contact details", "email", "linkedin", "how to reach"],
+    "keywords": ["contact", "contact details", "email", "e mail", "mail", "linkedin", "phone", "phone number", "how to reach", "reach fatih"],
     "responses": [
-      "You can contact Fatih via email (faatihgulen@gmail.com), LinkedIn (linkedin.com/in/faatihgulen), and the website (fatihgulen.com).",
-      "Available contact channels include Website, LinkedIn, Email, and phone details in the About section.",
-      "The portfolio includes direct contact links in both header/footer and About details."
+      "You can contact Fatih G\u00fclen at faatihgulen@gmail.com, by phone at +49 17637160838, or via LinkedIn at linkedin.com/in/faatihgulen.",
+      "Direct contact options are email: faatihgulen@gmail.com, phone: +49 17637160838, and LinkedIn: https://www.linkedin.com/in/faatihgulen.",
+      "The main contact channels are email, phone, and LinkedIn. Use faatihgulen@gmail.com, +49 17637160838, or linkedin.com/in/faatihgulen."
     ],
-    "followups": ["Who is Fatih?", "Portfolio categories", "Show AI projects", "Show VR projects"]
-  },
-  {
-    "intent": "show_vr_projects",
-    "keywords": ["vr projects", "vr ar", "virtual reality", "huawei vr", "unity vr"],
-    "responses": [
-      "In VR/AR, you can explore projects like Huawei VR - Racket Training and Huawei VR - Unity Environments.",
-      "The VR/AR category includes immersive training and spatial interaction work.",
-      "You can switch to the VR/AR category to view relevant projects quickly."
-    ],
-    "followups": ["Show 3D projects", "What tools were used in VR?", "Show AI projects", "Show Architecture projects"]
-  },
-  {
-    "intent": "show_uiux_projects",
-    "keywords": ["ui ux", "ui projects", "dashboard ui", "interface design", "resorsus", "aeronix ui"],
-    "responses": [
-      "UI/UX highlights include AERONIX, GroceryMate, Hipicon, and Resorsus.",
-      "The UI/UX category features dashboard interfaces, mobile product design, and design system work.",
-      "For interface-focused content, filtering to UI/UX is the best starting point."
-    ],
-    "followups": ["Design system examples", "Mobile app projects", "UI + 3D projects", "Contact details"]
-  },
-  {
-    "intent": "show_3d_projects",
-    "keywords": ["3d projects", "render", "vfx", "materials", "digital sculpture"],
-    "responses": [
-      "The 3D category includes product visualization, materials, VFX, and concept work.",
-      "You can find modeling, rendering, and material-focused projects in the 3D section.",
-      "3D work in this portfolio spans assets, visualization, and effects pipelines."
-    ],
-    "followups": ["Show VFX works", "Show materials projects", "Show Architecture + 3D", "Show AI projects"]
-  },
-  {
-    "intent": "show_ai_projects",
-    "keywords": ["ai projects", "artificial intelligence", "comfyui", "thesis", "generative ai"],
-    "responses": [
-      "AI-focused items include ComfyUI workflows, character generation experiments, and an AI thesis project.",
-      "The AI category showcases generative workflows and research-oriented experiments.",
-      "You can switch to the AI category to view relevant projects directly."
-    ],
-    "followups": ["ComfyUI details", "Thesis project", "VR + AI projects", "What tools does he use?"]
-  },
-  {
-    "intent": "show_architecture_projects",
-    "keywords": ["architecture", "archviz", "interior design", "residential visualization", "villa"],
-    "responses": [
-      "Architecture projects include Balikesir, Istanbloom, and Gym visualization work.",
-      "This category contains residential and interior architectural visualization projects.",
-      "Filter by Architecture to focus on archviz and interior-oriented cases."
-    ],
-    "followups": ["Show 3D works", "Interior-focused examples", "Show UI/UX projects", "Contact details"]
-  },
-  {
-    "intent": "portfolio_scope",
-    "keywords": ["what is in this portfolio", "what categories are available", "categories", "portfolio content"],
-    "responses": [
-      "This portfolio has five main categories: UI/UX, 3D, AI, VR/AR, and Architecture.",
-      "You can browse via category filters or ask in natural language to find relevant projects.",
-      "The portfolio combines product design, technical visualization, and AI-assisted workflows."
-    ],
-    "followups": ["Show UI/UX", "Show VR/AR", "Show AI", "Who is Fatih?"]
-  },
-  {
-    "intent": "location",
-    "keywords": ["where is fatih based", "location", "based in"],
-    "responses": [
-      "According to the portfolio profile text, Fatih is based in Germany.",
-      "Location in the current source data is listed as Germany.",
-      "The About profile indicates Germany as the current base."
-    ],
-    "followups": ["Contact details", "About Fatih", "Show VR projects", "Show UI/UX projects"]
-  },
-  {
-    "intent": "website_links",
-    "keywords": ["website", "portfolio link", "artstation", "linkedin link", "site address"],
-    "responses": [
-      "Primary website: fatihgulen.com. LinkedIn and ArtStation links are also available on the page.",
-      "The portfolio provides website, LinkedIn, and email links in the footer and About section.",
-      "You can use the public links to reach profile and contact channels quickly."
-    ],
-    "followups": ["Contact details", "Who is Fatih?", "Show AI projects", "Show VR projects"]
+    "followups": ["Who is Fatih?", "Where is he based?", "What roles is he looking for?", "What tools does he use?"]
   },
   {
     "intent": "education_background",
-    "keywords": ["education", "which university", "what university", "degree", "master", "bachelor", "school background"],
+    "keywords": ["education", "which university", "what university", "degree", "master", "bachelor", "school background", "study background"],
     "responses": [
-      "Education includes an M.A. in New Media Design at University of Europe for Applied Sciences (Berlin) and a B.A. in Interior Design at Mimar Sinan Fine Arts University (Istanbul).",
-      "Academic background: Master of Arts in New Media Design and Bachelor of Arts in Interior Design.",
-      "He studied New Media Design at master level and Interior Design at bachelor level."
+      "Fatih has a Bachelor's degree in Interior Architecture from Mimar Sinan Fine Arts University in Turkey and a Master's degree in New Media Design from University for Applied Sciences of Europe in Berlin, Germany.",
+      "His academic background combines Interior Architecture at bachelor level with New Media Design at master level.",
+      "Education includes Interior Architecture in Turkey and New Media Design in Berlin, giving him both spatial and digital design foundations."
     ],
-    "followups": ["What is his work experience?", "What tools does he use?", "Show UI/UX projects", "Show VR projects"]
+    "followups": ["What is his professional profile?", "What tools does he use?", "Show Architecture projects", "Show UI/UX projects"]
   },
   {
-    "intent": "ui_experience_detail",
-    "keywords": ["ui experience", "ux experience", "game ui experience", "interface experience", "ui workflow"],
+    "intent": "work_experience",
+    "keywords": ["work experience", "career", "professional background", "huawei", "freelance", "game designer", "work history"],
     "responses": [
-      "UI/UX experience includes designing UX flows, wireframes, and interaction systems for interactive and game-like experiences.",
-      "He builds clean and readable UI layouts, prototypes interfaces in Unreal Engine, and iterates from playtesting feedback.",
-      "UI feature ownership spans concept to polish, with close collaboration across design and development."
+      "Fatih worked as a Realtime Experience Designer at Huawei R&D, where he created 2D and 3D assets for VR experiences, built UI elements and game scenes, and worked with Blender, Figma, and Jira.",
+      "He has over 3 years experience in the industry, including a role at Huawei R&D focused on VR game design and freelance work in VR interor design, motion design, and visual content creation for various clients.",
+      "Professional highlights include real-time and interactive design work at Huawei plus freelance projects spanning immersive environments, visual storytelling, client-facing production, and presentation-ready showcase work."
     ],
-    "followups": ["Which tools are used for UI?", "Show game UI related projects", "Show dashboard projects", "Show VR projects"]
+    "followups": ["What tools does he use?", "Show VR projects", "What are his strengths?", "What roles is he looking for?"]
   },
   {
-    "intent": "work_timeline",
-    "keywords": ["work experience", "career timeline", "freelance", "huawei experience", "professional background"],
+    "intent": "tools_stack",
+    "keywords": ["what tools does he use", "tools", "tool stack", "software", "technologies", "design tools"],
     "responses": [
-      "Professional timeline includes freelance experience design work since 02/2022 and a Huawei Digital Experience Designer role from 09/2023 to 09/2024 in Berlin.",
-      "Experience covers real-time visualization, XR environments, and end-to-end digital pipeline execution.",
-      "Recent roles combine immersive experience design, UI systems, and production-ready real-time optimization."
+      "Core tools include Figma, Adobe Creative Suite, Blender, Maya, 3ds Max, Substance, Unreal Engine with Blueprints and UMG, Unity, and ComfyUI-based AI workflows.",
+      "Fatih's toolkit spans UI design, motion, 3D, real-time engines, offline rendering, and AI-assisted production. That includes Figma, Adobe tools, Blender, Maya, 3ds Max, Substance, Unreal, Unity, and ComfyUI.",
+      "The stack combines design and production tools such as Photoshop, Illustrator, After Effects, Premiere, Figma, Blender, Maya, 3ds Max, Unreal Engine, Unity, real-time and offline rendering pipelines, and AI generation workflows."
     ],
-    "followups": ["What tools does he use?", "Show VR/AR projects", "Show UI/UX projects", "Education details"]
+    "followups": ["Tell me about AI workflows", "Tell me about real-time tools", "What quality level is the work?", "Show VR projects"]
+  },
+  {
+    "intent": "real_time_expertise",
+    "keywords": ["real time", "real-time", "interactive", "unreal engine", "blueprints", "umg", "interactive prototyping", "render pipeline", "offline rendering"],
+    "responses": [
+      "Fatih's real-time and interactive expertise includes Unreal Engine with Blueprints and UMG UI systems, interactive experience prototyping, and real-time plus offline rendering pipelines.",
+      "The profile includes strong hands-on experience with real-time visual production, interface prototyping, Unreal-based interaction work, and presentation-ready interactive experiences.",
+      "Real-time and interactive work is one of the core strengths here, covering Unreal workflows, prototyping, user engagement, and polished visual delivery."
+    ],
+    "followups": ["What quality level is the work?", "Show VR projects", "What tools does he use?", "Tell me about AI workflows"]
+  },
+  {
+    "intent": "ai_workflows",
+    "keywords": ["ai tools", "ai workflow", "comfyui", "controlnet", "openpose", "lora", "midjourney", "flux", "ideogram", "sora", "veo", "wan ai"],
+    "responses": [
+      "AI-assisted creative work includes Midjourney, Flux, Ideogram, ComfyUI with ControlNet, OpenPose, and LoRA workflows, plus image-to-video tools such as Sora, VEO, and Wan AI.",
+      "Fatih uses AI tools for concept generation, workflow building, and creative production. ComfyUI pipelines, ControlNet, OpenPose, LoRA setups, and image-to-video tools are all part of that stack.",
+      "The AI side of the profile focuses on practical creative workflows, from image generation with ComfyUI and model control tools to newer image-to-video systems like Sora, VEO, and Wan AI, often combined with real-time design thinking."
+    ],
+    "followups": ["Show AI projects", "What is his professional profile?", "What tools does he use?", "What roles is he looking for?"]
+  },
+  {
+    "intent": "quality_level",
+    "keywords": ["quality level", "production ready", "production-ready", "aaa", "industry standard", "visual standards", "showcase quality", "adobe substance"],
+    "responses": [
+      "The work reflects high-quality real-time and interactive visual standards, with a level that fits production-ready and AAA-style expectations in presentation quality and pipeline thinking.",
+      "Projects show a polished quality level aligned with industry-style visual standards, including real-time presentation readiness, curated output quality, and strong pipeline awareness.",
+      "The visual level fits well with design showcase culture, real-time communities, and the kind of quality often associated with the Adobe Substance ecosystem."
+    ],
+    "followups": ["Tell me about exhibitions and showcases", "Tell me about real-time tools", "Show 3D projects", "What tools does he use?"]
+  },
+  {
+    "intent": "showcase_exhibition",
+    "keywords": ["showcase", "digital showcase", "exhibition", "interactive installation", "curated digital experiences", "concept exhibition", "presentation ready", "presentation-ready"],
+    "responses": [
+      "Fatih creates work suitable for digital showcases, exhibition environments, interactive installations, and presentation-ready visual experiences.",
+      "The portfolio reflects a strong fit for curated digital collections, concept exhibitions, and visual showcase contexts where storytelling and engagement matter.",
+      "This work is especially well aligned with exhibition-ready and showcase-level outputs, combining visual storytelling, user engagement, and emerging technologies."
+    ],
+    "followups": ["What quality level is the work?", "Tell me about real-time tools", "Show VR projects", "Who is Fatih?"]
   },
   {
     "intent": "languages",
-    "keywords": ["languages", "language skills", "english level", "german level", "turkish"],
+    "keywords": ["languages", "language skills", "english level", "german level", "turkish", "does he speak german"],
     "responses": [
-      "Language profile: German (B1), English (C1), and Turkish (native).",
-      "He works in multilingual settings with English (C1), German (B1), and native Turkish.",
-      "Language skills listed are German B1, English C1, and Turkish Native."
+      "Language profile: English advanced, Turkish native, and German at a basic A2 to B1 level and improving.",
+      "Fatih works with English at an advanced level, Turkish as a native language, and German at a basic improving level.",
+      "Current language skills are advanced English, native Turkish, and basic German in the A2 to B1 range."
     ],
-    "followups": ["Contact details", "Education details", "Work experience", "Show portfolio categories"]
+    "followups": ["Where is he based?", "Contact details", "Who is Fatih?", "What roles is he looking for?"]
+  },
+  {
+    "intent": "strengths",
+    "keywords": ["strengths", "soft skills", "teamwork", "collaboration", "what is he good at", "what are his strengths"],
+    "responses": [
+      "His strengths include strong team coordination, collaboration, translating complex ideas into clear visuals, and adapting quickly to new tools and workflows.",
+      "Fatih is especially strong at combining design, technology, and storytelling while staying reliable, punctual, and easy to collaborate with.",
+      "The profile highlights teamwork, fast learning, visual clarity, adaptability, and the ability to turn complex concepts into understandable experiences."
+    ],
+    "followups": ["What roles is he looking for?", "What is his work experience?", "What tools does he use?", "Who is Fatih?"]
+  },
+  {
+    "intent": "career_focus",
+    "keywords": ["what roles is he looking for", "career focus", "open to work", "looking for roles", "job focus", "what kind of role"],
+    "responses": [
+      "Fatih is actively seeking roles in UI/UX design, product design, real-time and interactive design, and AI-driven creative work.",
+      "Current career focus is on UI/UX, product, interactive, and AI-supported creative roles, especially where design and technology overlap.",
+      "He is especially interested in automotive UI and HMI, data-driven interfaces, AI plus design integration, and digital product experiences."
+    ],
+    "followups": ["What are his strengths?", "What tools does he use?", "Show UI/UX projects", "Contact details"]
+  },
+  {
+    "intent": "location",
+    "keywords": ["where is fatih based", "location", "based in", "frankfurt", "where does he live"],
+    "responses": [
+      "Fatih is based in Germany, in the Frankfurt area.",
+      "Current location is Germany, around Frankfurt.",
+      "He is currently based near Frankfurt in Germany."
+    ],
+    "followups": ["Contact details", "Who is Fatih?", "Languages", "What roles is he looking for?"]
+  },
+  {
+    "intent": "show_vr_projects",
+    "keywords": ["vr projects", "vr ar", "virtual reality", "huawei vr", "unity vr", "immersive environments"],
+    "responses": [
+      "VR and immersive highlights include Huawei VR - Racket Training, which focuses on spatial UI, gesture tracking, and training simulation in Unity, plus Huawei VR - Unity Environments for spatial interaction design and immersive scene building.",
+      "The VR/AR section includes Huawei VR - Racket Training, Huawei VR - Unity Environments, and Gaze Garden - AR Tiktok Project. Together they show immersive interaction, spatial design, and real-time scene development.",
+      "For VR and AR work, the strongest examples are the Huawei VR projects and Gaze Garden. They combine Unity-based immersive development, spatial interaction, and interface thinking for experiential environments."
+    ],
+    "followups": ["What tools were used in VR?", "Show 3D projects", "What is his work experience?", "Contact details"]
+  },
+  {
+    "intent": "show_uiux_projects",
+    "keywords": ["ui ux", "ui projects", "dashboard ui", "interface design", "product design", "hmi", "automotive ui"],
+    "responses": [
+      "UI/UX highlights include AERONIX, GroceryMate, Hipicon, and Resorsus.",
+      "The UI/UX category is a strong match for dashboard interfaces, product thinking, and interface system work.",
+      "For product design, HMI, and interface-focused work, the UI/UX projects are the best place to start."
+    ],
+    "followups": ["Show design system examples", "What tools does he use?", "What roles is he looking for?", "Contact details"]
+  },
+  {
+    "intent": "show_ai_projects",
+    "keywords": ["ai projects", "artificial intelligence", "generative ai", "comfyui projects", "ai workflows"],
+    "responses": [
+      "AI-focused portfolio work includes ComfyUI workflows, AI character pipelines, and the AI thesis project.",
+      "The AI category showcases generative workflows, experiment-driven production, and research-oriented creative exploration.",
+      "If you want to see AI plus design integration, the AI section is the most relevant category."
+    ],
+    "followups": ["Tell me about AI workflows", "Show VR projects", "What tools does he use?", "What roles is he looking for?"]
+  },
+  {
+    "intent": "show_architecture_projects",
+    "keywords": ["architecture", "archviz", "interior design", "vr interior design", "residential visualization", "spatial design"],
+    "responses": [
+      "Architecture-related work includes interior and visualization projects such as Balikesir, Istanbloom, and Gym.",
+      "The architecture side of the portfolio connects Interior Architecture background with visualization and spatial storytelling.",
+      "Architecture and interior-oriented work in this portfolio focuses on residential visualization, spatial design, and presentation quality."
+    ],
+    "followups": ["Show 3D projects", "What is his education background?", "Show VR projects", "Contact details"]
+  },
+  {
+    "intent": "portfolio_scope",
+    "keywords": ["what is in this portfolio", "what categories are available", "categories", "portfolio content", "what kind of projects are here"],
+    "responses": [
+      "This portfolio is organized around UI/UX, 3D, AI, VR/AR, and Architecture.",
+      "The portfolio combines product design, immersive environments, visualization, AI-assisted creative work, and presentation-ready interactive outputs.",
+      "You can browse by category or ask in natural language to find work related to interfaces, real-time scenes, AI workflows, architectural visualization, and showcase-level experiences."
+    ],
+    "followups": ["Who is Fatih?", "Show UI/UX projects", "Show AI projects", "Show VR projects"]
   }
 ]

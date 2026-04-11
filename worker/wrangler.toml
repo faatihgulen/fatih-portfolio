@@ -2,6 +2,14 @@ name = "fatih-portfolio-ai-proxy"
 main = "ask-worker.js"
 compatibility_date = "2025-01-01"
 workers_dev = true
+routes = [
+  { pattern = "ai.fatihgulen.com/api/*", zone_name = "fatihgulen.com" }
+]
+
+[[rules]]
+type = "Text"
+globs = ["../profile.md"]
 
 [vars]
-GEMINI_MODEL = "gemini-1.5-flash"
+OPENAI_MODEL = "gpt-5.4"
+ALLOWED_ORIGIN_SUFFIXES = ".fatihgulen-53.workers.dev"

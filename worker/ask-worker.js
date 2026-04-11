@@ -4,12 +4,16 @@
  * Secrets:
  * - OPENAI_API_KEY
  * Optional vars:
- * - OPENAI_MODEL (default: gpt-4.1-mini)
+ * - OPENAI_MODEL (default: gpt-5.4)
+ * - ALLOWED_ORIGIN_SUFFIXES (comma-separated, default: .fatihgulen-53.workers.dev)
  */
+
+import profileMarkdown from "./profile.md";
 
 const ALLOWED_ORIGINS = new Set([
   "https://fatihgulen.com",
   "https://www.fatihgulen.com",
+  "https://www.linkedin.com/in/faatihgulen",
   "http://localhost:8000",
   "http://localhost:3000",
   "http://localhost:5173",
@@ -17,64 +21,102 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:5500"
 ]);
 
-const ALLOWED_ORIGIN_SUFFIXES = [
-  ".fatihgulen-53.workers.dev",
-  ".pages.dev"
+const DEFAULT_ALLOWED_ORIGIN_SUFFIXES = [
+  ".fatihgulen-53.workers.dev"
 ];
 
-function isAllowedOrigin(origin) {
+function getAllowedOriginSuffixes(env) {
+  const raw = String(env?.ALLOWED_ORIGIN_SUFFIXES || "").trim();
+  if (!raw) return DEFAULT_ALLOWED_ORIGIN_SUFFIXES;
+  return raw
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function isAllowedOrigin(origin, allowedOriginSuffixes = DEFAULT_ALLOWED_ORIGIN_SUFFIXES) {
   if (!origin) return false;
   if (ALLOWED_ORIGINS.has(origin)) return true;
 
   try {
     const { protocol, hostname } = new URL(origin);
     if (protocol !== "https:") return false;
-    return ALLOWED_ORIGIN_SUFFIXES.some((suffix) => hostname.endsWith(suffix));
+    const normalizedHostname = hostname.toLowerCase();
+    return allowedOriginSuffixes.some((suffix) => normalizedHostname.endsWith(suffix));
   } catch {
     return false;
   }
 }
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
-const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_MAX = 60;
 const ipBuckets = new Map();
+const PROFILE_DOCUMENT = String(profileMarkdown || "").trim();
 const PROFILE_FACTS = {
+  identity:
+    "Fatih G\u00fclen is a Digital Experience Designer based in Germany, in the Frankfurt area.",
+  experienceYears:
+    "Experience level: 3+ years of professional experience in game-adjacent and real-time production environments.",
+  contact:
+    "Contact details: Email faatihgulen@gmail.com, phone +49 17637160838, LinkedIn https://www.linkedin.com/in/faatihgulen.",
   education:
-    "Education: M.A. in New Media Design at University of Europe for Applied Sciences (Berlin, Germany), and B.A. in Interior Design at Mimar Sinan Fine Arts University (Istanbul, Turkey).",
+    "Education: Bachelor's degree in Interior Architecture in Turkey, and a Master's degree in New Media Design in Berlin, Germany.",
+  profile:
+    "Professional profile: a hybrid background across UI/UX design, real-time and interactive design, 3D visualization, motion design, and AI-assisted creative production.",
+  focusAreas:
+    "Focus areas: clear, functional, and visually strong digital experiences, especially for interactive systems, data-driven interfaces, and immersive VR/AR environments.",
+  qualityLevel:
+    "Creative quality: developed high-quality real-time and interactive visual experiences aligned with industry-level visual standards, including AAA-style and production-ready pipelines.",
+  showcaseWork:
+    "Showcase and presentation work: created projects suitable for digital showcases, exhibition environments, interactive installations, and presentation-ready visual experiences.",
+  storytelling:
+    "Work qualities: strong visual storytelling, user engagement, and a confident use of emerging technologies, especially AI combined with real-time workflows.",
   experience:
-    "I have over 3 years experience: working as Freelance Experience Designer since 02/2022 (Remote, Germany), and Huawei Digital Experience Designer in Berlin (09/2022 to 09/2023).",
-  uiExperience:
-    "UI/UX experience includes UX flows, wireframes, interaction systems for game-like experiences, clean and readable UI layouts, and in-engine UI prototyping in Unreal Engine. Iterations were driven by playtesting and feedback from 1,200+ user interactions.",
+    "Work experience highlights: worked as a Game Designer at Huawei R&D, created 2D and 3D assets for VR experiences, built UI elements and game scenes, and used Blender, Figma, and Jira in team workflows. Freelance work includes VR interior design, motion design, visual content, and client work across different design fields.",
   tools:
-    "Tools include Substance, After Effects, Photoshop, Maya, Blender, Unity, Unreal Engine, VRED, TouchDesigner, ComfyUI, Alias, 3ds Max, AutoCAD, n8n, Claude, Miro, Jira, Notion, GitHub, and Figma.",
+    "Design and creative tools: Figma, Adobe Creative Suite including Photoshop, Illustrator, After Effects, and Premiere, plus Blender, Maya, 3ds Max, and Substance.",
+  realTime:
+    "Real-time and interactive tools: Unreal Engine with Blueprints and UMG, and Unity at a basic level.",
+  prototyping:
+    "Interactive expertise: interactive experience prototyping, real-time and offline rendering pipelines, and presentation-ready interactive visuals.",
+  vrProjects:
+    "VR and AR project examples in the portfolio: Huawei VR - Racket Training, a Unity-based VR training simulation with spatial UI, gesture tracking, and immersive training environments; Huawei VR - Unity Environments, focused on spatial interaction design and immersive scene building for a Huawei training platform; Gaze Garden - AR Tiktok Project, an AR effect project created for TikTok; and the AI Thesis - Research Project, a hybrid AI and interactive experience built with OpenAI API, Unity, Hanyuan3D, and C#.",
+  aiTools:
+    "AI tools and workflows: Midjourney, Flux, Ideogram, ComfyUI including ControlNet, OpenPose, and LoRA workflows, plus image-to-video tools such as Sora, VEO, and Wan AI.",
   languages:
-    "Languages: German (B1), English (C1), Turkish (Native)."
+    "Languages: English at an Fluent level, Turkish native, and German at intermediate B1 level and improving.",
+  strengths:
+    "Strengths: strong team coordination and collaboration, translating complex ideas into clear visuals, learning new tools quickly, combining design, technology, and storytelling, and being punctual and reliable.",
+  industryAlignment:
+    "Industry alignment: the work quality fits exhibition-ready and curated digital experiences, and aligns with visual standards often associated with the Adobe Substance ecosystem and real-time design communities.",
+  careerFocus:
+    "Career focus: actively seeking roles in UI/UX design, product design, real-time or interactive design, and AI-driven creative work, with strong interest in automotive UI and HMI, data-driven interfaces, AI plus design integration, and digital product experiences."
 };
 const FALLBACK_PATTERNS = [
   {
-    keywords: ["ai", "workflow", "thesis", "huawei", "unity", "vr", "ar"],
+    keywords: ["ai", "workflow", "comfyui", "midjourney", "flux", "ideogram", "sora", "veo", "wan ai"],
     answer:
-      "AI, VR, and AR related portfolio work is available. You can ask about Unity-based immersive projects, AI workflows, or thesis-oriented work."
+      "AI-assisted creative production is part of Fatih's profile. You can ask about ComfyUI workflows, generative image pipelines, image-to-video tools, or AI plus design integration."
   },
   {
-    keywords: ["ui", "ux", "hmi", "dashboard", "interface", "product"],
+    keywords: ["ui", "ux", "hmi", "dashboard", "interface", "product", "automotive"],
     answer:
-      "UI/UX and HMI experience is available in the portfolio. You can ask for dashboard design, product UI cases, or interface system examples."
+      "UI/UX, product design, and HMI are core focus areas. You can ask about dashboard interfaces, automotive UI, data-driven experiences, or interface systems."
   },
   {
-    keywords: ["game", "hud", "game ui", "interaction"],
+    keywords: ["game", "hud", "game ui", "interaction", "unreal", "blueprint", "umg"],
     answer:
-      "Game UI related work is available. You can ask for HUD patterns, interaction design details, and interface examples for gameplay contexts."
+      "Fatih has real-time and interactive design experience, including game-scene work, UI elements, and Unreal-focused workflows. You can ask about VR scenes, interaction design, or interface implementation."
   },
   {
-    keywords: ["visual design", "branding", "brand", "creative direction", "presentation"],
+    keywords: ["visual design", "branding", "brand", "creative direction", "presentation", "motion design", "3d"],
     answer:
-      "Visual design and creative-direction-oriented work is included. You can ask about branding outputs, visual systems, or presentation-oriented design."
+      "Visual design, motion, and 3D visualization are all part of the profile. You can ask about visual storytelling, motion content, or 3D-driven presentation work."
   }
 ];
 
-function corsHeaders(origin) {
-  const isAllowed = isAllowedOrigin(origin);
+function corsHeaders(origin, allowedOriginSuffixes = DEFAULT_ALLOWED_ORIGIN_SUFFIXES) {
+  const isAllowed = isAllowedOrigin(origin, allowedOriginSuffixes);
   if (!isAllowed) return {};
   return {
     "Access-Control-Allow-Origin": origin,
@@ -84,13 +126,13 @@ function corsHeaders(origin) {
   };
 }
 
-function jsonResponse(status, payload, origin) {
+function jsonResponse(status, payload, origin, allowedOriginSuffixes = DEFAULT_ALLOWED_ORIGIN_SUFFIXES) {
   return new Response(JSON.stringify(payload), {
     status,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
-      ...corsHeaders(origin)
+      ...corsHeaders(origin, allowedOriginSuffixes)
     }
   });
 }
@@ -139,6 +181,37 @@ function buildFallbackAnswer(query) {
   const q = normalizeQuery(query);
 
   if (
+    q.includes("contact") ||
+    q.includes("contact details") ||
+    q.includes("email") ||
+    q.includes("mail") ||
+    q.includes("linkedin") ||
+    q.includes("phone") ||
+    q.includes("reach")
+  ) {
+    return `${PROFILE_FACTS.identity} ${PROFILE_FACTS.contact}`;
+  }
+
+  if (
+    q.includes("who is fatih") ||
+    q.includes("about fatih") ||
+    q.includes("tell me about fatih") ||
+    q.includes("fatih profile") ||
+    q === "fatih"
+  ) {
+    return `${PROFILE_FACTS.identity} ${PROFILE_FACTS.profile} ${PROFILE_FACTS.focusAreas} ${PROFILE_FACTS.careerFocus}`;
+  }
+
+  if (
+    q.includes("location") ||
+    q.includes("where is fatih based") ||
+    q.includes("based in") ||
+    q.includes("frankfurt")
+  ) {
+    return PROFILE_FACTS.identity;
+  }
+
+  if (
     q.includes("which university") ||
     q.includes("what university") ||
     q.includes("education") ||
@@ -150,12 +223,49 @@ function buildFallbackAnswer(query) {
   }
 
   if (
+    q.includes("strength") ||
+    q.includes("strengths") ||
+    q.includes("soft skills") ||
+    q.includes("teamwork") ||
+    q.includes("collaboration")
+  ) {
+    return PROFILE_FACTS.strengths;
+  }
+
+  if (
+    q.includes("looking for") ||
+    q.includes("open to work") ||
+    q.includes("career focus") ||
+    q.includes("what roles") ||
+    q.includes("job") ||
+    q.includes("seeking roles")
+  ) {
+    return PROFILE_FACTS.careerFocus;
+  }
+
+  if (
+    q.includes("show vr projects") ||
+    q.includes("vr projects") ||
+    q.includes("vr project") ||
+    q.includes("ar projects") ||
+    q.includes("ar project") ||
+    q.includes("virtual reality") ||
+    q.includes("augmented reality") ||
+    q.includes("immersive environment") ||
+    q.includes("immersive environments")
+  ) {
+    return PROFILE_FACTS.vrProjects;
+  }
+
+  if (
     q.includes("ui experience") ||
     q.includes("ux experience") ||
     q.includes("game ui experience") ||
-    q.includes("interface experience")
+    q.includes("interface experience") ||
+    q.includes("interactive design") ||
+    q.includes("real time")
   ) {
-    return PROFILE_FACTS.uiExperience;
+    return `${PROFILE_FACTS.profile} ${PROFILE_FACTS.focusAreas}`;
   }
 
   if (
@@ -163,7 +273,8 @@ function buildFallbackAnswer(query) {
     q.includes("work history") ||
     q.includes("career") ||
     q.includes("huawei") ||
-    q.includes("freelance")
+    q.includes("freelance") ||
+    q.includes("game designer")
   ) {
     return PROFILE_FACTS.experience;
   }
@@ -173,7 +284,7 @@ function buildFallbackAnswer(query) {
     q.includes("how many years") ||
     q.includes("experience years")
   ) {
-    return "Based on the timeline, experience starts in 02/2022, which is about 4 years as of 2026.";
+    return "Fatih has 3+ years of professional experience, especially across game-adjacent, real-time, and interactive production environments, including Huawei R&D and freelance multidisciplinary work.";
   }
 
   if (
@@ -183,7 +294,7 @@ function buildFallbackAnswer(query) {
     q.includes("hangi arac") ||
     q.includes("hangi program")
   ) {
-    return PROFILE_FACTS.tools;
+    return `${PROFILE_FACTS.tools} ${PROFILE_FACTS.realTime} ${PROFILE_FACTS.aiTools}`;
   }
 
   if (
@@ -222,7 +333,7 @@ async function callOpenAI(model, apiKey, promptText) {
       model,
       input: promptText,
       temperature: 0.25,
-      max_output_tokens: 260
+      max_output_tokens: 360
     })
   });
 }
@@ -236,30 +347,31 @@ export default {
     const url = new URL(request.url);
     const origin = request.headers.get("Origin") || "";
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    const allowedOriginSuffixes = getAllowedOriginSuffixes(env);
 
-    if (origin && !isAllowedOrigin(origin)) {
-      return jsonResponse(403, { error: "Origin not allowed" }, origin);
+    if (origin && !isAllowedOrigin(origin, allowedOriginSuffixes)) {
+      return jsonResponse(403, { error: "Origin not allowed" }, origin, allowedOriginSuffixes);
     }
 
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(origin) });
+      return new Response(null, { status: 204, headers: corsHeaders(origin, allowedOriginSuffixes) });
     }
 
     if (!isAskPath(url.pathname)) {
-      return jsonResponse(404, { error: "Not found" }, origin);
+      return jsonResponse(404, { error: "Not found" }, origin, allowedOriginSuffixes);
     }
 
     if (request.method !== "POST") {
-      return jsonResponse(405, { error: "Method not allowed" }, origin);
+      return jsonResponse(405, { error: "Method not allowed" }, origin, allowedOriginSuffixes);
     }
 
     if (isRateLimited(ip)) {
-      return jsonResponse(429, { error: "Too many requests" }, origin);
+      return jsonResponse(429, { error: "Too many requests" }, origin, allowedOriginSuffixes);
     }
 
     const apiKey = env.OPENAI_API_KEY;
     if (!apiKey) {
-      return jsonResponse(500, { error: "Server is missing OpenAI API configuration." }, origin);
+      return jsonResponse(500, { error: "Server is missing OpenAI API configuration." }, origin, allowedOriginSuffixes);
     }
 
     let query = "";
@@ -267,16 +379,18 @@ export default {
       const body = await request.json();
       query = String(body?.query || "").trim();
     } catch {
-      return jsonResponse(400, { error: "Invalid JSON body" }, origin);
+      return jsonResponse(400, { error: "Invalid JSON body" }, origin, allowedOriginSuffixes);
     }
 
     if (!query) {
-      return jsonResponse(400, { error: "Query is required" }, origin);
+      return jsonResponse(400, { error: "Query is required" }, origin, allowedOriginSuffixes);
     }
+
+    const model = String(env.OPENAI_MODEL || "gpt-5.4").trim();
 
     if (query === "__status_ping__") {
       try {
-        const healthRes = await fetch("https://api.openai.com/v1/models?limit=1", {
+        const healthRes = await fetch(`https://api.openai.com/v1/models/${encodeURIComponent(model)}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${apiKey}`
@@ -287,39 +401,63 @@ export default {
             ? "quota_limited"
             : (healthRes.status === 401 || healthRes.status === 403)
               ? "auth_invalid"
+              : healthRes.status === 404
+                ? "model_unavailable"
               : "upstream_unavailable";
           return jsonResponse(200, {
             answer: "",
             fallback: true,
             reason,
             upstream_status: healthRes.status
-          }, origin);
+          }, origin, allowedOriginSuffixes);
         }
-        return jsonResponse(200, { answer: "ok", fallback: false, reason: "" }, origin);
+        return jsonResponse(200, { answer: "ok", fallback: false, reason: "" }, origin, allowedOriginSuffixes);
       } catch {
         return jsonResponse(200, {
           answer: "",
           fallback: true,
           reason: "upstream_unavailable"
-        }, origin);
+        }, origin, allowedOriginSuffixes);
       }
     }
-
-    const model = String(env.OPENAI_MODEL || "gpt-4.1-mini").trim();
-    const promptText = [
-      "You are the portfolio assistant for fatihgulen.com.",
-      "Answer in the same language as the user query.",
-      "Be concise but specific. Avoid generic marketing phrasing.",
-      "Use only verified facts below. If the user asks outside these facts, say it briefly and offer related portfolio topics.",
-      "Do not invent personal details, project names, dates, or tools.",
-      "",
-      "Verified facts:",
-      `- ${PROFILE_FACTS.education}`,
-      `- ${PROFILE_FACTS.experience}`,
-      `- ${PROFILE_FACTS.uiExperience}`,
-      `- ${PROFILE_FACTS.tools}`,
-      `- ${PROFILE_FACTS.languages}`
-    ].join("\n") + `\n\nUser query: ${query}`;
+  const promptText = [
+    "You are the portfolio assistant for fatihgulen.com.",
+    "Default to English.",
+    "Only answer in another language if the user explicitly asks for that language.",
+    "Be concise but specific. Avoid generic marketing phrasing.",
+    "The source facts below are grounding material. Use them to write a fresh answer in your own words.",
+    "Use the bundled profile document as a primary source for questions about Fatih's background, experience, tools, strengths, contact details, and career focus.",
+    "Use only the source facts below. If the user asks outside these facts, say it briefly and offer related portfolio topics.",
+    "Do not invent personal details, project names, dates, or tools.",
+    "If the user asks about projects in a category, mention the specific project names that appear in the source facts.",
+    "Do not say a project category is missing if the source facts include project examples for it.",
+    "When the user asks who Fatih is or asks for contact details, answer clearly and directly using the verified profile information.",
+    "If the profile document contains the answer, do not say the information is unavailable, unspecified, or unknown.",
+    "",
+    "Source facts:",
+    `- ${PROFILE_FACTS.identity}`,
+    `- ${PROFILE_FACTS.experienceYears}`,
+    `- ${PROFILE_FACTS.contact}`,
+    `- ${PROFILE_FACTS.education}`,
+    `- ${PROFILE_FACTS.profile}`,
+    `- ${PROFILE_FACTS.focusAreas}`,
+    `- ${PROFILE_FACTS.qualityLevel}`,
+    `- ${PROFILE_FACTS.showcaseWork}`,
+    `- ${PROFILE_FACTS.storytelling}`,
+    `- ${PROFILE_FACTS.experience}`,
+    `- ${PROFILE_FACTS.tools}`,
+    `- ${PROFILE_FACTS.realTime}`,
+    `- ${PROFILE_FACTS.prototyping}`,
+    `- ${PROFILE_FACTS.vrProjects}`,
+    `- ${PROFILE_FACTS.aiTools}`,
+    `- ${PROFILE_FACTS.languages}`,
+    `- ${PROFILE_FACTS.strengths}`,
+    `- ${PROFILE_FACTS.industryAlignment}`,
+    `- ${PROFILE_FACTS.careerFocus}`,
+    "",
+    "Profile document:",
+    PROFILE_DOCUMENT
+  ].join("\n") + `\n\nUser query: ${query}`;
 
     try {
       const openaiRes = await callOpenAI(model, apiKey, promptText);
@@ -340,7 +478,7 @@ export default {
           fallback: true,
           reason,
           upstream_status: openaiRes.status
-        }, origin);
+        }, origin, allowedOriginSuffixes);
       }
 
       const openaiJson = raw ? JSON.parse(raw) : {};
@@ -348,10 +486,10 @@ export default {
       if (!answer) {
         return jsonResponse(500, {
           answer: "I could not generate a reliable answer right now. Please try a different question."
-        }, origin);
+        }, origin, allowedOriginSuffixes);
       }
 
-      return jsonResponse(200, { answer }, origin);
+      return jsonResponse(200, { answer }, origin, allowedOriginSuffixes);
     } catch (err) {
       console.log(JSON.stringify({
         event: "openai_exception",
@@ -362,7 +500,7 @@ export default {
         answer: buildFallbackAnswer(query),
         fallback: true,
         reason: "upstream_unavailable"
-      }, origin);
+      }, origin, allowedOriginSuffixes);
     }
   }
 };

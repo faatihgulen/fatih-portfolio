@@ -32,8 +32,8 @@ projectGalleryConfig = {
     'images/UI/AERONIX/ezgif-545218b14e7a7379.gif',
     'images/UI/AERONIX/2.webp',
     'images/UI/AERONIX/Image 1.webp',
-    'images/UI/AERONIX/charge.webp',
-    'images/UI/AERONIX/drive.webp',
+    'images/UI/AERONIX/Charge.webp',
+    'images/UI/AERONIX/Drive.webp',
     'images/UI/AERONIX/Slide 16_9 - 1.webp',
     'images/UI/AERONIX/Slide 16_9 - 2.webp',
     'images/UI/AERONIX/Slide 16_9 - 3.webp',
@@ -221,6 +221,7 @@ async function loadSiteData() {
 
 async function loadQAData() {
   const response = await fetch('/data/qa.json');
+  if (response.status === 404) return null;
   if (!response.ok) throw new Error('Failed to load qa.json: ' + response.status);
   return response.json();
 }
@@ -230,11 +231,14 @@ async function init() {
     // Load both JSON files in parallel
     const [siteResult, qaResult] = await Promise.all([
       loadSiteData(),
-      loadQAData()
+      loadQAData().catch(function(err) {
+        console.warn('Optional qa.json could not be loaded:', err);
+        return null;
+      })
     ]);
 
     siteData = siteResult;
-    qaData = qaResult;
+    qaData = (qaResult && Array.isArray(qaResult.intents)) ? qaResult : null;
 
     // Populate projects from siteData
     projects = siteData.projects || [];
