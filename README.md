@@ -1,2 +1,0 @@
-﻿# Fatih Portfolio
-
