@@ -254,7 +254,7 @@ function buildFallbackAnswer(query) {
     q.includes("immersive environment") ||
     q.includes("immersive environments")
   ) {
-    return "Fatih's VR/AR portfolio includes Huawei VR - Racket Training (a Unity-based VR training with spatial UI and gesture tracking), Huawei VR - Unity Environments (spatial interaction design and immersive scenes), Gaze Garden (an AR TikTok effect project), and the AI Thesis research project combining AI and interactive experiences with Unity and OpenAI.";
+    return "Fatih's portfolio includes broad range of project such as; Huawei VR - Squash (a Unity-based VR training with spatial UI and gesture tracking), Huawei VR - Unity Environments (spatial interaction design and immersive scenes), Gaze Garden (an AR TikTok effect project), and the AI Thesis research project combining AI and interactive experiences with Unity and OpenAI.";
   }
 
   if (
@@ -276,7 +276,7 @@ function buildFallbackAnswer(query) {
     q.includes("freelance") ||
     q.includes("game designer")
   ) {
-    return "Fatih worked as a Game Designer at Huawei R&D, creating 2D and 3D assets for VR experiences, building UI elements and game scenes while using Blender, Figma, and Jira in team workflows. He also has extensive freelance experience in VR interior design, motion design, visual content, and multidisciplinary client work across various design fields.";
+    return "Fatih worked as a Realtime Experience Designer at Huawei R&D, creating 2D and 3D assets for VR experiences, building UI elements and game scenes while using Blender, Figma, and Jira in team workflows. He also has extensive freelance experience in VR interior design, motion design, visual content, and multidisciplinary client work across various design fields.";
   }
 
   if (
