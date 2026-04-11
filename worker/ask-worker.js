@@ -8,7 +8,7 @@
  * - ALLOWED_ORIGIN_SUFFIXES (comma-separated, default: .fatihgulen-53.workers.dev)
  */
 
-import profileMarkdown from "./profile.md";
+import profileMarkdown from "./profile.txt";
 
 const ALLOWED_ORIGINS = new Set([
   "https://fatihgulen.com",
