@@ -189,7 +189,7 @@ function buildFallbackAnswer(query) {
     q.includes("phone") ||
     q.includes("reach")
   ) {
-    return `${PROFILE_FACTS.identity} ${PROFILE_FACTS.contact}`;
+    return "You can reach Fatih at faatihgulen@gmail.com or +49 17637160838. You can also connect with him on LinkedIn at https://www.linkedin.com/in/faatihgulen.";
   }
 
   if (
@@ -199,7 +199,7 @@ function buildFallbackAnswer(query) {
     q.includes("fatih profile") ||
     q === "fatih"
   ) {
-    return `${PROFILE_FACTS.identity} ${PROFILE_FACTS.profile} ${PROFILE_FACTS.focusAreas} ${PROFILE_FACTS.careerFocus}`;
+    return "Fatih Gülen is a Digital Experience Designer based in Frankfurt, Germany, with a hybrid background spanning UI/UX design, real-time interaction, 3D visualization, motion design, and AI-assisted creative production. He transforms complex ideas into clear, functional digital experiences, with strong focus on interactive systems, data-driven interfaces, and immersive VR/AR environments. He is actively seeking roles in product design, real-time systems, and AI-driven creative work.";
   }
 
   if (
@@ -208,7 +208,7 @@ function buildFallbackAnswer(query) {
     q.includes("based in") ||
     q.includes("frankfurt")
   ) {
-    return PROFILE_FACTS.identity;
+    return "Fatih is based in the Frankfurt area of Germany.";
   }
 
   if (
@@ -219,7 +219,7 @@ function buildFallbackAnswer(query) {
     q.includes("hangi universite") ||
     q.includes("hangi okul")
   ) {
-    return PROFILE_FACTS.education;
+    return "Fatih holds a Bachelor's degree in Interior Architecture from Mimar Sinan Fine Arts University in Turkey, and a Master's degree in New Media Design from the University of Europe for Applied Sciences in Berlin.";
   }
 
   if (
@@ -229,7 +229,7 @@ function buildFallbackAnswer(query) {
     q.includes("teamwork") ||
     q.includes("collaboration")
   ) {
-    return PROFILE_FACTS.strengths;
+    return "Fatih excels at strong team coordination and collaboration, translating complex ideas into clear visuals, learning new tools quickly, and combining design, technology, and storytelling. He's known for being punctual and reliable, with a confident approach to emerging technologies like AI integrated with real-time workflows.";
   }
 
   if (
@@ -240,7 +240,7 @@ function buildFallbackAnswer(query) {
     q.includes("job") ||
     q.includes("seeking roles")
   ) {
-    return PROFILE_FACTS.careerFocus;
+    return "Fatih is actively seeking roles in UI/UX design, product design, real-time or interactive design, and AI-driven creative work. He has strong interest in automotive UI and HMI, data-driven interfaces, AI-design integration, and digital product experiences.";
   }
 
   if (
@@ -254,7 +254,7 @@ function buildFallbackAnswer(query) {
     q.includes("immersive environment") ||
     q.includes("immersive environments")
   ) {
-    return PROFILE_FACTS.vrProjects;
+    return "Fatih's VR/AR portfolio includes Huawei VR - Racket Training (a Unity-based VR training with spatial UI and gesture tracking), Huawei VR - Unity Environments (spatial interaction design and immersive scenes), Gaze Garden (an AR TikTok effect project), and the AI Thesis research project combining AI and interactive experiences with Unity and OpenAI.";
   }
 
   if (
@@ -265,7 +265,7 @@ function buildFallbackAnswer(query) {
     q.includes("interactive design") ||
     q.includes("real time")
   ) {
-    return `${PROFILE_FACTS.profile} ${PROFILE_FACTS.focusAreas}`;
+    return "Fatih has deep expertise in UI/UX and interactive design, creating clear, functional, and visually strong digital experiences. His real-time work spans interactive systems, data-driven interfaces, and immersive environments, with a focus on both usability and high-quality visual execution meeting AAA-style production standards.";
   }
 
   if (
@@ -276,7 +276,7 @@ function buildFallbackAnswer(query) {
     q.includes("freelance") ||
     q.includes("game designer")
   ) {
-    return PROFILE_FACTS.experience;
+    return "Fatih worked as a Game Designer at Huawei R&D, creating 2D and 3D assets for VR experiences, building UI elements and game scenes while using Blender, Figma, and Jira in team workflows. He also has extensive freelance experience in VR interior design, motion design, visual content, and multidisciplinary client work across various design fields.";
   }
 
   if (
@@ -284,7 +284,7 @@ function buildFallbackAnswer(query) {
     q.includes("how many years") ||
     q.includes("experience years")
   ) {
-    return "Fatih has 3+ years of professional experience, especially across game-adjacent, real-time, and interactive production environments, including Huawei R&D and freelance multidisciplinary work.";
+    return "Fatih has 3+ years of professional experience, particularly in game-adjacent, real-time, and interactive production environments, including his work at Huawei R&D and diverse freelance projects.";
   }
 
   if (
@@ -294,7 +294,7 @@ function buildFallbackAnswer(query) {
     q.includes("hangi arac") ||
     q.includes("hangi program")
   ) {
-    return `${PROFILE_FACTS.tools} ${PROFILE_FACTS.realTime} ${PROFILE_FACTS.aiTools}`;
+    return "Fatih works with Figma, Adobe Creative Suite (Photoshop, Illustrator, After Effects, Premiere), Blender, Maya, 3ds Max, and Substance for design and creative work. For real-time systems, he uses Unreal Engine with Blueprints and UMG, plus Unity at a foundational level. He's also proficient with AI tools including ComfyUI, Midjourney, Flux, Ideogram, and image-to-video platforms like Sora, VEO, and Wan AI.";
   }
 
   if (
@@ -305,7 +305,7 @@ function buildFallbackAnswer(query) {
     q.includes("german") ||
     q.includes("turkish")
   ) {
-    return PROFILE_FACTS.languages;
+    return "Fatih is fluent in English, speaks Turkish as a native speaker, and has intermediate German at B1 level, which he continues to improve.";
   }
 
   if (q === "hi" || q === "hello" || q === "hey") {
