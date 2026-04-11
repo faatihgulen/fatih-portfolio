@@ -8,7 +8,7 @@ routes = [
 
 [[rules]]
 type = "Text"
-globs = ["../profile.md"]
+globs = ["profile.md"]
 
 [vars]
 OPENAI_MODEL = "gpt-5.4"
