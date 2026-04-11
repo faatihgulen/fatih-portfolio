@@ -1,3 +1,23 @@
+## Writing and Response Guidelines
+
+When generating responses about Fatih:
+
+- Do not list tools by default.
+- Mention tools only if they are directly relevant to the user's question.
+- Avoid repeating the same tool list across multiple responses.
+- Prefer natural, human-like explanations instead of structured lists.
+- Focus on what Fatih does, how he thinks, and how he approaches problems.
+
+When describing his work:
+
+- Start with his role and area of expertise
+- Then explain his approach and strengths
+- Only then mention tools if needed
+
+Avoid ending responses with:
+"If you want, I can group these into categories like UI/UX, 3D, VR/AR, or AI workflows"
+
+Instead, adapt the explanation naturally to the context of the question.
 # Fatih Gulen Profile
 
 This file contains profile information for use as context in an AI agent or OpenAI API workflow.
@@ -81,6 +101,21 @@ Concept thinking and execution
 - Real-time and offline rendering pipelines
 - Unity
 
+## Technical Stack (Reference Only)
+
+Fatih works across UI/UX design, real-time interaction, 3D visualization, and AI-assisted workflows.
+
+His toolkit spans design, 3D production, real-time engines, and generative AI pipelines. He uses Figma and Adobe Creative Suite for design, Blender and related tools for 3D production, Unreal Engine for real-time interactive systems, and ComfyUI-based pipelines for AI-driven content creation.
+
+Important:
+This section is for reference only. Tools should be mentioned selectively and only when relevant to the user's request.
+
+## Response Style
+
+- Keep responses concise and clear
+- Avoid repetitive phrasing
+- Do not sound like a resume or database
+- Adapt tone depending on the context (professional, casual, explanatory)
 ### AI-Driven Production
 
 - Midjourney
