@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(test:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(echo:*)",
+      "Bash(dir:*)",
+      "Bash(node convert-to-webp.js:*)",
+      "Bash(node:*)",
+      "Bash(npm ls:*)"
+    ]
+  }
+}

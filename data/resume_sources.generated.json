@@ -1,0 +1,161 @@
+[
+  {
+    "id": "ai_vrp",
+    "label": "AI_VRP_Fatih",
+    "fileName": "AI_VRP_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\AI_VRP_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 143207,
+    "modifiedAt": "2026-02-18T20:07:22.836Z",
+    "tags": [
+      "ai",
+      "vr",
+      "ar",
+      "unity",
+      "huawei",
+      "thesis"
+    ],
+    "keywords": [
+      "ai",
+      "vr",
+      "ar",
+      "unity",
+      "huawei",
+      "thesis",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  },
+  {
+    "id": "vd_pr",
+    "label": "VD_PR_Fatih",
+    "fileName": "VD_PR_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\VD_PR_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 114149,
+    "modifiedAt": "2026-01-25T23:16:59.569Z",
+    "tags": [
+      "visual design",
+      "branding",
+      "presentation",
+      "portfolio"
+    ],
+    "keywords": [
+      "visual design",
+      "branding",
+      "presentation",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  },
+  {
+    "id": "uiux_hmi",
+    "label": "UIUX_HMI_Fatih",
+    "fileName": "UIUX_HMI_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\UIUX_HMI_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 131146,
+    "modifiedAt": "2026-01-20T10:46:33.232Z",
+    "tags": [
+      "ui",
+      "ux",
+      "hmi",
+      "dashboard",
+      "interface"
+    ],
+    "keywords": [
+      "ui",
+      "ux",
+      "hmi",
+      "dashboard",
+      "interface",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  },
+  {
+    "id": "game_ui",
+    "label": "Game_UI_Fatih",
+    "fileName": "Game_UI_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\Game_UI_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 109665,
+    "modifiedAt": "2026-01-17T23:29:46.986Z",
+    "tags": [
+      "game ui",
+      "hud",
+      "ui",
+      "ux",
+      "interaction"
+    ],
+    "keywords": [
+      "game ui",
+      "hud",
+      "ui",
+      "ux",
+      "interaction",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  },
+  {
+    "id": "ui_vd",
+    "label": "UI_VD_Fatih",
+    "fileName": "UI_VD_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\UI_VD_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 135441,
+    "modifiedAt": "2026-01-17T23:13:49.759Z",
+    "tags": [
+      "ui",
+      "visual design",
+      "design systems",
+      "product"
+    ],
+    "keywords": [
+      "ui",
+      "visual design",
+      "design systems",
+      "product",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  },
+  {
+    "id": "cd_uiux",
+    "label": "CD_UIUX_Fatih",
+    "fileName": "CD_UIUX_Fatih.pdf",
+    "filePath": "C:\\Users\\Casper\\Downloads\\Resumes\\CD_UIUX_Fatih.pdf",
+    "exists": true,
+    "sizeBytes": 288768,
+    "modifiedAt": "2026-01-17T18:46:20.135Z",
+    "tags": [
+      "creative direction",
+      "ui",
+      "ux",
+      "brand",
+      "lead"
+    ],
+    "keywords": [
+      "creative direction",
+      "ui",
+      "ux",
+      "brand",
+      "lead",
+      "portfolio",
+      "projects",
+      "experience",
+      "tools"
+    ]
+  }
+]
