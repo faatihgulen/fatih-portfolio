@@ -778,21 +778,19 @@
   @media (max-width: 768px) {
     .pm-ai-tooltip {
       position: fixed;
-      top: auto;
+      top: 50%;
       left: 50%;
       right: auto;
-      transform: translateX(-50%);
-      bottom: auto;
-      width: calc(100vw - 20px);
-      max-width: 95vw;
+      transform: translate(-50%, -50%);
+      width: 90vw;
+      max-width: calc(100vw - 40px);
       min-width: 0;
       min-height: auto;
       max-height: 60vh;
-      margin: 0;
     }
     .pm-ai-tooltip.expanded {
-      width: calc(100vw - 20px);
-      max-width: 95vw;
+      width: 90vw;
+      max-width: calc(100vw - 40px);
       max-height: 85vh;
     }
     .pm-ai-tooltip-head {
@@ -1182,18 +1180,19 @@
     .suggest-chip { font-size: 0.72rem; padding: 6px 12px; }
     .ai-followup-chip { font-size: 0.74rem; padding: 6px 11px; }
     .pm-ai-tooltip {
-      width: calc(100vw - 16px);
-      max-width: 99vw;
-      bottom: 12px;
-      left: 8px;
-      transform: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      transform: translate(-50%, -50%);
+      width: 88vw;
+      max-width: calc(100vw - 32px);
       max-height: 55vh;
     }
     .pm-ai-tooltip.expanded {
-      width: calc(100vw - 16px);
+      width: 88vw;
+      max-width: calc(100vw - 32px);
       max-height: 80vh;
-      bottom: 8px;
-      left: 8px;
     }
     .pm-ai-tooltip-body {
       max-height: calc(55vh - 50px);
