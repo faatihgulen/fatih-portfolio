@@ -637,6 +637,37 @@
   }
   .pm-close:hover { border-color: var(--text-muted); color: var(--text-primary); transform: rotate(90deg); }
   .pm-close svg { width: 16px; height: 16px; }
+  .pm-ai-wizard {
+    position: absolute; top: 16px; right: 60px; width: 36px; height: 36px;
+    border-radius: 50%; border: 1px solid var(--border); background: rgba(17,17,19,0.8);
+    backdrop-filter: blur(8px); color: #c9a961; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.3s; z-index: 10;
+  }
+  .pm-ai-wizard:hover { 
+    border-color: #d4b896; color: #e8c77d; background: rgba(17,17,19,0.95);
+    transform: scale(1.08);
+  }
+  .pm-ai-wizard svg { width: 16px; height: 16px; }
+  .pm-ai-wizard.loading svg {
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .pm-ai-tooltip {
+    position: absolute; top: 50px; right: -80px; width: 220px;
+    padding: 12px 14px; background: rgba(17,17,19,0.95); border: 1px solid #d4b896;
+    border-radius: 8px; font-size: 0.78rem; color: var(--text-secondary);
+    line-height: 1.5; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    z-index: 11; max-height: 120px; overflow-y: auto;
+  }
+  .pm-ai-tooltip.show { opacity: 1; pointer-events: auto; }
+  .pm-ai-tooltip::before {
+    content: ''; position: absolute; top: -6px; right: 26px;
+    width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
+    border-bottom: 6px solid #d4b896;
+  }
   .pm-hero {
     width: 100%; aspect-ratio: 16/9; background: var(--surface-2); position: relative;
     border-radius: 20px 20px 0 0; overflow: hidden;
@@ -2367,6 +2398,46 @@ function closeStoryPreview() {
   syncProjectImageState();
 }
 
+// --- AI Project Summary ---
+function getProjectSummary() {
+  if (!currentProject) return;
+  const btn = document.getElementById('pmAiWizard');
+  const tooltip = document.getElementById('pmAiTooltip');
+  
+  if (!btn || !tooltip) return;
+  
+  btn.classList.add('loading');
+  tooltip.textContent = 'Summarizing...';
+  tooltip.classList.add('show');
+  
+  const projectInfo = `Project: ${currentProject.title}
+Description: ${currentProject.description}
+Categories: ${currentProject.categories.map(c => catLabels[c] || c).join(', ')}
+Tools: ${currentProject.tools.join(', ')}
+Year: ${currentProject.year || 'N/A'}`;
+
+  fetch('https://fatihgulen-53.workers.dev/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `Provide a concise 1-2 sentence AI-generated summary of this portfolio project that highlights its key innovation and creative value: ${projectInfo}`
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    btn.classList.remove('loading');
+    const summary = data.answer || data.fallback || 'Unable to generate summary';
+    tooltip.textContent = summary;
+    tooltip.classList.add('show');
+  })
+  .catch(err => {
+    btn.classList.remove('loading');
+    tooltip.textContent = 'Summary not available';
+    tooltip.classList.add('show');
+    console.error('AI summary error:', err);
+  });
+}
+
 function renderProjectModal(p) {
   const embedCfg = projectEmbeds[p.id] || null;
   const useEmbedAsCover = !!(embedCfg && embedCfg.useAsCover);
@@ -2378,6 +2449,13 @@ function renderProjectModal(p) {
   const nextTitle = currentFilteredProjects[nextIdx]?.title.split(' - ')[0].trim() || '';
 
   document.getElementById('projectModalContent').innerHTML = `
+    <button class="pm-ai-wizard" id="pmAiWizard" onclick="getProjectSummary()" title="Summarize with AI">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 4V2m0 2a13 13 0 0 1 8.854 8.854M9 9h6m0 0h6m-6 0V3m0 6a13 13 0 0 0-8.854 8.854"/>
+        <circle cx="12" cy="12" r="9"/>
+      </svg>
+      <div class="pm-ai-tooltip" id="pmAiTooltip"></div>
+    </button>
     <button class="pm-close" onclick="closeProject()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
