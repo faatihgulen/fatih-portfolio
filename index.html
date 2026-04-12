@@ -157,22 +157,32 @@
   }
   .cat-pill {
     font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em;
-    text-transform: uppercase; padding: 10px 20px; border: 1px solid var(--border);
-    border-radius: 100px; background: transparent; color: var(--text-secondary);
+    text-transform: uppercase; padding: 10px 20px; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px; background: rgba(255,255,255,0.03); color: var(--text-primary);
     cursor: pointer; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative; overflow: hidden;
+    position: relative; overflow: hidden; font-weight: 500;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
   }
   .cat-pill::before {
     content: ''; position: absolute; inset: 0; background: var(--accent);
     opacity: 0; transition: opacity 0.35s; border-radius: 100px;
   }
   .cat-pill:hover {
-    border-color: var(--accent); color: var(--text-primary);
-    transform: translateY(-2px); box-shadow: 0 4px 20px var(--accent-dim);
+    border-color: var(--accent-mid); color: var(--text-primary);
+    transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.22), 0 4px 20px var(--accent-dim);
   }
-  .cat-pill:hover::before { opacity: 0.06; }
-  .cat-pill.active { border-color: var(--accent); color: var(--bg); background: var(--accent); }
-  .cat-pill .pill-count { margin-left: 6px; opacity: 0.5; font-size: 0.6rem; }
+  .cat-pill:hover::before { opacity: 0.1; }
+  .cat-pill:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(196,240,77,0.18), 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .cat-pill:active { transform: translateY(0) scale(0.985); }
+  .cat-pill.active {
+    border-color: var(--accent); color: var(--bg); background: var(--accent);
+    box-shadow: 0 10px 24px rgba(196,240,77,0.24);
+  }
+  .cat-pill .pill-count { margin-left: 6px; opacity: 0.82; font-size: 0.6rem; }
 
   /* --- Chat Input --- */
   .chat-input-wrap {
@@ -193,13 +203,29 @@
   }
   .chat-submit {
     position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    width: 36px; height: 36px; border-radius: var(--radius-sm); border: none;
-    background: var(--accent); color: var(--bg); cursor: pointer;
+    width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.12);
+    background: linear-gradient(180deg, rgba(40,40,46,0.96), rgba(24,24,27,0.96)); color: var(--text-secondary); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.25s; opacity: 0.4;
+    transition: all 0.25s;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.22);
   }
-  .chat-submit.active { opacity: 1; }
-  .chat-submit:hover { transform: translateY(-50%) scale(1.05); }
+  .chat-submit.active {
+    border-color: rgba(196,240,77,0.35);
+    background: linear-gradient(180deg, #d2f766 0%, #b8e23e 100%);
+    color: #060607;
+    box-shadow: 0 10px 26px rgba(196,240,77,0.28);
+  }
+  .chat-submit:hover {
+    transform: translateY(-50%) scale(1.05);
+    color: var(--text-primary);
+    border-color: var(--accent-mid);
+  }
+  .chat-submit.active:hover { color: #060607; }
+  .chat-submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(196,240,77,0.18), 0 10px 26px rgba(196,240,77,0.24);
+  }
+  .chat-submit:active { transform: translateY(-50%) scale(0.97); }
   .chat-submit svg { width: 16px; height: 16px; }
 
   /* --- Suggested Prompts --- */
@@ -208,13 +234,22 @@
     flex-wrap: wrap; animation: fadeUp 1s ease-out 0.6s both;
   }
   .suggest-chip {
-    font-family: var(--font-body); font-size: 0.85rem; color: var(--text-muted);
-    padding: 8px 16px; border: 1px solid var(--border); border-radius: 100px;
-    background: transparent; cursor: pointer; transition: all 0.3s; white-space: nowrap;
+    font-family: var(--font-body); font-size: 0.85rem; color: var(--text-primary);
+    padding: 8px 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 100px;
+    background: rgba(255,255,255,0.035); cursor: pointer; transition: all 0.3s; white-space: nowrap;
+    font-weight: 400;
   }
   .suggest-chip:hover {
-    color: var(--text-secondary); border-color: var(--border-hover); background: var(--surface);
+    color: var(--text-primary); border-color: var(--accent-mid); background: rgba(196,240,77,0.08);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
   }
+  .suggest-chip:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(196,240,77,0.15);
+  }
+  .suggest-chip:active { transform: translateY(0) scale(0.985); }
 
   /* --- AI Answer Container --- */
   .ai-answer-container {
@@ -358,20 +393,29 @@
     gap: 8px;
   }
   .ai-followup-chip {
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-secondary);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-primary);
     border-radius: 100px;
     padding: 7px 13px;
     font-size: 0.82rem;
     cursor: pointer;
     transition: all 0.22s ease;
+    font-weight: 400;
   }
   .ai-followup-chip:hover {
     border-color: var(--accent-mid);
     color: var(--text-primary);
-    background: var(--accent-dim);
+    background: rgba(196,240,77,0.08);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.18);
   }
+  .ai-followup-chip:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(196,240,77,0.14);
+  }
+  .ai-followup-chip:active { transform: translateY(0) scale(0.985); }
   @media (max-width: 768px) {
     .ai-answer-main.profile-mode {
       grid-template-columns: 1fr;
@@ -628,16 +672,21 @@
   .pm-close:hover { border-color: var(--text-muted); color: var(--text-primary); transform: rotate(90deg); }
   .pm-close svg { width: 16px; height: 16px; }
   .pm-ai-wrap {
-    position: absolute; top: 16px; left: 16px; z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 18px 0 22px;
   }
   .pm-ai-wizard {
-    position: relative; min-height: 44px; padding: 0 14px 0 12px;
-    border: none; border-radius: 999px; background: transparent;
+    position: relative; min-height: 52px; width: 100%; padding: 0 18px 0 14px;
+    border: none; border-radius: 18px; background: transparent;
     backdrop-filter: blur(10px); color: var(--text-primary); cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-    transition: all 0.3s; z-index: 10;
+    display: inline-flex; align-items: center; justify-content: flex-start; gap: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    z-index: 1;
     box-shadow: 0 10px 30px rgba(0,0,0,0.24);
     overflow: hidden; isolation: isolate;
+    text-align: left;
   }
   .pm-ai-wizard > * { position: relative; z-index: 2; }
   .pm-ai-wizard::before {
@@ -692,7 +741,7 @@
   .pm-ai-icon svg { width: 15px; height: 15px; }
   .pm-ai-label {
     font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--text-primary); white-space: nowrap;
+    text-transform: uppercase; color: var(--text-primary); white-space: normal;
     text-shadow: 0 0 16px rgba(196,240,77,0.10);
   }
   .pm-ai-wizard.loading .pm-ai-icon svg {
@@ -713,41 +762,43 @@
     }
   }
   .pm-ai-tooltip {
-    position: absolute; top: 50px; left: 0;
-    width: clamp(280px, 32vw, 360px);
-    min-width: 280px;
-    max-width: min(560px, calc(100vw - 40px));
-    min-height: 140px;
-    background: rgba(17,17,19,0.95); border: 1px solid #d4b896;
-    border-radius: 8px; font-size: 0.78rem; color: var(--text-secondary);
-    line-height: 1.5; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    z-index: 12; max-height: min(70vh, 520px); overflow: hidden;
-    box-shadow: 0 18px 48px rgba(0,0,0,0.34);
-    overscroll-behavior: contain; user-select: text;
-    display: flex; flex-direction: column;
+    position: relative;
+    display: none;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    background: linear-gradient(180deg, rgba(20,20,23,0.98), rgba(15,15,17,0.96));
+    border: 1px solid rgba(212,184,150,0.24);
+    border-radius: 18px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    overflow: hidden;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.24);
+    overscroll-behavior: contain;
+    user-select: text;
+    flex-direction: column;
   }
-  .pm-ai-tooltip.show { opacity: 1; pointer-events: auto; }
-  .pm-ai-tooltip.expanded {
-    width: min(620px, calc(100vw - 40px));
-    max-height: min(78vh, 720px);
-  }
+  .pm-ai-tooltip.show { display: flex; }
   .pm-ai-tooltip::-webkit-scrollbar { width: 6px; height: 6px; }
   .pm-ai-tooltip::-webkit-scrollbar-thumb {
     background: rgba(196,240,77,0.28);
     border-radius: 999px;
   }
   .pm-ai-tooltip-head {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding: 12px 14px 10px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    padding: 16px 18px 12px;
     border-bottom: 1px solid rgba(212,184,150,0.18);
     background: linear-gradient(135deg, rgba(196,240,77,0.08), rgba(17,17,19,0.0));
+    flex-wrap: wrap;
   }
   .pm-ai-tooltip-title {
-    font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.12em;
+    font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.12em;
     text-transform: uppercase; color: #e8c77d;
   }
   .pm-ai-tooltip-actions {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px; margin-left: auto;
   }
   .pm-ai-tooltip-action {
     width: 30px; height: 30px; border-radius: 8px;
@@ -762,66 +813,108 @@
   }
   .pm-ai-tooltip-action svg { width: 15px; height: 15px; }
   .pm-ai-tooltip-body {
-    padding: 14px;
+    padding: 18px;
     overflow: auto;
-    max-height: calc(min(70vh, 520px) - 54px);
-    white-space: pre-line;
+    max-height: 18rem;
+    white-space: normal;
+    font-size: clamp(0.95rem, 0.92rem + 0.28vw, 1.02rem);
+    line-height: 1.85;
   }
   .pm-ai-tooltip.expanded .pm-ai-tooltip-body {
-    max-height: calc(min(78vh, 720px) - 54px);
+    max-height: 32rem;
   }
   .pm-ai-tooltip::before {
-    content: ''; position: absolute; top: -6px; left: 24px;
-    width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
-    border-bottom: 6px solid #d4b896;
+    content: none;
+  }
+  .pm-ai-tooltip-status {
+    color: var(--text-secondary);
+  }
+  .pm-ai-summary-plain,
+  .pm-ai-summary-copy {
+    color: var(--text-primary);
+  }
+  .pm-ai-summary-plain p,
+  .pm-ai-summary-copy p,
+  .pm-ai-tooltip-intro p {
+    margin: 0;
+  }
+  .pm-ai-summary-plain p + p,
+  .pm-ai-summary-copy p + p,
+  .pm-ai-tooltip-intro p + p {
+    margin-top: 0.85em;
+  }
+  .pm-ai-tooltip-intro {
+    margin-bottom: 14px;
+    color: var(--text-secondary);
+  }
+  .pm-ai-summary-grid {
+    display: grid;
+    gap: 12px;
+  }
+  .pm-ai-summary-section {
+    padding: 14px 15px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  }
+  .pm-ai-summary-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  @media (min-width: 769px) {
+    .pm-ai-wrap {
+      margin: 20px 0 24px;
+    }
+    .pm-ai-wizard {
+      width: min(100%, 260px);
+      max-width: 260px;
+      align-self: flex-start;
+    }
+    .pm-ai-tooltip-body {
+      max-height: 22rem;
+    }
+    .pm-ai-tooltip.expanded .pm-ai-tooltip-body {
+      max-height: 36rem;
+    }
+    .pm-ai-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   @media (max-width: 768px) {
-    .pm-ai-tooltip {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      right: auto;
-      transform: translate(-50%, -50%);
-      width: 90vw;
-      max-width: calc(100vw - 40px);
-      min-width: 0;
-      min-height: auto;
-      max-height: 60vh;
+    .pm-ai-wizard {
+      min-height: 50px;
+      padding-right: 16px;
     }
-    .pm-ai-tooltip.expanded {
-      width: 90vw;
-      max-width: calc(100vw - 40px);
-      max-height: 85vh;
+    .pm-ai-icon {
+      width: 24px;
+      height: 24px;
+    }
+    .pm-ai-label {
+      font-size: 0.64rem;
     }
     .pm-ai-tooltip-head {
-      padding: 12px;
-      flex-shrink: 0;
-    }
-    .pm-ai-tooltip-title {
-      font-size: 0.56rem;
+      padding: 14px 15px 10px;
     }
     .pm-ai-tooltip-actions {
       gap: 6px;
     }
     .pm-ai-tooltip-action {
-      width: 28px;
-      height: 28px;
-      font-size: 0.75rem;
+      width: 30px;
+      height: 30px;
     }
     .pm-ai-tooltip-body {
-      padding: 12px;
-      max-height: calc(60vh - 50px);
-      font-size: 0.75rem;
-      line-height: 1.4;
+      padding: 15px;
+      max-height: 16rem;
       word-wrap: break-word;
       overflow-wrap: break-word;
       hyphens: auto;
     }
     .pm-ai-tooltip.expanded .pm-ai-tooltip-body {
-      max-height: calc(85vh - 50px);
-    }
-    .pm-ai-tooltip::before {
-      display: none;
+      max-height: 28rem;
     }
   }
   .pm-hero {
@@ -1179,28 +1272,12 @@
     .cat-pill { padding: 8px 14px; font-size: 0.65rem; }
     .suggest-chip { font-size: 0.72rem; padding: 6px 12px; }
     .ai-followup-chip { font-size: 0.74rem; padding: 6px 11px; }
-    .pm-ai-tooltip {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      right: auto;
-      transform: translate(-50%, -50%);
-      width: 88vw;
-      max-width: calc(100vw - 32px);
-      max-height: 55vh;
-    }
-    .pm-ai-tooltip.expanded {
-      width: 88vw;
-      max-width: calc(100vw - 32px);
-      max-height: 80vh;
-    }
+    .pm-ai-wizard { padding: 0 14px 0 12px; }
     .pm-ai-tooltip-body {
-      max-height: calc(55vh - 50px);
-      font-size: 0.7rem;
+      font-size: 0.94rem;
+      line-height: 1.78;
     }
-    .pm-ai-tooltip.expanded .pm-ai-tooltip-body {
-      max-height: calc(80vh - 50px);
-    }
+    .pm-ai-summary-section { padding: 13px 14px; }
   }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1432,6 +1509,9 @@
     width: 360px; max-width: calc(100vw - 40px);
     background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
     overflow: hidden;
+    max-height: calc(100vh - 28px);
+    display: flex;
+    flex-direction: column;
     opacity: 0; pointer-events: none;
     transform: translateY(20px) scale(0.95);
     transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -1472,7 +1552,7 @@
   }
   .tour-dialog-close:hover { border-color: var(--text-muted); color: var(--text-primary); transform: rotate(90deg); }
   .tour-dialog-close svg { width: 14px; height: 14px; }
-  .tour-dialog-body { padding: 16px 20px; }
+  .tour-dialog-body { padding: 16px 20px; overflow: auto; }
   .tour-step-indicator {
     display: flex; gap: 6px; margin-bottom: 14px;
   }
@@ -1698,11 +1778,11 @@
   </div>
 
   <div class="categories" id="categories">
-    <button class="cat-pill" data-cat="ui-ux" onclick="filterCategory(this)">UI / UX <span class="pill-count">9</span></button>
-    <button class="cat-pill" data-cat="3d" onclick="filterCategory(this)">3D <span class="pill-count">9</span></button>
-    <button class="cat-pill" data-cat="ai" onclick="filterCategory(this)">AI <span class="pill-count">4</span></button>
-    <button class="cat-pill" data-cat="vr-ar" onclick="filterCategory(this)">VR / AR <span class="pill-count">2</span></button>
-    <button class="cat-pill" data-cat="architecture" onclick="filterCategory(this)">Architecture <span class="pill-count">3</span></button>
+    <button class="cat-pill" data-cat="ui-ux" onclick="filterCategory(this)">UI / UX <span class="pill-count">0</span></button>
+    <button class="cat-pill" data-cat="3d" onclick="filterCategory(this)">3D <span class="pill-count">0</span></button>
+    <button class="cat-pill" data-cat="ai" onclick="filterCategory(this)">AI <span class="pill-count">0</span></button>
+    <button class="cat-pill" data-cat="vr-ar" onclick="filterCategory(this)">VR / AR <span class="pill-count">0</span></button>
+    <button class="cat-pill" data-cat="architecture" onclick="filterCategory(this)">Architecture <span class="pill-count">0</span></button>
   </div>
 
   <div class="chat-input-wrap">
@@ -2209,15 +2289,15 @@ const galleryConfig = {
     'images/Architecture/Istanbloom/ff3 (1).webp',
     'images/Architecture/Istanbloom/Banyo (2).webp',
   ],
-  p15: [
+  p16: [
     'images/3D/3D Badge Design/512x512_Frontside.png',
     'images/3D/3D Badge Design/512x512_backside.png',
 ],
-p16: [
+  p17: [
     'images/VR/GazeGarden/Sequence 01_2.mp4',
     'images/VR/GazeGarden/PHOTO-2024-06-18-17-28-53.jpg',
 ],
-  p17: [
+  p15: [
     'images/VR/Huawei/4.webp',
     'images/VR/Huawei/3.webp',
     'images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp',
@@ -2364,11 +2444,11 @@ const projects = [
   { id:"p10", title:"Whaf - 3D Product Visualization", description:"3D product visualization and rendering for Whaf. High-fidelity models with realistic materials and lighting.", categories:["3d"], tags:["3d","product","visualization","rendering","blender","materials","ecommerce"], tools:["Cinema4D","Substance Painter","Photoshop","After Effects"], thumbnail:"3D", image:"images/3D/Whaf/image (4).png", year:2022 },
   { id:"p11", title:"Gym - Fitness Center Design", description:"Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.", categories:["architecture",], tags:["gym","fitness","interior","visualization","rendering","archviz","commercial"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Gym/2 (1) (2).webp", year:2022 },
   { id:"p12", title:"AI Thesis - Research Project", description:"The project aims to provide integrated innovative preferences that can enhance the gaming experience and benefit the user with advancing technologies, based theoretically on the historical development of in-game user preferences. This will provide users with the opportunity to build the game, making them a part of the design process, ensuring the production of an endless experience. This game leverages the capabilities of the AI, which allows players to create and customize their canvases through their prompt, offering a unique interactive experience.", categories:["ai","vr-ar"], tags:["ai","research","thesis","generative","automation","academic","design"], tools:["OpenAI - API","Unity","Hanyuan3D","C#"], thumbnail:"AI", image:"images/AI/Thesis/1 (1).webp", year:2024 },
-  { id:"p13", title:"Dollvet  - Villa-Office Design", description:"The building was completely designed using 3DsMax and imported into Unreal Engine to allow the client to see every detail of the building giving options to change the colors, objects, and lightnings depending on the needs.", categories:["architecture","ar-vr"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["V-Ray","VR","3DsMax","Unreal Engine"], thumbnail:"ARCH", image:"images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp", year:2022 },
+  { id:"p13", title:"Dollvet  - Villa-Office Design", description:"The building was completely designed using 3DsMax and imported into Unreal Engine to allow the client to see every detail of the building giving options to change the colors, objects, and lightnings depending on the needs.", categories:["architecture","vr-ar"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["V-Ray","VR","3DsMax","Unreal Engine"], thumbnail:"ARCH", image:"images/Architecture/Dollvet/12d667ec-bc78-4b14-8324-ac10d6783e76_rw_1920.webp", year:2022 },
   { id:"p14", title:"Istanbloom - Interior Design", description:"Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.", categories:["architecture"], tags:["interior","residential","visualization","rendering","archviz","istanbul"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Istanbloom/ff1 (1).webp", year:2021 },
-  { id:"p15", title:"3D Badge Design - Token", description:"3D badge asset represents intelligence, focus, and mastery. The glowing brain icon symbolizes sharp thinking and deep knowledge. Players earn this badge by correctly answering a high number of questions, proving their expertise and consistent performance. It highlights achievement, accuracy, and cognitive excellence within the game. ", categories:["3d"], tags:["3D","Game","visualization","asset","stylized"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"Game", image:"images/3D/3D Badge Design/512x512_Frontside.png", year:2025 },
-  { id:"p16", title:"Gaze Garden - AR Tiktok Project", description:"This AR Project Was created using TikTok Effect House for TikTok effects. You can try it by scanning the QR code on the TikTok app.", categories:["vr-ar"], tags:["immersive","media design","tiktok","berlin"], tools:["Tiktok Studio","AR","image tracking"], thumbnail:"AR", image:"images/VR/GazeGarden/PHOTO-2024-06-18-17-28-53.jpg", year:2024 },
-  { id:"p17", title:"Huawei VR - VR Game Projects", description:"VR Game Prototyping (Huawei R&D), I handle the full production pipeline from concept to final engine integration. I work with both real-time and pre-rendered projects, ensuring visual quality, technical efficiency, and creative consistency.", categories:["vr-ar","3d","ui-ux"], tags:["vr","training","unity","immersive","spatial-ui","hand-tracking","huawei"], tools:["Unity","C#","VR","Blender"], thumbnail:"VR", image:"images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp", year:2023 },
+  { id:"p15", title:"Huawei VR - VR Game Projects", description:"VR Game Prototyping (Huawei R&D), I handle the full production pipeline from concept to final engine integration. I work with both real-time and pre-rendered projects, ensuring visual quality, technical efficiency, and creative consistency.", categories:["vr-ar","3d","ui-ux"], tags:["vr","training","unity","immersive","spatial-ui","hand-tracking","huawei"], tools:["Unity","C#","VR","Blender"], thumbnail:"VR", image:"images/VR/Huawei/757b462a-61b6-452c-ae8d-ae7df9baddd0.webp", year:2023 },
+  { id:"p16", title:"3D Badge Design - Token", description:"3D badge asset represents intelligence, focus, and mastery. The glowing brain icon symbolizes sharp thinking and deep knowledge. Players earn this badge by correctly answering a high number of questions, proving their expertise and consistent performance. It highlights achievement, accuracy, and cognitive excellence within the game. ", categories:["3d"], tags:["3D","Game","visualization","asset","stylized"], tools:["3ds Max","V-Ray","Photoshop"], thumbnail:"Game", image:"images/3D/3D Badge Design/512x512_Frontside.png", year:2025 },
+  { id:"p17", title:"Gaze Garden - AR Tiktok Project", description:"This AR Project Was created using TikTok Effect House for TikTok effects. You can try it by scanning the QR code on the TikTok app.", categories:["vr-ar"], tags:["immersive","media design","tiktok","berlin"], tools:["Tiktok Studio","AR","image tracking"], thumbnail:"AR", image:"images/VR/GazeGarden/PHOTO-2024-06-18-17-28-53.jpg", year:2024 },
   { id:"p18", title:"3D Concept - 3D Bathroom Stylized", description:"Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.", categories:["3d"], tags:["concept","sculpture","3d","digital","modeling","zbrush","art"], tools:["ZBrush","Blender","Photoshop"], thumbnail:"3D", image:"images/3D/Concept/8089a030-25ee-409e-8036-c16b8cc426f4_rw_1920.webp", year:2020 },
   { id:"p19", title:"Balikesir - Architectural Viz", description:"Architectural visualization for Balikesir residential project. Photorealistic renders from concept to final presentation.", categories:["architecture"], tags:["parametric","residential","archviz","grasshopper","3dsmax","rendering"], tools:["Blender","Photoshop"], thumbnail:"ARCH", image:"images/Architecture/Balıkesir/12345678 (2).webp", year:2021 },
   { id:"p20", title:"Mid poly 3D Assets", description:"Mid-poly asset collection presented with interactive Sketchfab embeds.", categories:["3d"], tags:["mid-poly","3d-assets","sketchfab","interactive","modeling"], tools:["Blender","Sketchfab"], thumbnail:"3D", image:"images/3D/Mid-Poly/midpoly.png", year:2026 },
@@ -2599,6 +2679,75 @@ function closeStoryPreview() {
 }
 
 // --- AI Project Summary ---
+function formatProjectSummaryParagraphs(text) {
+  return String(text || '')
+    .split(/\n{2,}/)
+    .map(block => block.split(/\n+/).map(line => line.trim()).filter(Boolean).join(' '))
+    .filter(Boolean)
+    .map(block => `<p>${escapeHtml(block)}</p>`)
+    .join('');
+}
+
+function renderProjectSummaryStatus(message) {
+  return `<p class="pm-ai-tooltip-status">${escapeHtml(message)}</p>`;
+}
+
+function renderProjectSummaryContent(summary) {
+  const trimmed = String(summary || '').trim();
+  if (!trimmed) return renderProjectSummaryStatus('Project brief is not available yet.');
+
+  const lines = trimmed.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  const labelPattern = /^(?:[-*]\s*)?(?:\*\*)?(Goal|Problem|Approach|Result)(?:\*\*)?\s*:\s*(.*)$/i;
+  const sections = [];
+  const intro = [];
+  let currentSection = null;
+
+  lines.forEach(line => {
+    const match = line.match(labelPattern);
+    if (match) {
+      currentSection = {
+        label: match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase(),
+        body: match[2] ? [match[2].trim()] : []
+      };
+      sections.push(currentSection);
+      return;
+    }
+
+    if (currentSection) {
+      currentSection.body.push(line);
+    } else {
+      intro.push(line);
+    }
+  });
+
+  if (!sections.length) {
+    return `<div class="pm-ai-summary-plain">${formatProjectSummaryParagraphs(trimmed)}</div>`;
+  }
+
+  const introHtml = intro.length
+    ? `<div class="pm-ai-tooltip-intro">${formatProjectSummaryParagraphs(intro.join('\n'))}</div>`
+    : '';
+
+  const sectionsHtml = sections.map(section => `
+    <section class="pm-ai-summary-section">
+      <div class="pm-ai-summary-kicker">${escapeHtml(section.label)}</div>
+      <div class="pm-ai-summary-copy">${formatProjectSummaryParagraphs(section.body.join('\n'))}</div>
+    </section>
+  `).join('');
+
+  return `${introHtml}<div class="pm-ai-summary-grid">${sectionsHtml}</div>`;
+}
+
+function syncProjectSummaryExpandedState() {
+  const tooltip = document.getElementById('pmAiTooltip');
+  const toggle = document.getElementById('pmAiTooltipExpand');
+  if (!tooltip || !toggle) return;
+
+  const expanded = tooltip.classList.contains('expanded');
+  toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+  toggle.setAttribute('title', expanded ? 'Collapse' : 'Expand');
+}
+
 function closeProjectSummary(event) {
   if (event) {
     event.preventDefault();
@@ -2607,6 +2756,7 @@ function closeProjectSummary(event) {
   const tooltip = document.getElementById('pmAiTooltip');
   if (!tooltip) return;
   tooltip.classList.remove('show', 'expanded');
+  syncProjectSummaryExpandedState();
 }
 
 function toggleProjectSummaryExpanded(event) {
@@ -2617,6 +2767,7 @@ function toggleProjectSummaryExpanded(event) {
   const tooltip = document.getElementById('pmAiTooltip');
   if (!tooltip) return;
   tooltip.classList.toggle('expanded');
+  syncProjectSummaryExpandedState();
 }
 
 function getProjectSummary() {
@@ -2628,9 +2779,10 @@ function getProjectSummary() {
   if (!btn || !tooltip || !tooltipBody) return;
   
   btn.classList.add('loading');
-  tooltipBody.textContent = 'Analyzing project...';
+  tooltipBody.innerHTML = renderProjectSummaryStatus('Analyzing project...');
   tooltip.classList.add('show');
   tooltip.classList.remove('expanded');
+  syncProjectSummaryExpandedState();
 
   const projectInfo = [
     `Project ID: ${currentProject.id}`,
@@ -2660,12 +2812,12 @@ function getProjectSummary() {
       const summary = data && data.answer
         ? data.answer
         : 'Project brief is not available yet. You can fill more detail in worker/project.txt.';
-      tooltipBody.textContent = summary;
+      tooltipBody.innerHTML = renderProjectSummaryContent(summary);
       tooltip.classList.add('show');
     })
     .catch(err => {
       btn.classList.remove('loading');
-      tooltipBody.textContent = 'Project brief is not available right now.';
+      tooltipBody.innerHTML = renderProjectSummaryStatus('Project brief is not available right now.');
       tooltip.classList.add('show');
       console.error('AI summary error:', err);
     });
@@ -2682,39 +2834,6 @@ function renderProjectModal(p) {
   const nextTitle = currentFilteredProjects[nextIdx]?.title.split(' - ')[0].trim() || '';
 
   document.getElementById('projectModalContent').innerHTML = `
-    <div class="pm-ai-wrap">
-      <button type="button" class="pm-ai-wizard" id="pmAiWizard" onclick="event.stopPropagation(); getProjectSummary();" title="Explain it with AI">
-        <span class="pm-ai-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 4V2m0 2a13 13 0 0 1 8.854 8.854M9 9h6m0 0h6m-6 0V3m0 6a13 13 0 0 0-8.854 8.854"/>
-            <circle cx="12" cy="12" r="9"/>
-          </svg>
-        </span>
-        <span class="pm-ai-label">Explain it</span>
-      </button>
-      <div class="pm-ai-tooltip" id="pmAiTooltip">
-        <div class="pm-ai-tooltip-head">
-          <div class="pm-ai-tooltip-title">AI Project Brief</div>
-          <div class="pm-ai-tooltip-actions">
-            <button type="button" class="pm-ai-tooltip-action" onclick="toggleProjectSummaryExpanded(event)" title="Expand">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <polyline points="9 21 3 21 3 15"></polyline>
-                <line x1="21" y1="3" x2="14" y2="10"></line>
-                <line x1="3" y1="21" x2="10" y2="14"></line>
-              </svg>
-            </button>
-            <button type="button" class="pm-ai-tooltip-action" onclick="closeProjectSummary(event)" title="Close">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="pm-ai-tooltip-body" id="pmAiTooltipBody"></div>
-      </div>
-    </div>
     <button class="pm-close" onclick="closeProject()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
@@ -2767,6 +2886,39 @@ function renderProjectModal(p) {
         ${currentProjectGallery.length > 1 ? `<div class="pm-gallery-chip">${UI_TEXT.projectsGallery}</div>` : ''}
       </div>
       <div class="pm-desc">${p.description}</div>
+      <div class="pm-ai-wrap">
+        <button type="button" class="pm-ai-wizard" id="pmAiWizard" onclick="event.stopPropagation(); getProjectSummary();" title="Summarize with AI">
+          <span class="pm-ai-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 4V2m0 2a13 13 0 0 1 8.854 8.854M9 9h6m0 0h6m-6 0V3m0 6a13 13 0 0 0-8.854 8.854"/>
+              <circle cx="12" cy="12" r="9"/>
+            </svg>
+          </span>
+          <span class="pm-ai-label">Summarize it</span>
+        </button>
+        <div class="pm-ai-tooltip" id="pmAiTooltip">
+          <div class="pm-ai-tooltip-head">
+            <div class="pm-ai-tooltip-title">Project Summary</div>
+            <div class="pm-ai-tooltip-actions">
+              <button type="button" class="pm-ai-tooltip-action" id="pmAiTooltipExpand" onclick="toggleProjectSummaryExpanded(event)" title="Expand" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <polyline points="9 21 3 21 3 15"></polyline>
+                  <line x1="21" y1="3" x2="14" y2="10"></line>
+                  <line x1="3" y1="21" x2="10" y2="14"></line>
+                </svg>
+              </button>
+              <button type="button" class="pm-ai-tooltip-action" onclick="closeProjectSummary(event)" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="pm-ai-tooltip-body" id="pmAiTooltipBody"></div>
+        </div>
+      </div>
       <div class="pm-details">
         <div class="pm-detail-row">
           <div class="pm-detail-label">${UI_TEXT.toolsLabel}</div>
@@ -2842,6 +2994,13 @@ const keywordMap = {
 };
 
 const catLabels = {"ui-ux":"UI/UX","3d":"3D","ai":"AI","vr-ar":"VR/AR","architecture":"Architecture"};
+const categoryAliases = {
+  "ar-vr": "vr-ar",
+  "vr/ar": "vr-ar",
+  "ar/vr": "vr-ar",
+  "uiux": "ui-ux",
+  "ui/ux": "ui-ux"
+};
 // UI text config area: edit these labels from one place.
 const UI_TEXT = {
   projectsGallery: "Projects Gallery",
@@ -2850,6 +3009,30 @@ const UI_TEXT = {
   expandLabel: "Expand",
   coverLabel: "Cover"
 };
+
+function normalizeCategoryId(catId) {
+  const normalized = String(catId || "").trim().toLowerCase();
+  return categoryAliases[normalized] || normalized;
+}
+
+function normalizeProjectCategories() {
+  projects.forEach((project) => {
+    const normalized = (Array.isArray(project.categories) ? project.categories : [])
+      .map(normalizeCategoryId)
+      .filter((category, index, list) => category && catLabels[category] && list.indexOf(category) === index);
+
+    project.categories = normalized;
+  });
+}
+
+function syncCategoryCounts() {
+  document.querySelectorAll('#categories .cat-pill').forEach((pill) => {
+    const catId = normalizeCategoryId(pill.dataset.cat);
+    const countEl = pill.querySelector('.pill-count');
+    if (!countEl) return;
+    countEl.textContent = String(filterByCategory(catId).length);
+  });
+}
 
 // --- SEARCH ---
 function searchProjects(query) {
@@ -2881,7 +3064,10 @@ function searchProjects(query) {
   });
   return projects.filter(p=>scores[p.id]).sort((a,b)=>scores[b.id]-scores[a.id]);
 }
-function filterByCategory(catId) { return projects.filter(p=>p.categories.includes(catId)); }
+function filterByCategory(catId) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  return projects.filter((p) => p.categories.includes(normalizedCatId));
+}
 
 const aiFallbackFollowups = [
   "Who is Fatih?",
@@ -2897,7 +3083,7 @@ const AI_HEALTH_ENDPOINT = (window.AI_HEALTH_ENDPOINT && String(window.AI_HEALTH
   : (AI_ENDPOINT === "/api/ask"
     ? "/api/ask/health"
     : "");
-const aiUnknownFallback = "I could not find an exact match, but this portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects. I can also guide you to the closest category and show related work.";
+const aiUnknownFallback = "No exact match was found, but the portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects.";
 const aiThreshold = 0.58;
 let aiKbCache = null;
 const aiProfileLayoutSignals = {
@@ -2918,7 +3104,7 @@ const inlinePriorityKb = [
     intent: "contact_info",
     keywords: ["contact", "contact details", "email", "e mail", "mail", "linkedin", "phone", "phone number", "how to reach", "reach fatih"],
     responses: [
-      "You can contact Fatih Gulen at faatihgulen@gmail.com, by phone at +49 17637160838, or via LinkedIn at https://www.linkedin.com/in/faatihgulen."
+      "Fatih Gulen can be contacted at faatihgulen@gmail.com, by phone at +49 17637160838, or via LinkedIn at https://www.linkedin.com/in/faatihgulen."
     ],
     followups: ["Who is Fatih?", "Where is he based?", "What roles is he looking for?", "What tools does he use?"]
   }
@@ -3099,7 +3285,7 @@ function getSiteGroundedAnswer(query) {
 
   if (isGreetingQuery(q)) {
     return {
-      answer: `Hi. I can help you explore this portfolio. There are ${totalProjects} projects across UI/UX, 3D, AI, VR/AR, and Architecture.`,
+      answer: `This portfolio includes ${totalProjects} projects across UI/UX, 3D, AI, VR/AR, and Architecture.`,
       followups: ["Show UI/UX projects", "Show AI projects", "Show VR projects", "Who is Fatih?"]
     };
   }
@@ -3326,8 +3512,66 @@ function renderAiAnswer(query, answer, suggestions) {
   if (heading) heading.focus({ preventScroll: true });
 }
 
+function normalizeAiAnswerTone(answer) {
+  let text = String(answer || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+
+  if (!text) return text;
+
+  const directRewrites = [
+    [/\bYou can contact Fatih Gulen at\b/gi, "Fatih Gulen can be contacted at"],
+    [/\bYou can contact Fatih at\b/gi, "Fatih can be contacted at"],
+    [/\bYou can reach Fatih at\b/gi, "Fatih can be reached at"],
+    [/\bYou can also connect with him on LinkedIn at\b/gi, "He is also available on LinkedIn at"],
+    [/\bYou can browse by category or ask in natural language to find work related to\b/gi, "The portfolio can be explored by category, with work related to"],
+    [/\bIf you want to see AI plus design integration, the AI section is the most relevant category\.?/gi, "The AI section is the strongest match for AI plus design integration."],
+    [/^Hi\.\s*I can help you explore this portfolio\.\s*/i, ""],
+    [/^Hi\.\s*I can help you explore portfolio projects across /i, "The portfolio covers "],
+    [/^I can help with portfolio topics like /i, "The portfolio covers topics such as "],
+    [/\bYou can ask about\b/gi, "Relevant areas here include"],
+    [/\bYou can ask for\b/gi, "Relevant areas here include"]
+  ];
+
+  directRewrites.forEach(([pattern, replacement]) => {
+    text = text.replace(pattern, replacement);
+  });
+
+  const assistantStyleSentence = [
+    /^(?:if you(?:'d| would)? like|if you want|if needed|let me know|feel free to ask|just ask)\b/i,
+    /^(?:i can also|i can help|i can walk through|i can break down|i can show|i can share)\b/i,
+    /^(?:istersen|dilersen|yardimci olabilirim|yardımcı olabilirim)\b/i
+  ];
+
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((paragraph) => {
+      const trimmed = paragraph.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("-")) return trimmed;
+
+      const sentences = trimmed.match(/[^.!?]+[.!?]?/g) || [trimmed];
+      const kept = sentences
+        .map((sentence) => sentence.trim())
+        .filter(Boolean)
+        .filter((sentence) => !assistantStyleSentence.some((pattern) => pattern.test(sentence)));
+
+      return kept.join(" ").trim();
+    })
+    .filter(Boolean);
+
+  return paragraphs
+    .join("\n\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]{2,}/g, " ").trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function slightlyExpandAnswer(answer) {
-  const text = String(answer || "").trim();
+  const text = normalizeAiAnswerTone(answer);
   if (!text) return text;
   return text;
 }
@@ -3411,13 +3655,14 @@ function initAiServiceStatus() {
 }
 
 function applyCategoryFilter(catId, options = {}) {
-  const el = document.querySelector('.cat-pill[data-cat="' + catId + '"]');
+  const normalizedCatId = normalizeCategoryId(catId);
+  const el = document.querySelector('.cat-pill[data-cat="' + normalizedCatId + '"]');
   if (el) {
     document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
     el.classList.add("active");
   }
-  const results = filterByCategory(catId);
-  const catName = catLabels[catId] || catId;
+  const results = filterByCategory(normalizedCatId);
+  const catName = catLabels[normalizedCatId] || normalizedCatId;
   renderProjects(results, 'Browsing <strong>' + catName + "</strong> - " + results.length + " project" + (results.length > 1 ? "s" : "") + " in this category");
   if (!options.keepInput) {
     const input = document.getElementById("chatInput");
@@ -3623,6 +3868,8 @@ function resetView() {
   document.getElementById('responseArea').innerHTML = '<div class="initial-state" id="initialState">Select a category or type a query to explore projects. Press <span class="keystroke">Enter</span> to search.</div>';
 }
 
+normalizeProjectCategories();
+syncCategoryCounts();
 setupImageLightboxSwipe();
 initAiServiceStatus();
 
@@ -3793,10 +4040,10 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
       scroll: 'center'
     },
     {
-      targetAll: 'footer .footer-links a',
-      content: 'You can directly reach <strong>LinkedIn, Email and other links</strong> from this footer section.',
-      pad: 4,
-      radius: 10,
+      target: 'footer',
+      content: 'The <strong>footer section</strong> gives direct access to LinkedIn, Email, Artstation, and the main website.',
+      pad: 6,
+      radius: 16,
       scroll: 'end'
     },
     {
@@ -3937,31 +4184,76 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     };
   }
 
+  function getTourScrollBounds() {
+    const viewport = getViewportSize();
+    const header = document.querySelector('header');
+    const headerRect = header ? header.getBoundingClientRect() : null;
+    const top = Math.max(TOUR_EDGE + 10, headerRect ? Math.round(headerRect.bottom + 12) : TOUR_EDGE + 10);
+    const bottom = Math.max(top + 120, Math.round(viewport.height - TOUR_EDGE - 14));
+    return { top, bottom };
+  }
+
+  function scrollStepIntoView(step, rect) {
+    if (!rect) return false;
+    const bounds = getTourScrollBounds();
+    let delta = 0;
+
+    if (step.scroll === 'start') {
+      delta = rect.top - bounds.top;
+    } else if (step.scroll === 'end') {
+      delta = rect.bottom - bounds.bottom;
+    } else {
+      if (rect.top < bounds.top) delta = rect.top - bounds.top;
+      else if (rect.bottom > bounds.bottom) delta = rect.bottom - bounds.bottom;
+    }
+
+    if (Math.abs(delta) < 8) return false;
+
+    window.scrollBy({
+      top: Math.round(delta),
+      behavior: isMobileTour() ? 'auto' : 'smooth'
+    });
+    return true;
+  }
+
   function positionDialogNearTarget(rect) {
     const dialog = document.getElementById('tourDialog');
     if (!dialog) return;
     const viewport = getViewportSize();
+    const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+    const dialogWidth = Math.min(dialog.offsetWidth || 360, viewport.width - (TOUR_EDGE * 2));
+    const dialogHeight = Math.min(dialog.offsetHeight || 280, viewport.height - (TOUR_EDGE * 2));
 
     if (isMobileTour()) {
-      const targetIsLow = rect && rect.top > viewport.height * 0.52;
       dialog.style.width = 'auto';
       dialog.style.maxWidth = 'none';
       dialog.style.left = `calc(15px + env(safe-area-inset-left, 0px))`;
       dialog.style.right = `calc(15px + env(safe-area-inset-right, 0px))`;
-      if (targetIsLow) {
-        dialog.style.top = TOUR_EDGE + 'px';
-        dialog.style.bottom = 'auto';
-      } else {
+
+      if (!rect) {
         dialog.style.bottom = `calc(${DIALOG_MOBILE_BOTTOM}px + env(safe-area-inset-bottom, 0px))`;
         dialog.style.top = 'auto';
+        dialog.classList.add('active');
+        return;
       }
+
+      const spacing = 12;
+      const spaceAbove = rect.top - TOUR_EDGE - spacing;
+      const spaceBelow = viewport.height - rect.bottom - TOUR_EDGE - spacing;
+      const shouldPlaceBelow = spaceBelow >= dialogHeight || spaceBelow >= spaceAbove;
+      const proposedTop = shouldPlaceBelow
+        ? rect.bottom + spacing
+        : rect.top - dialogHeight - spacing;
+      const top = clamp(proposedTop, TOUR_EDGE, viewport.height - dialogHeight - TOUR_EDGE);
+
+      dialog.style.top = Math.round(top) + 'px';
+      dialog.style.bottom = 'auto';
       dialog.classList.add('active');
       return;
     }
 
     dialog.style.width = '';
     dialog.style.maxWidth = '';
-    const dialogWidth = Math.min(360, viewport.width - 40);
     const spacing = 14;
 
     if (!rect) {
@@ -3977,11 +4269,15 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     if (left + dialogWidth > viewport.width - TOUR_EDGE) {
       left = rect.left - dialogWidth - spacing;
     }
-    left = Math.max(TOUR_EDGE, Math.min(left, viewport.width - dialogWidth - TOUR_EDGE));
+    left = clamp(left, TOUR_EDGE, viewport.width - dialogWidth - TOUR_EDGE);
 
-    let top = rect.top;
-    const maxTop = viewport.height - 260;
-    top = Math.max(TOUR_EDGE, Math.min(top, maxTop));
+    const spaceBelow = viewport.height - rect.top - TOUR_EDGE;
+    const spaceAbove = rect.bottom - TOUR_EDGE;
+    const shouldAlignTop = spaceBelow >= dialogHeight || spaceBelow >= spaceAbove;
+    const proposedTop = shouldAlignTop
+      ? rect.top
+      : rect.bottom - dialogHeight;
+    const top = clamp(proposedTop, TOUR_EDGE, viewport.height - dialogHeight - TOUR_EDGE);
 
     dialog.style.left = left + 'px';
     dialog.style.top = top + 'px';
@@ -4023,7 +4319,6 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     bot.style.display = 'none';
     bot.classList.remove('pinned');
     document.getElementById('tourOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden';
     showStep(0);
   };
 
@@ -4035,7 +4330,6 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     document.getElementById('tourFocus').classList.remove('active');
     clearOverlayHole();
     pinTourBot();
-    document.body.style.overflow = '';
     storage.set(TOUR_KEY, '1');
   };
 
@@ -4044,6 +4338,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     const step = tourSteps[idx];
     const targets = getStepTargets(step);
     const primaryTarget = targets[0] || null;
+    const combinedRect = getCombinedRect(targets);
 
     const indicator = document.getElementById('tourStepIndicator');
     indicator.innerHTML = tourSteps.map((_, i) =>
@@ -4066,8 +4361,8 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     footerHtml += '</div>';
     footer.innerHTML = footerHtml;
 
-    if (primaryTarget) {
-      primaryTarget.scrollIntoView({ behavior: isMobileTour() ? 'auto' : 'smooth', block: step.scroll || 'center' });
+    if (combinedRect) {
+      scrollStepIntoView(step, combinedRect);
       queueTourRefreshes([80, 260, 520]);
     } else {
       updateStepVisual(step, null);
@@ -4322,13 +4617,30 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
       obj.y += (obj.vy * speed) + (Math.sin(time * 1.1 + obj.wobblePhase) * 0.1);
       obj.rotation += obj.rotSpeed * (0.4 + obj.z);
 
-      obj.trail.unshift({ x: obj.x, y: obj.y, a: obj.alpha });
-      if (obj.trail.length > 8) obj.trail.pop();
+      let wrapped = false;
+      if (obj.x < -100) {
+        obj.x = w + 100;
+        wrapped = true;
+      }
+      if (obj.x > w + 100) {
+        obj.x = -100;
+        wrapped = true;
+      }
+      if (obj.y < -120) {
+        obj.y = h + 120;
+        wrapped = true;
+      }
+      if (obj.y > h + 120) {
+        obj.y = -120;
+        wrapped = true;
+      }
 
-      if (obj.x < -100) obj.x = w + 100;
-      if (obj.x > w + 100) obj.x = -100;
-      if (obj.y < -120) obj.y = h + 120;
-      if (obj.y > h + 120) obj.y = -120;
+      if (wrapped) {
+        obj.trail.length = 0;
+      } else {
+        obj.trail.unshift({ x: obj.x, y: obj.y, a: obj.alpha });
+        if (obj.trail.length > 8) obj.trail.pop();
+      }
 
       drawObject(obj, focusY);
     }

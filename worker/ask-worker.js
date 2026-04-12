@@ -277,6 +277,64 @@ function readOpenAIText(payload) {
   return chunks.filter(Boolean).join("\n").trim();
 }
 
+function normalizeAnswerTone(answer) {
+  let text = String(answer || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+
+  if (!text) return text;
+
+  const directRewrites = [
+    [/\bYou can contact Fatih Gulen at\b/gi, "Fatih Gulen can be contacted at"],
+    [/\bYou can contact Fatih at\b/gi, "Fatih can be contacted at"],
+    [/\bYou can reach Fatih at\b/gi, "Fatih can be reached at"],
+    [/\bYou can also connect with him on LinkedIn at\b/gi, "He is also available on LinkedIn at"],
+    [/\bYou can browse by category or ask in natural language to find work related to\b/gi, "The portfolio can be explored by category, with work related to"],
+    [/\bIf you want to see AI plus design integration, the AI section is the most relevant category\.?/gi, "The AI section is the strongest match for AI plus design integration."],
+    [/^Hi\.\s*I can help you explore this portfolio\.\s*/i, ""],
+    [/^Hi\.\s*I can help you explore portfolio projects across /i, "The portfolio covers "],
+    [/^I can help with portfolio topics like /i, "The portfolio covers topics such as "],
+    [/\bYou can ask about\b/gi, "Relevant areas here include"],
+    [/\bYou can ask for\b/gi, "Relevant areas here include"]
+  ];
+
+  directRewrites.forEach(([pattern, replacement]) => {
+    text = text.replace(pattern, replacement);
+  });
+
+  const assistantStyleSentence = [
+    /^(?:if you(?:'d| would)? like|if you want|if needed|let me know|feel free to ask|just ask)\b/i,
+    /^(?:i can also|i can help|i can walk through|i can break down|i can show|i can share)\b/i,
+    /^(?:istersen|dilersen|yardimci olabilirim|yardımcı olabilirim)\b/i
+  ];
+
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((paragraph) => {
+      const trimmed = paragraph.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("-")) return trimmed;
+
+      const sentences = trimmed.match(/[^.!?]+[.!?]?/g) || [trimmed];
+      const kept = sentences
+        .map((sentence) => sentence.trim())
+        .filter(Boolean)
+        .filter((sentence) => !assistantStyleSentence.some((pattern) => pattern.test(sentence)));
+
+      return kept.join(" ").trim();
+    })
+    .filter(Boolean);
+
+  return paragraphs
+    .join("\n\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]{2,}/g, " ").trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function normalizeQuery(value) {
   const trMap = { "ı": "i", "ş": "s", "ğ": "g", "ü": "u", "ö": "o", "ç": "c", "İ": "i", "Ş": "s", "Ğ": "g", "Ü": "u", "Ö": "o", "Ç": "c" };
   return String(value || "")
@@ -625,6 +683,10 @@ export default {
     "- Weave facts together naturally instead of listing them. Connect ideas across the profile seamlessly.",
     "- Avoid repeating exact phrases across multiple responses. Rephrase and recombine source material creatively.",
     "- Maintain the profile document's tone and conversational style in your answers.",
+    "- Write as if speaking to another person about Fatih, not as a chat assistant speaking directly to the user.",
+    "- Prefer third-person phrasing with 'Fatih' or 'he' instead of 'I' or direct offers to the user.",
+    "- Never end with assistant-style invitations such as 'let me know', 'if you want', 'I can help', 'I can also', or 'you can ask'.",
+    "- End on a factual statement, not on a prompt for the next question.",
     "",
     "=== ANSWERING GUIDELINES ===",
     "- If the user asks about tools, don't always list them; sometimes explain what they're *used for*, sometimes discuss philosophy, sometimes connect them to specific projects.",
@@ -664,7 +726,7 @@ export default {
           reason
         }));
         return jsonResponse(200, {
-          answer: buildFallbackAnswer(query),
+          answer: normalizeAnswerTone(buildFallbackAnswer(query)),
           fallback: true,
           reason,
           upstream_status: openaiRes.status
@@ -672,7 +734,7 @@ export default {
       }
 
       const openaiJson = raw ? JSON.parse(raw) : {};
-      const answer = readOpenAIText(openaiJson);
+      const answer = normalizeAnswerTone(readOpenAIText(openaiJson));
       if (!answer) {
         return jsonResponse(500, {
           answer: "I could not generate a reliable answer right now. Please try a different question."
@@ -687,7 +749,7 @@ export default {
         message: err && err.message ? String(err.message) : "unknown"
       }));
       return jsonResponse(200, {
-        answer: buildFallbackAnswer(query),
+        answer: normalizeAnswerTone(buildFallbackAnswer(query)),
         fallback: true,
         reason: "upstream_unavailable"
       }, origin, allowedOriginSuffixes);
