@@ -1207,6 +1207,104 @@
     pointer-events: none;
   }
   .pm-story-item:hover .pm-story-caption { opacity: 1; transform: translate(-50%, 0); }
+  .pm-story-shell {
+    margin-top: 18px;
+    position: relative;
+  }
+  .pm-story-shell .pm-story {
+    margin-top: 12px;
+  }
+  .pm-story-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .pm-story-toolbar-title {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .pm-story-toolbar-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pm-story-status {
+    min-width: 62px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(17,17,19,0.8);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+  .pm-story-nav-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(17,17,19,0.82);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s ease;
+  }
+  .pm-story-nav-btn:hover {
+    border-color: var(--accent-mid);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+  .pm-story-nav-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .pm-story.is-carousel {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 14px;
+    overflow-x: auto;
+    padding: 6px 4px 12px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .pm-story.is-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  .pm-story.is-carousel .pm-story-item {
+    flex: 0 0 min(78%, 760px);
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    padding: 4px 0 8px;
+  }
+  .pm-story.is-carousel .pm-story-item::before {
+    inset: -4px;
+  }
+  .pm-story.is-carousel .pm-story-media {
+    width: 100%;
+    transform: none !important;
+  }
+  .pm-story.is-carousel .pm-story-item.is-portrait {
+    flex: 0 0 clamp(220px, 27vw, 320px);
+    max-width: none;
+    min-width: 220px;
+    padding: 2px 0 8px;
+  }
+  .pm-story.is-carousel .pm-story-item.active::before {
+    opacity: 1;
+  }
+  .pm-story.is-carousel .pm-story-item.active .pm-story-media {
+    border-color: var(--accent-mid);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.34), 0 0 0 1px rgba(196,240,77,0.16);
+  }
   .image-lightbox {
     position: fixed; inset: 0; z-index: 11000; background: rgba(0,0,0,0.86);
     display: none; align-items: center; justify-content: center; padding: 24px;
@@ -1255,6 +1353,14 @@
     .pm-story-item.is-portrait .pm-story-media { width: 100%; border-radius: 16px; padding: 6px; }
     .pm-story-caption { width: 100%; left: 50%; }
     .pm-story-item.is-portrait .pm-story-caption { width: 100%; border-radius: 0 0 16px 16px; }
+    .pm-story-toolbar { align-items: flex-start; }
+    .pm-story-status { min-width: 56px; padding: 7px 9px; }
+    .pm-story.is-carousel { gap: 12px; padding: 4px 2px 10px; }
+    .pm-story.is-carousel .pm-story-item { flex-basis: min(86vw, 560px); }
+    .pm-story.is-carousel .pm-story-item.is-portrait {
+      flex-basis: min(68vw, 300px);
+      min-width: 180px;
+    }
     .pm-hero-controls { left: 10px; right: 10px; bottom: 10px; }
     .pm-embed-host { min-height: 440px; }
     .pm-embed-grid { grid-template-columns: 1fr; }
@@ -2327,6 +2433,15 @@ const galleryConfig = {
   ],
 };
 
+const projectStoryLayouts = {
+  p01: 'carousel',
+  p02: 'carousel',
+  p03: 'carousel',
+  p12: 'carousel',
+  p13: 'carousel',
+  p15: 'carousel'
+};
+
 const projectEmbeds = {
   p06: {
     type: 'iframe',
@@ -2475,6 +2590,52 @@ function getProjectCaptionMap(p) {
   return map;
 }
 
+function getProjectStoryLayout(projectId) {
+  return projectStoryLayouts[projectId] || 'stack';
+}
+
+function isProjectStoryCarousel(projectId) {
+  return getProjectStoryLayout(projectId) === 'carousel';
+}
+
+function renderProjectStorySection(p) {
+  if (currentProjectGallery.length <= 1) return '';
+
+  const itemsHtml = currentProjectGallery.map((img, i) => `
+    <article class="pm-story-item ${i === currentProjectImageIndex ? 'active' : ''}" data-story-index="${i}" onclick="setProjectImage(${i})">
+      ${isVideoMedia(img)
+        ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="event.stopPropagation(); openImageLightbox(this.currentSrc || this.src)"></video>`
+        : `<img class="pm-story-media pm-story-image" src="${img}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="event.stopPropagation(); openImageLightbox(this.currentSrc || this.src)">`
+      }
+      ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
+    </article>
+  `).join('');
+
+  if (!isProjectStoryCarousel(p.id)) {
+    return `<div class="pm-story">${itemsHtml}</div>`;
+  }
+
+  return `
+    <div class="pm-story-shell">
+      <div class="pm-story-toolbar">
+        <div class="pm-story-toolbar-title">Project Walkthrough</div>
+        <div class="pm-story-toolbar-actions">
+          <button type="button" class="pm-story-nav-btn" onclick="navProjectStory(-1)" aria-label="Previous visual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <div class="pm-story-status" id="pmStoryCarouselStatus">${currentProjectImageIndex + 1} / ${currentProjectGallery.length}</div>
+          <button type="button" class="pm-story-nav-btn" onclick="navProjectStory(1)" aria-label="Next visual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pm-story is-carousel" id="pmStoryTrack">
+        ${itemsHtml}
+      </div>
+    </div>
+  `;
+}
+
 function mountKuulaEmbed(container, cfg) {
   if (!container || !cfg) return;
   container.innerHTML = '';
@@ -2612,8 +2773,30 @@ function syncProjectImageState() {
   document.querySelectorAll('.pm-gallery-thumb').forEach((thumb, i) => {
     thumb.classList.toggle('active', i === currentProjectImageIndex);
   });
+  syncProjectStoryCarousel();
   const previewBtn = document.getElementById('pmPreviewClose');
   if (previewBtn) previewBtn.style.display = storyPreviewActive ? 'inline-flex' : 'none';
+}
+
+function syncProjectStoryCarousel() {
+  const track = document.getElementById('pmStoryTrack');
+  const status = document.getElementById('pmStoryCarouselStatus');
+  if (status) status.textContent = (currentProjectImageIndex + 1) + ' / ' + currentProjectGallery.length;
+  if (!track) return;
+
+  const items = Array.from(track.querySelectorAll('.pm-story-item'));
+  items.forEach((item, index) => {
+    item.classList.toggle('active', index === currentProjectImageIndex);
+  });
+
+  const activeItem = items[currentProjectImageIndex];
+  if (!activeItem) return;
+
+  const targetLeft = activeItem.offsetLeft - ((track.clientWidth - activeItem.offsetWidth) / 2);
+  track.scrollTo({
+    left: Math.max(0, targetLeft),
+    behavior: 'smooth'
+  });
 }
 
 function applyStoryImageLayout() {
@@ -2657,6 +2840,10 @@ function navProjectImage(dir) {
   storyPreviewActive = false;
   currentProjectImageIndex = (currentProjectImageIndex + dir + currentProjectGallery.length) % currentProjectGallery.length;
   syncProjectImageState();
+}
+
+function navProjectStory(dir) {
+  navProjectImage(dir);
 }
 
 function previewStoryImage(idx) {
@@ -2930,18 +3117,7 @@ function renderProjectModal(p) {
         <div class="pm-embed-title">${UI_TEXT.tourLabel}</div>
         <div class="pm-embed-host" data-project-embed="${p.id}"></div>
       </div>` : ''}
-      ${currentProjectGallery.length > 1 ? `
-      <div class="pm-story">
-        ${currentProjectGallery.map((img, i) => `
-          <article class="pm-story-item">
-            ${isVideoMedia(img)
-              ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="openImageLightbox(this.currentSrc || this.src)"></video>`
-              : `<img class="pm-story-media pm-story-image" src="${img}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="openImageLightbox(this.currentSrc || this.src)">`
-            }
-            ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
-          </article>
-        `).join('')}
-      </div>` : ''}
+      ${renderProjectStorySection(p)}
       ${currentFilteredProjects.length > 1 ? `
       <div class="pm-nav">
         <button class="pm-nav-btn" onclick="navProject(-1)">
