@@ -3,21 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fatih Gulen is a digital experience designer creating UI/UX, 3D, AI, VR/AR, and architectural visualization work from Germany.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="author" content="Fatih Gulen">
+<link rel="canonical" href="https://fatihgulen.com/">
 <meta name="theme-color" content="#14161a">
-<title>Fatih Gulen - Portfolio</title>
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Fatih Gulen Portfolio">
+<meta property="og:title" content="Fatih Gulen | Digital Experience Designer Portfolio">
+<meta property="og:description" content="Fatih Gulen is a digital experience designer creating UI/UX, 3D, AI, VR/AR, and architectural visualization work from Germany.">
+<meta property="og:url" content="https://fatihgulen.com/">
+<meta property="og:image" content="https://fatihgulen.com/images/UI/AERONIX/fe022a73-4746-4b02-a481-e89392b3561b_rw_1920.png">
+<meta property="og:image:width" content="1550">
+<meta property="og:image:height" content="605">
+<meta property="og:image:alt" content="Selected digital experience design work by Fatih Gulen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fatih Gulen | Digital Experience Designer Portfolio">
+<meta name="twitter:description" content="Fatih Gulen is a digital experience designer creating UI/UX, 3D, AI, VR/AR, and architectural visualization work from Germany.">
+<meta name="twitter:image" content="https://fatihgulen.com/images/UI/AERONIX/fe022a73-4746-4b02-a481-e89392b3561b_rw_1920.png">
+<meta name="twitter:image:alt" content="Selected digital experience design work by Fatih Gulen">
+<title>Fatih Gulen | Digital Experience Designer Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://fatihgulen.com/#website",
+      "url": "https://fatihgulen.com/",
+      "name": "Fatih Gulen Portfolio",
+      "description": "Digital experience design portfolio featuring UI/UX, 3D, AI, VR/AR, and architectural visualization projects.",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://fatihgulen.com/#person",
+      "name": "Fatih Gulen",
+      "jobTitle": "Digital Experience Designer",
+      "url": "https://fatihgulen.com/",
+      "image": "https://fatihgulen.com/images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg",
+      "email": "mailto:faatihgulen@gmail.com",
+      "telephone": "+4917637160838",
+      "sameAs": [
+        "https://www.linkedin.com/in/faatihgulen/",
+        "https://www.artstation.com/fatihgulen"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "DE"
+      }
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://fatihgulen.com/#portfolio",
+      "url": "https://fatihgulen.com/",
+      "name": "Fatih Gulen Portfolio",
+      "isPartOf": {
+        "@id": "https://fatihgulen.com/#website"
+      },
+      "about": {
+        "@id": "https://fatihgulen.com/#person"
+      },
+      "description": "Portfolio website showcasing selected UI/UX, 3D, AI, VR/AR, and architectural visualization work.",
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://fatihgulen.com/images/UI/AERONIX/fe022a73-4746-4b02-a481-e89392b3561b_rw_1920.png",
+        "width": 1550,
+        "height": 605
+      }
+    }
+  ]
+}
+</script>
 <script>
   (function() {
-    const storageKey = 'fatih-portfolio-theme';
-    let theme = 'dark';
-    try {
-      const stored = localStorage.getItem(storageKey);
-      if (stored === 'light' || stored === 'dark') {
-        theme = stored;
+    const themeTimeZone = 'Europe/Berlin';
+    const lightStartHour = 7;
+    const darkStartHour = 19;
+    function getGermanyHour(now) {
+      try {
+        const parts = new Intl.DateTimeFormat('en-GB', {
+          timeZone: themeTimeZone,
+          hour: '2-digit',
+          hour12: false
+        }).formatToParts(now || new Date());
+        const hourPart = parts.find((part) => part.type === 'hour');
+        return hourPart ? Number(hourPart.value) : 12;
+      } catch (err) {
+        return 12;
       }
-    } catch (err) {}
-    document.documentElement.dataset.theme = theme;
+    }
+    function getGermanyTheme(now) {
+      const hour = getGermanyHour(now);
+      return hour >= lightStartHour && hour < darkStartHour ? 'light' : 'dark';
+    }
+    document.documentElement.dataset.theme = getGermanyTheme(new Date());
   })();
 </script>
 <style>
@@ -2412,19 +2495,42 @@
 </div>
 
 <script>
-const THEME_STORAGE_KEY = 'fatih-portfolio-theme';
-
-function getStoredTheme() {
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    return stored === 'light' || stored === 'dark' ? stored : null;
-  } catch (err) {
-    return null;
-  }
-}
+const THEME_TIMEZONE = 'Europe/Berlin';
+const THEME_LIGHT_START_HOUR = 7;
+const THEME_DARK_START_HOUR = 19;
+let themeManualOverride = null;
+let themeSyncTimer = 0;
 
 function getActiveTheme() {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+}
+
+function getGermanyTimeParts(now = new Date()) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: THEME_TIMEZONE,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).formatToParts(now);
+    const readPart = (type, fallback) => {
+      const part = parts.find((entry) => entry.type === type);
+      return part ? Number(part.value) : fallback;
+    };
+    return {
+      hour: readPart('hour', 12),
+      minute: readPart('minute', 0),
+      second: readPart('second', 0),
+    };
+  } catch (err) {
+    return { hour: 12, minute: 0, second: 0 };
+  }
+}
+
+function getGermanyTheme(now = new Date()) {
+  const { hour } = getGermanyTimeParts(now);
+  return hour >= THEME_LIGHT_START_HOUR && hour < THEME_DARK_START_HOUR ? 'light' : 'dark';
 }
 
 function setThemeMeta(theme) {
@@ -2444,24 +2550,54 @@ function syncThemeToggle(theme) {
   label.textContent = theme === 'light' ? 'Light' : 'Dark';
 }
 
-function applyTheme(theme, persist) {
+function applyTheme(theme) {
   const nextTheme = theme === 'light' ? 'light' : 'dark';
   document.documentElement.dataset.theme = nextTheme;
-  if (persist) {
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-    } catch (err) {}
-  }
   syncThemeToggle(nextTheme);
   setThemeMeta(nextTheme);
 }
 
-function toggleTheme() {
-  applyTheme(getActiveTheme() === 'light' ? 'dark' : 'light', true);
+function syncThemeWithGermanyTime(force = false) {
+  const germanyTheme = getGermanyTheme();
+  if (force) {
+    themeManualOverride = null;
+  }
+  if (themeManualOverride) {
+    if (themeManualOverride === germanyTheme) {
+      themeManualOverride = null;
+    } else {
+      syncThemeToggle(getActiveTheme());
+      setThemeMeta(getActiveTheme());
+      return;
+    }
+  }
+  if (force || getActiveTheme() !== germanyTheme) {
+    applyTheme(germanyTheme);
+    return;
+  }
+  syncThemeToggle(germanyTheme);
+  setThemeMeta(germanyTheme);
 }
 
-syncThemeToggle(getActiveTheme());
-setThemeMeta(getActiveTheme());
+function scheduleThemeSync() {
+  if (themeSyncTimer) {
+    clearTimeout(themeSyncTimer);
+  }
+  const { second } = getGermanyTimeParts();
+  const delay = Math.max(1000, ((60 - second) * 1000) + 120);
+  themeSyncTimer = window.setTimeout(() => {
+    syncThemeWithGermanyTime();
+    scheduleThemeSync();
+  }, delay);
+}
+
+function toggleTheme() {
+  themeManualOverride = getActiveTheme() === 'light' ? 'dark' : 'light';
+  applyTheme(themeManualOverride);
+}
+
+syncThemeWithGermanyTime(true);
+scheduleThemeSync();
 
 // --- ABOUT MODAL ---
 function openAbout() {
