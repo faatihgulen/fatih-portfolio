@@ -3872,6 +3872,22 @@ const categoryAliases = {
   "uiux": "ui-ux",
   "ui/ux": "ui-ux"
 };
+const categoryRoutePaths = {
+  "ui-ux": "/uiux",
+  "3d": "/3d",
+  "ai": "/ai",
+  "vr-ar": "/vr-ar",
+  "architecture": "/architecture"
+};
+const routeCategoryAliases = {
+  "/uiux": "ui-ux",
+  "/ui-ux": "ui-ux",
+  "/3d": "3d",
+  "/ai": "ai",
+  "/vr-ar": "vr-ar",
+  "/vr": "vr-ar",
+  "/architecture": "architecture"
+};
 // UI text config area: edit these labels from one place.
 const UI_TEXT = {
   projectsGallery: "Projects Gallery",
@@ -3884,6 +3900,53 @@ const UI_TEXT = {
 function normalizeCategoryId(catId) {
   const normalized = String(catId || "").trim().toLowerCase();
   return categoryAliases[normalized] || normalized;
+}
+
+function normalizeRoutePath(pathname) {
+  let normalized = String(pathname || "/").trim() || "/";
+  normalized = normalized.replace(/\/index\.html$/i, "/");
+  if (!normalized.startsWith("/")) normalized = "/" + normalized;
+  if (normalized.length > 1) normalized = normalized.replace(/\/+$/, "");
+  return normalized || "/";
+}
+
+function getCategoryFromLocation() {
+  const routeCategory = routeCategoryAliases[normalizeRoutePath(window.location.pathname)];
+  if (routeCategory) return routeCategory;
+  const params = new URLSearchParams(window.location.search);
+  const queryCategory = normalizeCategoryId(params.get("category"));
+  return catLabels[queryCategory] ? queryCategory : "";
+}
+
+function getCategoryPath(catId) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  return categoryRoutePaths[normalizedCatId] || "/";
+}
+
+function updateUrlForCategory(catId, options = {}) {
+  if (typeof window === "undefined" || !window.history || typeof window.history.pushState !== "function") return;
+  const normalizedCatId = normalizeCategoryId(catId);
+  const hasCategory = Boolean(normalizedCatId && catLabels[normalizedCatId]);
+  const nextPath = hasCategory ? getCategoryPath(normalizedCatId) : "/";
+  const currentPath = normalizeRoutePath(window.location.pathname);
+  const currentQuery = new URLSearchParams(window.location.search);
+  const currentQueryCategory = normalizeCategoryId(currentQuery.get("category"));
+  const alreadySynced = currentPath === nextPath && !window.location.search && (!hasCategory || currentQueryCategory === normalizedCatId || !currentQueryCategory);
+  if (alreadySynced) return;
+  const method = options.replace ? "replaceState" : "pushState";
+  window.history[method]({ category: hasCategory ? normalizedCatId : null }, "", nextPath);
+}
+
+function syncViewWithLocation(options = {}) {
+  const routeCategory = getCategoryFromLocation();
+  if (document.getElementById('projectModal')?.classList.contains('open')) {
+    closeProject();
+  }
+  if (routeCategory) {
+    applyCategoryFilter(routeCategory, { keepInput: true, replaceUrl: true });
+    return;
+  }
+  resetView({ replaceUrl: true });
 }
 
 function normalizeProjectCategories() {
@@ -4621,6 +4684,9 @@ function applyCategoryFilter(catId, options = {}) {
     if (input) input.value = "";
     toggleSubmit();
   }
+  if (!options.skipUrl) {
+    updateUrlForCategory(normalizedCatId, { replace: Boolean(options.replaceUrl) });
+  }
 }
 
 function generateResponse(query, count) {
@@ -4780,6 +4846,7 @@ async function handleQuery() {
     const response = results.length > 0 ? generateResponse(query, results.length) : null;
     renderProjects(results, response || 'No matches for "' + query + '" - try broader terms or pick a category.');
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    updateUrlForCategory('', { replace: true });
   } catch (err) {
     console.error("handleQuery failed:", err);
     const grounded = getSiteGroundedAnswer(query);
@@ -4821,7 +4888,7 @@ function toggleSubmit() {
   btn.classList.toggle('active', document.getElementById('chatInput').value.trim().length > 0);
 }
 
-function resetView() {
+function resetView(options = {}) {
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   document.getElementById('chatInput').value = '';
   toggleSubmit();
@@ -4831,12 +4898,17 @@ function resetView() {
     answerContainer.hidden = true;
   }
   document.getElementById('responseArea').innerHTML = '<div class="initial-state" id="initialState">Select a category or type a query to explore projects. Press <span class="keystroke">Enter</span> to search.</div>';
+  if (!options.skipUrl) {
+    updateUrlForCategory('', { replace: Boolean(options.replaceUrl) });
+  }
 }
 
 normalizeProjectCategories();
 syncCategoryCounts();
 setupImageLightboxSwipe();
 initAiServiceStatus();
+syncViewWithLocation({ replaceUrl: true });
+window.addEventListener('popstate', () => syncViewWithLocation({ replaceUrl: true }));
 
 // =========== SKELETON LOADING UI ===========
 function buildSkeletonHTML(count) {
