@@ -52,6 +52,9 @@ function isAllowedOrigin(origin, allowedOriginSuffixes = DEFAULT_ALLOWED_ORIGIN_
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const RATE_LIMIT_MAX = 60;
 const ipBuckets = new Map();
+const SESSION_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
+const SESSION_LIMIT_MAX = 15;
+const sessionBuckets = new Map();
 const PROFILE_DOCUMENT = String(profileMarkdown || "").trim();
 const PROJECT_DOCUMENT = String(projectMarkdown || "").trim();
 function pickOne(options) {
@@ -256,6 +259,23 @@ function isRateLimited(ip) {
   }
   bucket.count += 1;
   return bucket.count > RATE_LIMIT_MAX;
+}
+
+function normalizeSessionId(value) {
+  const sessionId = String(value || "").trim();
+  if (!sessionId) return "";
+  return /^[a-z0-9_-]{12,128}$/i.test(sessionId) ? sessionId : "";
+}
+
+function isSessionRateLimited(sessionId) {
+  const now = Date.now();
+  const bucket = sessionBuckets.get(sessionId);
+  if (!bucket || now > bucket.resetAt) {
+    sessionBuckets.set(sessionId, { count: 1, resetAt: now + SESSION_LIMIT_WINDOW_MS });
+    return false;
+  }
+  bucket.count += 1;
+  return bucket.count > SESSION_LIMIT_MAX;
 }
 
 function readOpenAIText(payload) {
@@ -581,15 +601,25 @@ export default {
     }
 
     let query = "";
+    let sessionId = "";
     try {
       const body = await request.json();
       query = String(body?.query || "").trim();
+      sessionId = normalizeSessionId(body?.sessionId || request.headers.get("X-AI-Session-Id"));
     } catch {
       return jsonResponse(400, { error: "Invalid JSON body" }, origin, allowedOriginSuffixes);
     }
 
     if (!query) {
       return jsonResponse(400, { error: "Query is required" }, origin, allowedOriginSuffixes);
+    }
+
+    if (query !== "__status_ping__" && sessionId && isSessionRateLimited(sessionId)) {
+      return jsonResponse(429, {
+        error: "Session request limit reached",
+        reason: "session_limited",
+        limit: SESSION_LIMIT_MAX
+      }, origin, allowedOriginSuffixes);
     }
 
     const model = String(env.OPENAI_MODEL || "gpt-5.4").trim();

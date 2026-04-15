@@ -3343,9 +3343,14 @@ const AI_HEALTH_ENDPOINT = (window.AI_HEALTH_ENDPOINT && String(window.AI_HEALTH
   : (AI_ENDPOINT === "/api/ask"
     ? "/api/ask/health"
     : "");
+const AI_SESSION_LIMIT = 15;
+const AI_SESSION_ID_KEY = "pm_ai_session_id";
+const AI_SESSION_USAGE_KEY = "pm_ai_session_usage_v1";
 const aiUnknownFallback = "No exact match was found, but the portfolio covers UI/UX, 3D, AI, VR/AR, and Architecture projects.";
 const aiThreshold = 0.58;
 let aiKbCache = null;
+let aiSessionIdMemory = "";
+let aiSessionUsageMemory = null;
 const aiProfileLayoutSignals = {
   about: ["who is fatih", "about fatih", "tell me about fatih", "fatih profile", "who is he", "about him"],
   contact: ["contact", "contact details", "email", "e mail", "mail", "linkedin", "phone", "phone number", "how to reach", "reach fatih"]
@@ -3386,6 +3391,74 @@ const navigationalSignals = {
   "vr-ar": ["vr", "ar", "xr", "virtual reality", "augmented", "spatial", "unity", "huawei"],
   "architecture": ["architecture", "interior", "archviz", "villa", "residential"]
 };
+
+function readSessionValue(key) {
+  try { return window.sessionStorage.getItem(key); } catch (_) { return null; }
+}
+
+function writeSessionValue(key, value) {
+  try { window.sessionStorage.setItem(key, value); } catch (_) {}
+}
+
+function createAiSessionId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  return "pm-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+}
+
+function getAiSessionId() {
+  const stored = readSessionValue(AI_SESSION_ID_KEY);
+  if (stored) {
+    aiSessionIdMemory = stored;
+    return stored;
+  }
+  if (!aiSessionIdMemory) {
+    aiSessionIdMemory = createAiSessionId();
+    writeSessionValue(AI_SESSION_ID_KEY, aiSessionIdMemory);
+  }
+  return aiSessionIdMemory;
+}
+
+function readAiSessionUsage() {
+  const stored = readSessionValue(AI_SESSION_USAGE_KEY);
+  if (stored !== null) {
+    const parsed = Number.parseInt(stored, 10);
+    aiSessionUsageMemory = Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+    return aiSessionUsageMemory;
+  }
+  if (aiSessionUsageMemory === null) aiSessionUsageMemory = 0;
+  return aiSessionUsageMemory;
+}
+
+function writeAiSessionUsage(count) {
+  const safeCount = Math.max(0, Number.parseInt(String(count), 10) || 0);
+  aiSessionUsageMemory = safeCount;
+  writeSessionValue(AI_SESSION_USAGE_KEY, String(safeCount));
+}
+
+function reserveAiSessionRequest() {
+  const used = readAiSessionUsage();
+  const sessionId = getAiSessionId();
+  if (used >= AI_SESSION_LIMIT) {
+    return {
+      allowed: false,
+      sessionId,
+      used,
+      remaining: 0,
+      limit: AI_SESSION_LIMIT
+    };
+  }
+  const nextUsed = used + 1;
+  writeAiSessionUsage(nextUsed);
+  return {
+    allowed: true,
+    sessionId,
+    used: nextUsed,
+    remaining: Math.max(0, AI_SESSION_LIMIT - nextUsed),
+    limit: AI_SESSION_LIMIT
+  };
+}
 
 function normalizeQuery(raw) {
   const lower = String(raw || "").toLowerCase().trim();
@@ -3862,13 +3935,21 @@ function setAiServiceStatus(isOnline) {
   link.setAttribute("aria-label", link.title);
 }
 
-async function askProxy(query) {
+async function askProxy(query, options = {}) {
+  const isStatusPing = Boolean(options && options.isStatusPing);
+  const sessionId = !isStatusPing
+    ? String((options && options.sessionId) || getAiSessionId()).trim()
+    : "";
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 12000);
   const res = await fetch(AI_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: query }),
+    body: JSON.stringify(
+      sessionId
+        ? { query: query, sessionId: sessionId }
+        : { query: query }
+    ),
     cache: "no-store",
     signal: controller.signal
   }).finally(() => clearTimeout(timeout));
@@ -3900,7 +3981,7 @@ async function refreshAiServiceStatus() {
       return;
     }
 
-    const ping = await askProxy("__status_ping__");
+    const ping = await askProxy("__status_ping__", { isStatusPing: true });
     const isOnline = Boolean(ping.answer);
     setAiServiceStatus(isOnline);
   } catch (_) {
@@ -4015,28 +4096,41 @@ async function handleQuery() {
     }
 
     if (!preferLocalKb) {
-      try {
-        const proxyResult = await askProxy(query);
-        const proxyAnswer = proxyResult.answer;
-        if (proxyAnswer && !proxyResult.fallback) {
-          answerText = proxyAnswer;
-          followups = aiFallbackFollowups;
-          setAiServiceStatus(true);
-        } else {
-          shouldUseLocalFallback = true;
-          fallbackReason = proxyResult.reason || "unavailable";
-          if (proxyResult.fallback) {
-            console.warn("Worker returned fallback:", {
-              reason: proxyResult.reason || "",
-              upstreamStatus: proxyResult.upstream_status || ""
-            });
-          }
-          setAiServiceStatus(false);
-        }
-      } catch (err) {
-        console.warn("Proxy fallback failed:", err);
+      const sessionReservation = reserveAiSessionRequest();
+      if (!sessionReservation.allowed) {
         shouldUseLocalFallback = true;
-        setAiServiceStatus(false);
+        fallbackReason = "session_limited";
+      } else {
+        try {
+          const proxyResult = await askProxy(query, { sessionId: sessionReservation.sessionId });
+          const proxyAnswer = proxyResult.answer;
+          if (proxyAnswer && !proxyResult.fallback) {
+            answerText = proxyAnswer;
+            followups = aiFallbackFollowups;
+            setAiServiceStatus(true);
+          } else {
+            shouldUseLocalFallback = true;
+            fallbackReason = proxyResult.reason || "unavailable";
+            if (proxyResult.fallback) {
+              console.warn("Worker returned fallback:", {
+                reason: proxyResult.reason || "",
+                upstreamStatus: proxyResult.upstream_status || ""
+              });
+            }
+            if (fallbackReason !== "session_limited") {
+              setAiServiceStatus(false);
+            }
+          }
+        } catch (err) {
+          console.warn("Proxy fallback failed:", err);
+          shouldUseLocalFallback = true;
+          fallbackReason = err && err.payload && err.payload.reason
+            ? String(err.payload.reason)
+            : "unavailable";
+          if (fallbackReason !== "session_limited") {
+            setAiServiceStatus(false);
+          }
+        }
       }
     }
 
