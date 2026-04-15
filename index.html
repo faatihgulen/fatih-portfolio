@@ -15,8 +15,6 @@
       const stored = localStorage.getItem(storageKey);
       if (stored === 'light' || stored === 'dark') {
         theme = stored;
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        theme = 'light';
       }
     } catch (err) {}
     document.documentElement.dataset.theme = theme;
@@ -46,7 +44,7 @@
     --header-shadow: 0 10px 26px rgba(0,0,0,0.14);
     --header-shine: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
     --ambient-glow-bg: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
-    --ambient-opacity: 0.5;
+    --ambient-opacity: 0.42;
     --orb-one-bg: radial-gradient(circle at 35% 30%, rgba(196,240,77,0.34), rgba(196,240,77,0.09) 58%, transparent 74%);
     --orb-two-bg: radial-gradient(circle at 62% 38%, rgba(120,170,255,0.22), rgba(120,170,255,0.08) 58%, transparent 74%);
     --orb-three-bg: radial-gradient(circle at 45% 45%, rgba(255,255,255,0.18), rgba(255,255,255,0.05) 60%, transparent 76%);
@@ -120,24 +118,24 @@
     --text-primary: #17150f;
     --text-secondary: #5e574b;
     --text-muted: #867d6f;
-    --accent: #758f1f;
-    --accent-glow: #9bb552;
-    --accent-dim: rgba(117,143,31,0.14);
-    --accent-mid: rgba(117,143,31,0.28);
+    --accent: #667d22;
+    --accent-glow: #879b47;
+    --accent-dim: rgba(102,125,34,0.16);
+    --accent-mid: rgba(102,125,34,0.3);
     --accent-contrast: #f8f5ef;
     --page-bg:
-      radial-gradient(circle at 18% 18%, rgba(117,143,31,0.12), transparent 30%),
-      radial-gradient(circle at 82% 14%, rgba(108,138,210,0.11), transparent 23%),
-      radial-gradient(circle at 78% 76%, rgba(255,255,255,0.76), transparent 22%),
+      radial-gradient(circle at 18% 18%, rgba(102,125,34,0.14), transparent 30%),
+      radial-gradient(circle at 82% 14%, rgba(82,117,186,0.13), transparent 23%),
+      radial-gradient(circle at 78% 76%, rgba(198,184,170,0.52), transparent 24%),
       linear-gradient(180deg, #f8f4ec 0%, #efe7d9 100%);
     --header-bg: rgba(248, 244, 236, 0.82);
     --header-shadow: 0 12px 32px rgba(87, 67, 32, 0.08);
     --header-shine: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0));
-    --ambient-glow-bg: radial-gradient(circle, rgba(117,143,31,0.16) 0%, transparent 70%);
-    --ambient-opacity: 0.56;
-    --orb-one-bg: radial-gradient(circle at 35% 30%, rgba(117,143,31,0.24), rgba(117,143,31,0.08) 58%, transparent 72%);
-    --orb-two-bg: radial-gradient(circle at 62% 38%, rgba(108,138,210,0.20), rgba(108,138,210,0.08) 58%, transparent 72%);
-    --orb-three-bg: radial-gradient(circle at 45% 45%, rgba(255,255,255,0.5), rgba(255,255,255,0.1) 60%, transparent 74%);
+    --ambient-glow-bg: radial-gradient(circle, rgba(102,125,34,0.24) 0%, transparent 72%);
+    --ambient-opacity: 0.58;
+    --orb-one-bg: radial-gradient(circle at 35% 30%, rgba(102,125,34,0.34), rgba(102,125,34,0.12) 58%, transparent 72%);
+    --orb-two-bg: radial-gradient(circle at 62% 38%, rgba(82,117,186,0.3), rgba(82,117,186,0.12) 58%, transparent 72%);
+    --orb-three-bg: radial-gradient(circle at 45% 45%, rgba(173,149,127,0.34), rgba(173,149,127,0.1) 60%, transparent 74%);
     --glass-border: rgba(23,21,15,0.1);
     --glass-border-strong: rgba(23,21,15,0.12);
     --glass-fill: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(245,239,229,0.88));
@@ -225,31 +223,31 @@
     position: absolute;
     border-radius: 48% 52% 60% 40% / 52% 46% 54% 48%;
     filter: blur(16px);
-    opacity: 0.14;
+    opacity: 0.11;
     mix-blend-mode: normal;
     will-change: auto;
   }
   .bg-orb.one {
-    width: 340px;
-    height: 300px;
-    left: -70px;
-    top: 18vh;
+    width: 320px;
+    height: 286px;
+    left: -82px;
+    top: 20vh;
     background: var(--orb-one-bg);
     animation: orbDriftOne 22s ease-in-out infinite alternate;
   }
   .bg-orb.two {
-    width: 280px;
-    height: 340px;
-    right: 8vw;
-    top: 54vh;
+    width: 252px;
+    height: 312px;
+    right: -1vw;
+    top: 62vh;
     background: var(--orb-two-bg);
     animation: orbDriftTwo 26s ease-in-out infinite alternate;
   }
   .bg-orb.three {
-    width: 250px;
-    height: 250px;
-    right: -40px;
-    top: 8vh;
+    width: 220px;
+    height: 220px;
+    right: 14vw;
+    top: 10vh;
     background: var(--orb-three-bg);
     animation: orbDriftThree 20s ease-in-out infinite alternate;
   }
@@ -1788,16 +1786,16 @@
 
   /* =========== NEON STAR PARTICLES =========== */
   .neon-stars-canvas {
-    position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.9;
+    position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.78;
     filter: saturate(1.08) contrast(1.05);
   }
   html[data-theme="light"] .neon-stars-canvas {
     opacity: 0.76;
-    filter: saturate(0.95) contrast(1.06);
+    filter: saturate(1.02) contrast(1.08);
   }
   html[data-theme="light"] .bg-orb {
     opacity: 0.24;
-    filter: blur(18px);
+    filter: blur(17px);
   }
   @media (prefers-reduced-motion: reduce) {
     .neon-stars-canvas { display: none; }
@@ -2415,7 +2413,6 @@
 
 <script>
 const THEME_STORAGE_KEY = 'fatih-portfolio-theme';
-const systemThemeQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null;
 
 function getStoredTheme() {
   try {
@@ -2465,18 +2462,6 @@ function toggleTheme() {
 
 syncThemeToggle(getActiveTheme());
 setThemeMeta(getActiveTheme());
-
-if (systemThemeQuery) {
-  const handleSystemThemeChange = (event) => {
-    if (getStoredTheme()) return;
-    applyTheme(event.matches ? 'light' : 'dark', false);
-  };
-  if (typeof systemThemeQuery.addEventListener === 'function') {
-    systemThemeQuery.addEventListener('change', handleSystemThemeChange);
-  } else if (typeof systemThemeQuery.addListener === 'function') {
-    systemThemeQuery.addListener(handleSystemThemeChange);
-  }
-}
 
 // --- ABOUT MODAL ---
 function openAbout() {
@@ -5276,19 +5261,19 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
   resize();
   window.addEventListener('resize', resize);
 
-  const STAR_COUNT = 84;
-  const OBJECT_COUNT = 12;
+  const STAR_COUNT = 64;
+  const OBJECT_COUNT = 6;
   const stars = [];
   const objects = [];
 
   function getSpacePalette() {
     return document.documentElement.dataset.theme === 'light'
       ? [
-          { r: 117, g: 143, b: 31 },
-          { r: 164, g: 182, b: 92 },
-          { r: 114, g: 135, b: 196 },
-          { r: 191, g: 170, b: 128 },
-          { r: 255, g: 255, b: 255 },
+          { r: 108, g: 131, b: 33 },
+          { r: 162, g: 98, b: 82 },
+          { r: 82, g: 117, b: 186 },
+          { r: 184, g: 136, b: 64 },
+          { r: 176, g: 151, b: 130 },
         ]
       : [
           { r: 196, g: 240, b: 77 },
@@ -5318,36 +5303,54 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 
   function createObject(initial = false) {
     const z = Math.random();
+    const initialSpread = Math.max(150, Math.min(h * 0.58, Math.max(150, h - 180)));
     return {
       x: Math.random() * w,
-      y: initial ? (Math.random() * Math.min(h, 520)) : Math.random() * h,
+      y: initial
+        ? (Math.random() * initialSpread) + 56
+        : Math.random() * h,
       z,
-      baseSize: 18 + Math.random() * 40,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.18,
+      baseSize: 14 + Math.random() * 24,
+      vx: (Math.random() - 0.5) * 0.24,
+      vy: (Math.random() - 0.5) * 0.15,
       wobblePhase: Math.random() * Math.PI * 2,
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.01,
       trail: [],
       colorIndex: Math.floor(Math.random() * 5),
-      alpha: 0.18 + z * 0.24
+      alpha: 0.12 + z * 0.15
     };
   }
 
+  function isObjectSeparated(candidate, placed) {
+    return placed.every((other) => {
+      const dx = other.x - candidate.x;
+      const dy = other.y - candidate.y;
+      const minDistance = 170 + ((other.baseSize + candidate.baseSize) * 0.75);
+      return (dx * dx) + (dy * dy) > (minDistance * minDistance);
+    });
+  }
+
   for (let i = 0; i < OBJECT_COUNT; i++) {
-    objects.push(createObject(true));
+    let next = createObject(true);
+    let attempts = 0;
+    while (attempts < 32 && !isObjectSeparated(next, objects)) {
+      next = createObject(true);
+      attempts += 1;
+    }
+    objects.push(next);
   }
 
   function drawStar(star) {
     const palette = getSpacePalette();
     const lightMode = document.documentElement.dataset.theme === 'light';
     const color = palette[star.colorIndex % palette.length];
-    const a = star.alpha * (lightMode ? 0.74 : 1);
+    const a = star.alpha * (lightMode ? 0.88 : 1);
     if (a < 0.01) return;
 
     const { x, y, size, glowSize, isBright } = star;
     const s = isBright ? size * 2 : size;
-    const g = (isBright ? glowSize * 1.5 : glowSize) * (lightMode ? 0.82 : 1);
+    const g = (isBright ? glowSize * 1.5 : glowSize) * (lightMode ? 0.9 : 1);
 
     // Outer glow
     const grad = ctx.createRadialGradient(x, y, 0, x, y, g);
@@ -5389,11 +5392,13 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     const palette = getSpacePalette();
     const lightMode = document.documentElement.dataset.theme === 'light';
     const color = palette[obj.colorIndex % palette.length];
+    const accentColor = palette[(obj.colorIndex + 1) % palette.length];
+    const highlightColor = palette[(obj.colorIndex + 2) % palette.length];
     const perspective = 0.55 + obj.z * 0.95;
     const size = obj.baseSize * perspective;
     const yDist = Math.abs(obj.y - focusY);
     const focusFade = Math.max(0.12, 1 - (yDist / (h * 0.95)));
-    const baseAlpha = obj.alpha * focusFade * (lightMode ? 0.78 : 1);
+    const baseAlpha = obj.alpha * focusFade * (lightMode ? 0.9 : 1);
     if (baseAlpha < 0.02) return;
 
     // Motion blur trail
@@ -5411,7 +5416,11 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 
     // Soft glow body
     const grad = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, size * 1.35);
-    grad.addColorStop(0, `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.45})`);
+    grad.addColorStop(0, `rgba(${color.r},${color.g},${color.b},${baseAlpha * (lightMode ? 0.58 : 0.45)})`);
+    if (lightMode) {
+      grad.addColorStop(0.36, `rgba(${accentColor.r},${accentColor.g},${accentColor.b},${baseAlpha * 0.24})`);
+      grad.addColorStop(0.68, `rgba(${highlightColor.r},${highlightColor.g},${highlightColor.b},${baseAlpha * 0.1})`);
+    }
     grad.addColorStop(1, `rgba(${color.r},${color.g},${color.b},0)`);
     ctx.fillStyle = grad;
     ctx.beginPath();
@@ -5423,13 +5432,32 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     ctx.translate(obj.x, obj.y);
     ctx.rotate(obj.rotation);
     ctx.scale(1, 0.62);
-    ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.9})`;
+    if (lightMode) {
+      const outerRing = ctx.createLinearGradient(-size, -size * 0.25, size, size * 0.25);
+      outerRing.addColorStop(0, `rgba(${color.r},${color.g},${color.b},${baseAlpha * 1.02})`);
+      outerRing.addColorStop(0.38, `rgba(${accentColor.r},${accentColor.g},${accentColor.b},${baseAlpha * 0.78})`);
+      outerRing.addColorStop(0.7, `rgba(${highlightColor.r},${highlightColor.g},${highlightColor.b},${baseAlpha * 0.5})`);
+      outerRing.addColorStop(1, `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.88})`);
+      ctx.shadowBlur = Math.max(10, size * 0.24);
+      ctx.shadowColor = `rgba(${accentColor.r},${accentColor.g},${accentColor.b},${baseAlpha * 0.22})`;
+      ctx.strokeStyle = outerRing;
+    } else {
+      ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.9})`;
+    }
     ctx.lineWidth = Math.max(0.6, size * 0.045);
     ctx.beginPath();
     ctx.ellipse(0, 0, size, size, 0, 0, Math.PI * 2);
     ctx.stroke();
     ctx.rotate(Math.PI / 2.8);
-    ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.55})`;
+    if (lightMode) {
+      const innerRing = ctx.createLinearGradient(-size * 0.78, size * 0.18, size * 0.78, -size * 0.18);
+      innerRing.addColorStop(0, `rgba(${accentColor.r},${accentColor.g},${accentColor.b},${baseAlpha * 0.84})`);
+      innerRing.addColorStop(0.52, `rgba(${highlightColor.r},${highlightColor.g},${highlightColor.b},${baseAlpha * 0.56})`);
+      innerRing.addColorStop(1, `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.56})`);
+      ctx.strokeStyle = innerRing;
+    } else {
+      ctx.strokeStyle = `rgba(${color.r},${color.g},${color.b},${baseAlpha * 0.55})`;
+    }
     ctx.beginPath();
     ctx.ellipse(0, 0, size * 0.78, size * 0.78, 0, 0, Math.PI * 2);
     ctx.stroke();
@@ -5437,11 +5465,17 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 
     // Core highlight
     ctx.fillStyle = lightMode
-      ? `rgba(255,255,255,${baseAlpha * 0.18})`
+      ? `rgba(255,255,255,${baseAlpha * 0.24})`
       : `rgba(255,255,255,${baseAlpha * 0.35})`;
     ctx.beginPath();
     ctx.arc(obj.x - size * 0.22, obj.y - size * 0.18, Math.max(1, size * 0.09), 0, Math.PI * 2);
     ctx.fill();
+    if (lightMode) {
+      ctx.fillStyle = `rgba(${highlightColor.r},${highlightColor.g},${highlightColor.b},${baseAlpha * 0.16})`;
+      ctx.beginPath();
+      ctx.arc(obj.x + size * 0.16, obj.y + size * 0.12, Math.max(0.8, size * 0.06), 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 
   let time = 0;
