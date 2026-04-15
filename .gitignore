@@ -4,3 +4,9 @@ node_modules/
 .env.*
 !.env.example
 .wrangler/
+.claude/
+.vscode/
+uploads/
+private/
+data/resume_fallback_kb.generated.json
+data/resume_sources.generated.json

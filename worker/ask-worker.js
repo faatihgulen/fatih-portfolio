@@ -574,8 +574,9 @@ export default {
     const origin = request.headers.get("Origin") || "";
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
     const allowedOriginSuffixes = getAllowedOriginSuffixes(env);
+    const hasAllowedOrigin = isAllowedOrigin(origin, allowedOriginSuffixes);
 
-    if (origin && !isAllowedOrigin(origin, allowedOriginSuffixes)) {
+    if (!hasAllowedOrigin) {
       return jsonResponse(403, { error: "Origin not allowed" }, origin, allowedOriginSuffixes);
     }
 

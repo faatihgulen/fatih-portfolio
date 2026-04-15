@@ -38,6 +38,7 @@ const LOCAL_ADMIN_ORIGINS = new Set([
   'http://127.0.0.1:3000'
 ]);
 const LOOPBACK_HOSTNAMES = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
+const LOOPBACK_ADDRESSES = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 const resumePdfCache = new Map();
 
 const DEFAULT_RESUME_SOURCES = [
@@ -80,6 +81,10 @@ function isLoopbackHostname(hostname) {
   return LOOPBACK_HOSTNAMES.has(String(hostname || '').toLowerCase());
 }
 
+function isLoopbackAddress(address) {
+  return LOOPBACK_ADDRESSES.has(String(address || '').toLowerCase());
+}
+
 function isSubpath(parentPath, childPath) {
   const relative = path.relative(parentPath, childPath);
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
@@ -115,18 +120,19 @@ function sanitizeUploadFilename(value, fallbackBase = 'upload') {
 }
 
 function isLocalAdminRequest(req) {
+  const remoteAddress = String(req.socket && req.socket.remoteAddress || '').trim();
+  if (!isLoopbackAddress(remoteAddress)) return false;
+
   const origin = req.get('origin');
   if (origin) {
-    if (LOCAL_ADMIN_ORIGINS.has(origin)) return true;
+    if (!LOCAL_ADMIN_ORIGINS.has(origin)) return false;
     try {
       return isLoopbackHostname(new URL(origin).hostname);
     } catch {
       return false;
     }
   }
-
-  const host = String(req.get('host') || '').split(':')[0];
-  return isLoopbackHostname(host);
+  return true;
 }
 
 function enforceLocalAdminRequest(req, res) {
@@ -152,8 +158,8 @@ app.get('/index.html', (_req, res) => {
 });
 
 function isAllowedOrigin(req) {
-  const origin = req.get('origin');
-  if (!origin) return true;
+  const origin = String(req.get('origin') || '').trim();
+  if (!origin) return false;
   return ALLOWED_ORIGINS.has(origin);
 }
 
