@@ -18,7 +18,7 @@ Recommended fields:
 - notes
 
 ## p01 | AERONIX - EV Dashboard UI
-current_portfolio_summary: End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive 3D car visualizations.
+current_portfolio_summary: End-to-end dashboard and interface design for an electric vehicle platform. Drive mode, charging screens, and immersive interior and HMI visualizations.
 goal:
 problem:
 approach:
@@ -35,8 +35,8 @@ result:
 impact:
 notes:
 
-## p03 | Hipicon - Brand Identity
-current_portfolio_summary: Brand identity and UI design for Hipicon. Visual language, component system, and marketing collateral.
+## p04 | 3D Materials - Trim Sheet Material
+current_portfolio_summary: Featured by Adobe. Custom trim sheet material created for a fantasy-style castle environment in a harsh winter landscape, with rich ornamentation, classical motifs, icy wear, sculptural details, and golden accents.
 goal:
 problem:
 approach:
@@ -44,8 +44,8 @@ result:
 impact:
 notes:
 
-## p04 | Balıkesir - Architectural Viz
-current_portfolio_summary: Architectural visualization for Balıkesir residential project. Photorealistic renders from concept to final presentation.
+## p05 | 3D Materials - PBR Material
+current_portfolio_summary: Stylized snow-covered and weathered stone path material focused on surface detail, bootprints, scattered leaves, and the contrast between snow accumulation and exposed rock.
 goal:
 problem:
 approach:
@@ -53,8 +53,8 @@ result:
 impact:
 notes:
 
-## p05 | Huawei VR - Racket Training
-current_portfolio_summary: VR racket training simulation for Huawei. Spatial UI, gesture tracking, and immersive training environments built in Unity.
+## p06 | Ogut Tarabya - Villa Design
+current_portfolio_summary: Holistic villa design blending classic touches with contemporary living requirements through a timeless spatial language focused on user experience, comfort, clarity, and long-term usability.
 goal:
 problem:
 approach:
@@ -62,17 +62,8 @@ result:
 impact:
 notes:
 
-## p06 | Synapse - AI Workflow Engine
-current_portfolio_summary: ComfyUI-based AI image generation pipeline. Custom nodes for style transfer, upscaling, and batch processing.
-goal:
-problem:
-approach:
-result:
-impact:
-notes:
-
-## p07 | Istanbloom - Interior Design
-current_portfolio_summary: Interior design and architectural visualization for Istanbloom residential project. Living spaces, bathrooms, and lifestyle renders.
+## p07 | BSH - Office Interior Design
+current_portfolio_summary: Office interior project blending functionality, comfort, and modern aesthetics with open-plan workspace design, ergonomic furniture, and warm-toned seating areas to support collaboration and productivity.
 goal:
 problem:
 approach:
@@ -107,8 +98,8 @@ result:
 impact:
 notes:
 
-## p11 | Gym - Fitness Center Design
-current_portfolio_summary: Architectural design and visualization for a modern fitness center. Interior layouts, equipment placement, and atmospheric renders.
+## p11 | Mid poly 3D Assets
+current_portfolio_summary: Mid-poly asset collection presented with interactive Sketchfab embeds.
 goal:
 problem:
 approach:
@@ -116,8 +107,8 @@ result:
 impact:
 notes:
 
-## p12 | AI Thesis - Research Project
-current_portfolio_summary: Academic research project exploring AI-driven design workflows. Thesis documentation with generative design experiments.
+## p12 | Huawei VR - VR Game Projects
+current_portfolio_summary: VR game prototyping for Huawei R&D covering the full production pipeline from concept to final engine integration across real-time and pre-rendered projects.
 goal:
 problem:
 approach:
@@ -125,8 +116,8 @@ result:
 impact:
 notes:
 
-## p13 | Huawei VR - Unity Environments
-current_portfolio_summary: VR environment development for Huawei training platform. Spatial interaction design and immersive scene building.
+## p13 | Dollvet - Villa-Office Design
+current_portfolio_summary: Building designed in 3ds Max and imported into Unreal Engine so the client could inspect details and interactively change colors, objects, and lighting based on project needs.
 goal:
 problem:
 approach:
@@ -134,8 +125,8 @@ result:
 impact:
 notes:
 
-## p14 | AERONIX - Design System
-current_portfolio_summary: Comprehensive design system for AERONIX EV platform. 100+ components, dark/light modes, and automotive-specific patterns.
+## p14 | Istanbloom - Interior Design
+current_portfolio_summary: Interior design and architectural visualization for the Istanbloom residential project, including living spaces, bathrooms, and lifestyle renders.
 goal:
 problem:
 approach:
@@ -143,8 +134,8 @@ result:
 impact:
 notes:
 
-## p15 | AI Art - Diffusion Collection
-current_portfolio_summary: Curated collection of AI-generated art exploring identity and perception. Custom-trained models on personal datasets.
+## p15 | AI Thesis - Research Project
+current_portfolio_summary: Research project exploring AI-driven game and design workflows, where users become part of the design process by generating and customizing content through prompts inside an interactive experience.
 goal:
 problem:
 approach:
@@ -152,8 +143,8 @@ result:
 impact:
 notes:
 
-## p16 | VFX - 3D Visual Effects
-current_portfolio_summary: Real-time visual effects and 3D compositing. Particle systems, shader development, and post-processing pipelines.
+## p16 | 3D Badge Design - Token
+current_portfolio_summary: 3D badge asset representing intelligence, focus, and mastery, designed as a reward icon for high-performing players within a game system.
 goal:
 problem:
 approach:
@@ -161,8 +152,8 @@ result:
 impact:
 notes:
 
-## p17 | 3D Materials - Texture Library
-current_portfolio_summary: Custom PBR material library with realistic metal, fabric, and organic surfaces. Procedural and hand-painted textures.
+## p17 | Gaze Garden - AR Tiktok Project
+current_portfolio_summary: AR project created with TikTok Effect House for TikTok effects, designed to be experienced by scanning the QR code in the TikTok app.
 goal:
 problem:
 approach:
@@ -170,8 +161,8 @@ result:
 impact:
 notes:
 
-## p18 | 3D Concept - Digital Sculpture
-current_portfolio_summary: Digital sculpture and concept art. High-poly modeling with detailed surface work and cinematic composition.
+## p18 | 3D Concept - 3D Bathroom Stylized
+current_portfolio_summary: Digital sculpture and concept art project with high-poly modeling, detailed surface work, and cinematic composition.
 goal:
 problem:
 approach:
@@ -179,8 +170,8 @@ result:
 impact:
 notes:
 
-## p19 | AERONIX - 3D Car Visuals
-current_portfolio_summary: High-fidelity 3D car visualization for AERONIX EV. Detailed exterior renders, lighting studies, and turntable animations.
+## p19 | Balikesir - Architectural Viz
+current_portfolio_summary: Architectural visualization for a residential project in Balikesir, with photorealistic renders spanning concept through final presentation.
 goal:
 problem:
 approach:
@@ -188,8 +179,17 @@ result:
 impact:
 notes:
 
-## p20 | Lumen - Portfolio Website
-current_portfolio_summary: AI-interface portfolio concept. Chat-based navigation, smart filtering, and ambient design system.
+## p20 | Gym - Fitness Center Design
+current_portfolio_summary: Architectural design and visualization for a modern fitness center, covering interior layouts, equipment placement, and atmospheric renders.
+goal:
+problem:
+approach:
+result:
+impact:
+notes:
+
+## p21 | VFX - 3D Visual Effects
+current_portfolio_summary: Real-time visual effects and 3D compositing focused on particle systems, shader development, and post-processing pipelines.
 goal:
 problem:
 approach:

@@ -104,14 +104,49 @@ function parseProjectEntries(documentText) {
 
 const PROJECT_ENTRIES = parseProjectEntries(PROJECT_DOCUMENT);
 
-function scoreProjectEntry(query, entry) {
+function extractExplicitProjectSignals(query) {
+  const rawQuery = String(query || "");
+  const idMatch =
+    rawQuery.match(/Project ID:\s*(p\d+)/i) ||
+    rawQuery.match(/Explain project\s+(p\d+)\b/i);
+  const titleMatch =
+    rawQuery.match(/Project title:\s*(.+)/i) ||
+    rawQuery.match(/Explain project\s+p\d+\s+\(([^)]+)\)/i);
+
+  const id = idMatch ? String(idMatch[1] || "").toLowerCase().trim() : "";
+  const title = titleMatch ? String(titleMatch[1] || "").trim() : "";
+
+  return {
+    id,
+    title,
+    normalizedTitle: normalizeQuery(title)
+  };
+}
+
+function entryMatchesExplicitTitle(entry, normalizedTitle) {
+  if (!entry || !normalizedTitle) return false;
+  return [entry.title, entry.alias]
+    .filter(Boolean)
+    .some((value) => normalizeQuery(value) === normalizedTitle);
+}
+
+function scoreProjectEntry(query, entry, explicitSignals = null) {
   const normalizedQuery = normalizeQuery(query);
   if (!normalizedQuery || !entry) return 0;
-  const explicitIdRegex = new RegExp(`\\b${entry.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
-  if (explicitIdRegex.test(normalizedQuery)) return 1000;
+  let best = 0;
+
+  if (explicitSignals?.normalizedTitle && entryMatchesExplicitTitle(entry, explicitSignals.normalizedTitle)) {
+    best = Math.max(best, 1400);
+  }
+
+  if (explicitSignals?.id === entry.id) {
+    best = Math.max(best, 1000);
+  } else {
+    const explicitIdRegex = new RegExp(`\\b${entry.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+    if (explicitIdRegex.test(normalizedQuery)) best = Math.max(best, 1000);
+  }
 
   const titleVariants = [entry.title, entry.alias].filter(Boolean).map(normalizeQuery);
-  let best = 0;
   titleVariants.forEach((variant) => {
     if (!variant) return;
     if (normalizedQuery.includes(variant)) {
@@ -128,10 +163,33 @@ function scoreProjectEntry(query, entry) {
 function findRelevantProjectEntry(query) {
   const normalizedQuery = normalizeQuery(query);
   if (!normalizedQuery || !PROJECT_ENTRIES.length) return null;
+  const explicitSignals = extractExplicitProjectSignals(query);
+
+  if (explicitSignals.normalizedTitle) {
+    const exactTitleEntry = PROJECT_ENTRIES.find((entry) =>
+      entryMatchesExplicitTitle(entry, explicitSignals.normalizedTitle)
+    );
+    if (exactTitleEntry) return exactTitleEntry;
+
+    // If the frontend supplied both a project ID and a project title but the
+    // canonical source disagrees, prefer no match over the wrong project.
+    if (explicitSignals.id) {
+      const exactIdEntry = PROJECT_ENTRIES.find((entry) => entry.id === explicitSignals.id);
+      if (exactIdEntry && !entryMatchesExplicitTitle(exactIdEntry, explicitSignals.normalizedTitle)) {
+        return null;
+      }
+    }
+  }
+
+  if (explicitSignals.id) {
+    const exactIdEntry = PROJECT_ENTRIES.find((entry) => entry.id === explicitSignals.id);
+    if (exactIdEntry) return exactIdEntry;
+  }
+
   const explicitProjectIntent = /\b(project|case study|goal|problem|approach|result|impact|detail|details|summary|explain|breakdown)\b/i.test(normalizedQuery);
   let best = null;
   PROJECT_ENTRIES.forEach((entry) => {
-    const score = scoreProjectEntry(normalizedQuery, entry);
+    const score = scoreProjectEntry(normalizedQuery, entry, explicitSignals);
     if (!best || score > best.score) best = { entry, score };
   });
   if (!best || best.score <= 0) return null;

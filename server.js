@@ -25,6 +25,7 @@ const app = express();
 const PORT = 3000;
 const DATA_PATH = path.join(__dirname, 'data', 'site.json');
 const IMAGES_ROOT = path.join(__dirname, 'images');
+const CATEGORY_ROUTE_PATHS = ['/architecture', '/uiux', '/ui-ux', '/ai', '/3d', '/vr-ar', '/vr'];
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const ALLOWED_ORIGINS = new Set([
@@ -154,6 +155,9 @@ app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.get('/index.html', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.get(CATEGORY_ROUTE_PATHS, (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
