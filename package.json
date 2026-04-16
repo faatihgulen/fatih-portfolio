@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "generate": "node generate-data.js",
-    "convert": "node convert-to-webp.js"
+    "convert": "node convert-to-webp.js",
+    "generate:cards": "node generate-card-thumbs.js"
   },
   "dependencies": {
     "express": "^4.21.0",
