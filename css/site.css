@@ -280,7 +280,7 @@
   .header-meta { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .status-dot {
     width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
-    animation: statusBlink 3s ease-in-out infinite; display: inline-block;
+    animation: statusBlink 3s ease-in-out infinite; display: flex; flex-shrink: 0; margin-top: 1px;
   }
   .status-dot.offline {
     background: #ff6b6b;
@@ -290,7 +290,7 @@
   .header-link {
     font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
     text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase;
-    transition: color 0.3s; cursor: pointer;
+    transition: color 0.3s; cursor: pointer; display: flex; align-items: center; gap: 6px;
   }
   .header-link:hover { color: var(--text-secondary); }
   .theme-toggle {
