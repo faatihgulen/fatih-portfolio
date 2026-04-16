@@ -9,6 +9,9 @@ const OUTPUT_DIR = path.join(ROOT, 'images', '_card');
 const CARD_WIDTH = 960;
 const CARD_HEIGHT = 600;
 const CARD_QUALITY = 72;
+const CARD_POSITIONS = {
+};
+const CARD_TOP_CROPS = new Set(['p04']);
 const EXTRA_CARD_PROJECTS = [
   {
     id: 'p03',
@@ -33,12 +36,27 @@ async function ensureDir(dirPath) {
 async function buildCardThumb(project) {
   const inputPath = path.join(ROOT, String(project.image || '').replace(/\//g, path.sep));
   const outputPath = path.join(OUTPUT_DIR, `${project.id}.webp`);
-  await sharp(inputPath)
-    .rotate()
-    .resize(CARD_WIDTH, CARD_HEIGHT, {
+  const position = CARD_POSITIONS[project.id] || 'attention';
+
+  let pipeline = sharp(inputPath).rotate();
+
+  if (CARD_TOP_CROPS.has(project.id)) {
+    pipeline = pipeline
+      .resize({ width: CARD_WIDTH })
+      .extract({
+        left: 0,
+        top: 0,
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT
+      });
+  } else {
+    pipeline = pipeline.resize(CARD_WIDTH, CARD_HEIGHT, {
       fit: 'cover',
-      position: 'attention'
-    })
+      position
+    });
+  }
+
+  await pipeline
     .webp({
       quality: CARD_QUALITY,
       effort: 4
