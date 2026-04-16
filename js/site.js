@@ -1413,9 +1413,104 @@ const UI_TEXT = {
   coverLabel: "Cover"
 };
 
+const defaultSuggestedPrompts = [
+  "Who is Fatih?",
+  "How many years of experience?",
+  "What tools does he use?",
+  "What roles is he looking for?",
+  "Contact details"
+];
+
+const searchPlaceholderOptions = [
+  'Try: "Show me your Unreal VR projects"',
+  'Try: "Show me dashboard UI case studies"',
+  'Try: "Show me 3D product visualization work"',
+  'Try: "Show me AI workflows with ComfyUI"',
+  'Try: "Show me architectural visualization projects"'
+];
+
+const categorySuggestedPrompts = {
+  "ui-ux": [
+    "Show UI dashboard examples for complex platforms",
+    "Show UI flows for mobile app products",
+    "What tools does he use for UI/UX design projects?",
+    "Show automotive UI and EV dashboard projects",
+    "Show web interface case studies for product design"
+  ],
+  "3d": [
+    "Show 3D product visualization with realistic materials",
+    "Show 3D mid-poly assets",
+    "Which tools does he use for 3D material library and PBR texture work?",
+    "Show 3D concept modeling and digital sculpture projects",
+    "Tell me how he started doing 3D work"
+  ],
+  "ai": [
+    "Show ComfyUI workflows for image generation pipelines",
+    "Show AI-assisted character creation projects",
+    "Show generative AI research and thesis work",
+    "Show production-ready marketing visuals generated with AI",
+    "Show AI art projects trained on custom datasets"
+  ],
+  "vr-ar": [
+    "Show VR training simulations built in Unity",
+    "Show spatial UI and immersive interaction projects",
+    "What tools did he use in Huawei VR projects?",
+    "Show interactive 3D environments for XR experiences",
+    "Show industrial or simulation-focused VR work"
+  ],
+  "architecture": [
+    "Show architectural visualization for residential projects",
+    "Show interior design renders with atmospheric lighting",
+    "How did he present interior design projects to clients and stakeholders?",
+    "Tell me about his interior design background and projects",
+    "Show commercial architecture and fitness space visualization work"
+  ]
+};
+
 function normalizeCategoryId(catId) {
   const normalized = String(catId || "").trim().toLowerCase();
   return categoryAliases[normalized] || normalized;
+}
+
+function getSuggestedPromptsForCategory(catId) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  return categorySuggestedPrompts[normalizedCatId] || defaultSuggestedPrompts;
+}
+
+function renderSuggestedPrompts(catId) {
+  const container = document.getElementById("suggestedPrompts");
+  if (!container) return;
+  const normalizedCatId = normalizeCategoryId(catId);
+  const prompts = getSuggestedPromptsForCategory(normalizedCatId);
+  const isCategoryMode = Boolean(categorySuggestedPrompts[normalizedCatId]);
+  const renderChip = (prompt) => '<button class="suggest-chip" onclick="usePrompt(this)">' + escapeHtml(prompt) + "</button>";
+
+  container.classList.toggle("category-prompts", isCategoryMode);
+
+  if (!isCategoryMode) {
+    container.innerHTML = prompts.map(renderChip).join("");
+    return;
+  }
+
+  const rows = [prompts.slice(0, 3), prompts.slice(3)];
+  container.innerHTML = rows
+    .filter((row) => row.length)
+    .map((row) => '<div class="suggested-row">' + row.map(renderChip).join("") + "</div>")
+    .join("");
+}
+
+function getRandomSearchPlaceholder(currentPlaceholder) {
+  const current = String(currentPlaceholder || "").trim();
+  const pool = searchPlaceholderOptions.filter((item) => item !== current);
+  const choices = pool.length ? pool : searchPlaceholderOptions;
+  return choices[Math.floor(Math.random() * choices.length)];
+}
+
+function applyRandomSearchPlaceholder(options = {}) {
+  const input = document.getElementById("chatInput");
+  if (!input) return;
+  if (!options.force && input.value.trim()) return;
+  input.placeholder = getRandomSearchPlaceholder(input.placeholder);
 }
 
 function normalizeRoutePath(pathname) {
@@ -1709,6 +1804,255 @@ function tokenOverlapScore(aTokens, bTokens) {
   return overlap / Math.max(aTokens.length, bTokens.length);
 }
 
+const projectSuggestionStopWords = new Set([
+  "a", "an", "the", "and", "or", "but", "if", "then", "than", "to", "of", "in", "on", "at", "for", "from", "with", "by",
+  "about", "around", "into", "through", "over", "under", "as", "show", "tell", "me", "his", "her", "their", "them",
+  "this", "that", "these", "those", "he", "she", "it", "its", "does", "did", "do", "is", "are", "was", "were", "be",
+  "being", "been", "what", "which", "who", "how", "when", "where", "why", "can", "could", "would", "should", "will",
+  "like", "please", "project", "projects", "case", "study", "studies", "example", "examples", "work", "works",
+  "portfolio", "tool", "tools", "used", "use", "using", "ready", "prompt", "prompts"
+]);
+const projectSuggestionIgnoreSignals = [
+  "who is fatih",
+  "contact details",
+  "how many years of experience",
+  "what roles is he looking for",
+  "where is he based",
+  "phone number",
+  "linkedin profile",
+  "resume",
+  "cv"
+];
+const projectSuggestionContextSignals = [
+  "project", "projects", "case study", "case studies", "visualization", "render", "renders", "dashboard", "mobile",
+  "character", "comfyui", "interior", "archviz", "design system", "simulation", "spatial", "xr", "asset", "assets",
+  "materials", "texture", "textures", "product", "car", "automotive", "ev", "unity", "huawei", "concept",
+  "sculpture", "workflow", "pipeline", "marketing visuals", "diffusion", "portfolio website"
+];
+const projectSuggestionCategoryTokens = new Set(["ui", "ux", "3d", "ai", "vr", "ar", "xr", "architecture"]);
+const projectSuggestionEntries = projects.map(buildProjectSuggestionEntry);
+const projectSuggestionTokenFrequency = buildProjectSuggestionTokenFrequency(projectSuggestionEntries);
+
+function collectProjectSuggestionTokens(value) {
+  return tokenize(value).filter((token) => {
+    if (!token || projectSuggestionStopWords.has(token)) return false;
+    return token.length > 1 || token === "ai";
+  });
+}
+
+function buildProjectSuggestionPhrases(tokens, minSize = 2, maxSize = 3) {
+  const phrases = [];
+  for (let size = minSize; size <= maxSize; size += 1) {
+    for (let i = 0; i <= tokens.length - size; i += 1) {
+      phrases.push(tokens.slice(i, i + size).join(" "));
+    }
+  }
+  return Array.from(new Set(phrases));
+}
+
+function buildProjectSuggestionEntry(project) {
+  const titleText = normalizeQuery(project.title);
+  const descriptionText = normalizeQuery(project.description);
+  const tagTexts = (Array.isArray(project.tags) ? project.tags : []).map(normalizeQuery).filter(Boolean);
+  const toolTexts = (Array.isArray(project.tools) ? project.tools : []).map(normalizeQuery).filter(Boolean);
+  const categoryTexts = (Array.isArray(project.categories) ? project.categories : [])
+    .map((catId) => normalizeQuery(catLabels[catId] || catId))
+    .filter(Boolean);
+
+  return {
+    project,
+    titleText,
+    descriptionText,
+    tagTexts,
+    toolTexts,
+    categoryTexts,
+    titleTokens: Array.from(new Set(collectProjectSuggestionTokens(project.title))),
+    descriptionTokens: Array.from(new Set(collectProjectSuggestionTokens(project.description))),
+    tagTokens: Array.from(new Set(tagTexts.flatMap((text) => collectProjectSuggestionTokens(text)))),
+    toolTokens: Array.from(new Set(toolTexts.flatMap((text) => collectProjectSuggestionTokens(text)))),
+    categoryTokens: Array.from(new Set(categoryTexts.flatMap((text) => collectProjectSuggestionTokens(text)))),
+    signatureTokens: []
+  };
+}
+
+function buildProjectSuggestionTokenFrequency(entries) {
+  const frequency = {};
+  entries.forEach((entry) => {
+    const signatureTokens = Array.from(new Set([
+      ...entry.titleTokens,
+      ...entry.tagTokens,
+      ...entry.toolTokens
+    ]));
+    entry.signatureTokens = signatureTokens;
+    signatureTokens.forEach((token) => {
+      frequency[token] = (frequency[token] || 0) + 1;
+    });
+  });
+  return frequency;
+}
+
+function getProjectSuggestionSpecificity(token) {
+  const frequency = projectSuggestionTokenFrequency[token] || 1;
+  if (projectSuggestionCategoryTokens.has(token)) return 0.28;
+  if (frequency <= 1) return 1;
+  if (frequency === 2) return 0.82;
+  if (frequency === 3) return 0.62;
+  if (frequency === 4) return 0.45;
+  return 0.3;
+}
+
+function hasProjectSuggestionContext(normalizedQuery) {
+  return projectSuggestionContextSignals.some((signal) => normalizedQuery.includes(signal));
+}
+
+function shouldSkipProjectSuggestionQuery(query) {
+  const normalizedQuery = normalizeQuery(query);
+  if (!normalizedQuery) return true;
+  const hasIgnoreSignal = projectSuggestionIgnoreSignals.some((signal) => normalizedQuery.includes(signal));
+  if (!hasIgnoreSignal) return false;
+  return !hasProjectSuggestionContext(normalizedQuery);
+}
+
+function scoreProjectSuggestion(queryTokens, queryPhrases, entry) {
+  let score = 0;
+  let exactTitle = false;
+  let matchedTitleTokens = 0;
+  let matchedTagTokens = 0;
+  let matchedToolTokens = 0;
+  let matchedDescriptionTokens = 0;
+  let matchedCategoryTokens = 0;
+  let matchedPhrases = 0;
+  let matchedRareTokens = 0;
+  const matchedQueryTokens = new Set();
+  const compactQuery = queryTokens.join(" ");
+
+  if (queryTokens.length >= 2 && compactQuery.length >= 6) {
+    if (compactQuery === entry.titleText) {
+      score += 96;
+      exactTitle = true;
+    } else if (entry.titleText.includes(compactQuery) || compactQuery.includes(entry.titleText)) {
+      score += 72;
+      exactTitle = true;
+    }
+  }
+
+  queryPhrases.forEach((phrase) => {
+    if (phrase.length < 5) return;
+    if (entry.titleText.includes(phrase)) {
+      score += 24;
+      matchedPhrases += 1;
+      return;
+    }
+    if (entry.tagTexts.some((tag) => tag.includes(phrase))) {
+      score += 20;
+      matchedPhrases += 1;
+      return;
+    }
+    if (entry.toolTexts.some((tool) => tool.includes(phrase))) {
+      score += 17;
+      matchedPhrases += 1;
+      return;
+    }
+    if (entry.descriptionText.includes(phrase)) {
+      score += 10;
+      matchedPhrases += 1;
+    }
+  });
+
+  queryTokens.forEach((token) => {
+    const specificity = getProjectSuggestionSpecificity(token);
+    const rareHit = specificity >= 0.82;
+    if (entry.titleTokens.includes(token)) {
+      score += Math.round(12 + (16 * specificity));
+      matchedTitleTokens += 1;
+      matchedQueryTokens.add(token);
+      if (rareHit) matchedRareTokens += 1;
+      return;
+    }
+    if (entry.tagTokens.includes(token)) {
+      score += Math.round(9 + (14 * specificity));
+      matchedTagTokens += 1;
+      matchedQueryTokens.add(token);
+      if (rareHit) matchedRareTokens += 1;
+      return;
+    }
+    if (entry.toolTokens.includes(token)) {
+      score += Math.round(8 + (12 * specificity));
+      matchedToolTokens += 1;
+      matchedQueryTokens.add(token);
+      if (rareHit) matchedRareTokens += 1;
+      return;
+    }
+    if (entry.descriptionTokens.includes(token)) {
+      score += Math.round(4 + (7 * specificity));
+      matchedDescriptionTokens += 1;
+      matchedQueryTokens.add(token);
+      return;
+    }
+    if (entry.categoryTokens.includes(token)) {
+      score += Math.round(2 + (3 * specificity));
+      matchedCategoryTokens += 1;
+      matchedQueryTokens.add(token);
+    }
+  });
+
+  if (matchedTitleTokens && matchedTagTokens) score += 10;
+  if (matchedTagTokens && matchedToolTokens) score += 6;
+
+  return {
+    score,
+    exactTitle,
+    matchedTitleTokens,
+    matchedTagTokens,
+    matchedToolTokens,
+    matchedDescriptionTokens,
+    matchedCategoryTokens,
+    matchedPhrases,
+    matchedRareTokens,
+    coverage: matchedQueryTokens.size / Math.max(queryTokens.length, 1)
+  };
+}
+
+function findRelatedProjectForAiAnswer(query) {
+  if (shouldSkipProjectSuggestionQuery(query)) return null;
+
+  const queryTokens = Array.from(new Set(collectProjectSuggestionTokens(query)));
+  if (!queryTokens.length) return null;
+
+  const normalizedQuery = normalizeQuery(query);
+  const queryPhrases = buildProjectSuggestionPhrases(queryTokens);
+  const focusedTokens = queryTokens.filter((token) => !projectSuggestionCategoryTokens.has(token));
+  const broadCategoryQuery = focusedTokens.length <= 1 && hasProjectSuggestionContext(normalizedQuery);
+  const ranked = projectSuggestionEntries
+    .map((entry) => ({
+      entry,
+      ...scoreProjectSuggestion(queryTokens, queryPhrases, entry)
+    }))
+    .filter((candidate) => candidate.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  if (!ranked.length) return null;
+
+  const best = ranked[0];
+  const secondScore = ranked[1] ? ranked[1].score : 0;
+  const hasSpecificEvidence = best.exactTitle ||
+    best.matchedRareTokens > 0 ||
+    best.matchedTitleTokens > 0 ||
+    best.matchedPhrases > 0 ||
+    best.matchedToolTokens > 0;
+  const clearLead = !ranked[1] || best.score >= secondScore + 12 || best.score >= Math.round(secondScore * 1.24);
+  const enoughCoverage = best.exactTitle || best.coverage >= 0.45 || best.matchedPhrases > 0;
+  const minimumScore = best.exactTitle ? 30 : 36;
+
+  if (best.score < minimumScore) return null;
+  if (!hasSpecificEvidence) return null;
+  if (!enoughCoverage) return null;
+  if (!clearLead) return null;
+  if (broadCategoryQuery && !best.exactTitle && best.matchedRareTokens === 0 && best.matchedPhrases === 0) return null;
+
+  return best.entry.project;
+}
+
 async function loadAiKb() {
   if (aiKbCache) return aiKbCache;
   const res = await fetch("/data/ai_kb.json", { cache: "no-store" });
@@ -1998,6 +2342,7 @@ function setAnswerLoading(query) {
     answerText.textContent = "Thinking...";
   }
   if (followups) followups.innerHTML = "";
+  renderAiRelatedProject(null);
 }
 
 function typeAnswerText(text) {
@@ -2025,12 +2370,48 @@ function renderFollowups(questions) {
     .join("");
 }
 
+function renderAiRelatedProject(project) {
+  const host = document.getElementById("aiRelatedProject");
+  if (!host) return;
+
+  if (!project) {
+    host.hidden = true;
+    host.innerHTML = "";
+    return;
+  }
+
+  const projectImage = getProjectCardImage(project);
+  const projectCategories = (Array.isArray(project.categories) ? project.categories : [])
+    .map((catId) => catLabels[catId] || catId)
+    .filter(Boolean)
+    .join(" · ");
+  const description = String(project.description || "").trim();
+  const shortDescription = description.length > 140 ? description.slice(0, 137).trimEnd() + "..." : description;
+
+  host.hidden = false;
+  host.innerHTML =
+    '<div class="ai-related-project-label">Related project</div>' +
+    '<button type="button" class="ai-related-project-card" onclick="openProject(\'' + escapeJs(project.id) + '\')">' +
+      (projectImage
+        ? '<span class="ai-related-project-thumb"><img src="' + escapeHtml(projectImage) + '" alt="' + escapeHtml(project.title) + '" loading="lazy" decoding="async"></span>'
+        : '<span class="ai-related-project-thumb">Project</span>') +
+      '<span class="ai-related-project-meta">' +
+        '<span class="ai-related-project-title">Would you like to see this related project?</span>' +
+        '<span class="ai-related-project-name">' + escapeHtml(project.title) + '</span>' +
+        (projectCategories ? '<span class="ai-related-project-cats">' + escapeHtml(projectCategories) + '</span>' : '') +
+        (shortDescription ? '<span class="ai-related-project-desc">' + escapeHtml(shortDescription) + '</span>' : '') +
+      '</span>' +
+      '<span class="ai-related-project-action">Open project</span>' +
+    '</button>';
+}
+
 function renderAiAnswer(query, answer, suggestions) {
   const heading = document.getElementById("aiAnswerHeading");
   const asked = document.getElementById("aiAsked");
   syncAiAnswerPresentation(query);
   if (asked) asked.innerHTML = 'You asked: <strong>' + escapeHtml(query) + "</strong>";
   typeAnswerText(answer);
+  renderAiRelatedProject(findRelatedProjectForAiAnswer(query));
   renderFollowups(suggestions);
   if (heading) heading.focus({ preventScroll: true });
 }
@@ -2218,6 +2599,7 @@ function applyCategoryFilter(catId, options = {}) {
   const results = filterByCategory(normalizedCatId);
   const catName = catLabels[normalizedCatId] || normalizedCatId;
   renderProjects(results, 'Browsing <strong>' + catName + "</strong> - " + results.length + " project" + (results.length > 1 ? "s" : "") + " in this category");
+  renderSuggestedPrompts(normalizedCatId);
   if (!options.keepInput) {
     const input = document.getElementById("chatInput");
     if (input) input.value = "";
@@ -2395,6 +2777,7 @@ async function handleQuery() {
     const response = results.length > 0 ? generateResponse(query, results.length) : null;
     renderProjects(results, response || 'No matches for "' + query + '" - try broader terms or pick a category.');
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    renderSuggestedPrompts();
     updateUrlForCategory('', { replace: true });
   } catch (err) {
     console.error("handleQuery failed:", err);
@@ -2440,7 +2823,10 @@ function toggleSubmit() {
 function resetView(options = {}) {
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   document.getElementById('chatInput').value = '';
+  applyRandomSearchPlaceholder({ force: true });
   toggleSubmit();
+  renderSuggestedPrompts();
+  renderAiRelatedProject(null);
   const answerContainer = document.getElementById("aiAnswerContainer");
   if (answerContainer) {
     answerContainer.classList.remove("visible");
@@ -2456,6 +2842,7 @@ normalizeProjectCategories();
 syncCategoryCounts();
 setupImageLightboxSwipe();
 scheduleAiServiceStatusInit();
+applyRandomSearchPlaceholder({ force: true });
 syncViewWithLocation({ replaceUrl: true });
 window.addEventListener('popstate', () => syncViewWithLocation({ replaceUrl: true }));
 
@@ -2601,6 +2988,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
   const BOT_BOTTOM_MOBILE = 76;
   const DIALOG_MOBILE_BOTTOM = 100;
   const TOUR_EDGE = 14;
+  const TOUR_SCROLL_KEYS = new Set([' ', 'Spacebar', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
   let refreshFrame = 0;
   let refreshTimer = 0;
 
@@ -2614,7 +3002,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     },
     {
       targetAll: '#suggestedPrompts .suggest-chip',
-      content: 'These are ready prompts: <span class="tour-highlight">Dashboard UI examples</span>, <span class="tour-highlight">VR projects in Unreal</span>, <span class="tour-highlight">Generative AI</span>, <span class="tour-highlight">Architectural visualizations</span>, <span class="tour-highlight">3D Assets</span>.',
+      content: 'These ready prompts adapt to the active category, so <span class="tour-highlight">UI/UX</span> shows interface examples, <span class="tour-highlight">3D</span> shows render and materials prompts, and <span class="tour-highlight">Architecture</span> shows archviz-focused examples.',
       pad: 4,
       radius: 10,
       scroll: 'center'
@@ -2699,6 +3087,24 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     delays.forEach((delay) => {
       window.setTimeout(() => scheduleTourRefresh(), delay);
     });
+  }
+
+  function preventTourPageScroll(event) {
+    if (!tourActive) return;
+    event.preventDefault();
+  }
+
+  function handleTourGlobalKeydown(event) {
+    if (!tourActive) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      window.closeTour();
+      return;
+    }
+    if (TOUR_SCROLL_KEYS.has(event.key)) {
+      event.preventDefault();
+    }
   }
 
   function pinTourBot() {
@@ -2920,6 +3326,16 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     storage.set(TOUR_KEY, '1');
   };
 
+  const overlay = document.getElementById('tourOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', (event) => {
+      if (!tourActive) return;
+      if (event.target === overlay) {
+        window.closeTour();
+      }
+    });
+  }
+
   function showStep(idx) {
     currentStep = idx;
     const step = tourSteps[idx];
@@ -2981,6 +3397,9 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     if (!tourActive) return;
     scheduleTourRefresh();
   }, { passive: true });
+  window.addEventListener('wheel', preventTourPageScroll, { passive: false });
+  window.addEventListener('touchmove', preventTourPageScroll, { passive: false });
+  document.addEventListener('keydown', handleTourGlobalKeydown, true);
 
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', () => {
