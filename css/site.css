@@ -205,42 +205,42 @@
     will-change: auto;
   }
   .bg-orb.one {
-    width: 320px;
-    height: 286px;
+    width: 430px;
+    height: 360px;
     left: -82px;
-    top: 20vh;
+    top: 16vh;
     background: var(--orb-one-bg);
     animation: orbDriftOne 22s ease-in-out infinite alternate;
   }
   .bg-orb.two {
-    width: 252px;
-    height: 312px;
+    width: 360px;
+    height: 430px;
     right: -1vw;
-    top: 62vh;
+    top: 58vh;
     background: var(--orb-two-bg);
     animation: orbDriftTwo 26s ease-in-out infinite alternate;
   }
   .bg-orb.three {
-    width: 220px;
-    height: 220px;
-    right: 14vw;
-    top: 10vh;
+    width: 285px;
+    height: 260px;
+    right: 12vw;
+    top: 8vh;
     background: var(--orb-three-bg);
     animation: orbDriftThree 20s ease-in-out infinite alternate;
   }
   .bg-orb.four {
-    width: 244px;
-    height: 268px;
-    left: 22vw;
-    top: 56vh;
+    width: 390px;
+    height: 320px;
+    left: 18vw;
+    top: 52vh;
     background: var(--orb-two-bg);
     animation: orbDriftFour 24s ease-in-out infinite alternate;
   }
   .bg-orb.five {
-    width: 208px;
-    height: 236px;
-    right: 34vw;
-    top: 30vh;
+    width: 325px;
+    height: 295px;
+    right: 30vw;
+    top: 26vh;
     background: var(--orb-one-bg);
     animation: orbDriftFive 28s ease-in-out infinite alternate;
   }
