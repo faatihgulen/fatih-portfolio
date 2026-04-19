@@ -228,6 +228,22 @@
     background: var(--orb-three-bg);
     animation: orbDriftThree 20s ease-in-out infinite alternate;
   }
+  .bg-orb.four {
+    width: 244px;
+    height: 268px;
+    left: 22vw;
+    top: 56vh;
+    background: var(--orb-two-bg);
+    animation: orbDriftFour 24s ease-in-out infinite alternate;
+  }
+  .bg-orb.five {
+    width: 208px;
+    height: 236px;
+    right: 34vw;
+    top: 30vh;
+    background: var(--orb-one-bg);
+    animation: orbDriftFive 28s ease-in-out infinite alternate;
+  }
   @keyframes ambientFloat {
     0% { transform: translate3d(0, 0, 0) scale(1); }
     50% { transform: translate3d(-28px, 18px, 0) scale(1.06); }
@@ -247,6 +263,16 @@
     0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
     50% { transform: translate3d(-16px, 18px, 0) scale(1.04) rotate(5deg); }
     100% { transform: translate3d(20px, -14px, 0) scale(0.94) rotate(-6deg); }
+  }
+  @keyframes orbDriftFour {
+    0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate3d(18px, -20px, 0) scale(1.06) rotate(4deg); }
+    100% { transform: translate3d(-14px, 22px, 0) scale(0.95) rotate(-5deg); }
+  }
+  @keyframes orbDriftFive {
+    0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate3d(-22px, 12px, 0) scale(1.05) rotate(-4deg); }
+    100% { transform: translate3d(16px, -18px, 0) scale(1.08) rotate(6deg); }
   }
   .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 3; }
 
