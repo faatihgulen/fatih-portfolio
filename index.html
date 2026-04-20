@@ -267,8 +267,30 @@
 
   <section class="hero">
     <div class="hero-label">Design Portfolio</div>
-    <h1>Ask me anything.<br>I'll show you <em>the work.</em></h1>
-    <p class="hero-sub">Browse by category or describe what you're looking for. This portfolio understands context, tools, and intent.</p>
+    <div class="hero-vr-showcase" id="heroVrShowcase" aria-hidden="true">
+      <div class="hero-vr-frame">
+        <div class="hero-vr-media hero-vr-media-dark" aria-hidden="true">
+          <canvas class="hero-vr-canvas" id="heroVrCanvasDark"></canvas>
+          <video class="hero-vr-video-source" id="heroVrVideoDark" muted loop playsinline preload="auto">
+            <source src="Video/Firefly A cinematic animation of a futuristic LEGO micro-city made of black and neon green LEGO piec (1).mp4?v=20260420133639" type="video/mp4">
+          </video>
+        </div>
+        <div class="hero-vr-media hero-vr-media-light" aria-hidden="true">
+          <canvas class="hero-vr-canvas" id="heroVrCanvasLight"></canvas>
+          <video class="hero-vr-video-source" id="heroVrVideoLight" muted loop playsinline preload="auto">
+            <source src="Video/Firefly A clean, futuristic animation of a VR headset placed in the center, surrounded by multiple c.mp4?v=20260420174305" type="video/mp4">
+          </video>
+        </div>
+        <div class="hero-vr-overlay">
+          <span class="hero-vr-kicker">VR / AR</span>
+          <span class="hero-vr-caption">Immersive motion</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-copy" id="heroCopy">
+      <h1><span class="hero-line hero-line-primary">Ask me anything.</span><span class="hero-line">I'll show you <em>the work.</em></span></h1>
+      <p class="hero-sub">Browse by category or describe what you're looking for. This portfolio understands context, tools, and intent.</p>
+    </div>
   </section>
 
   <!-- =========== TOUR BOT (below hero) =========== -->

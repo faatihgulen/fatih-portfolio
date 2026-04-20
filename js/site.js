@@ -58,6 +58,7 @@ function applyTheme(theme) {
   document.documentElement.dataset.theme = nextTheme;
   syncThemeToggle(nextTheme);
   setThemeMeta(nextTheme);
+  document.dispatchEvent(new CustomEvent('site-theme-change', { detail: { theme: nextTheme } }));
 }
 
 function syncThemeWithGermanyTime(force = false) {
@@ -101,6 +102,616 @@ function toggleTheme() {
 
 syncThemeWithGermanyTime(true);
 scheduleThemeSync();
+
+const vrHero = {
+  section: document.querySelector('.hero'),
+  copy: document.getElementById('heroCopy'),
+  showcase: document.getElementById('heroVrShowcase'),
+  layers: {
+    dark: {
+      canvas: document.getElementById('heroVrCanvasDark'),
+      video: document.getElementById('heroVrVideoDark'),
+      context: null,
+      requestId: null,
+      requestType: '',
+      scaleBoost: 1.58,
+      keyLow: 18,
+      keyHigh: 54
+    },
+    light: {
+      canvas: document.getElementById('heroVrCanvasLight'),
+      video: document.getElementById('heroVrVideoLight'),
+      context: null,
+      requestId: null,
+      requestType: '',
+      scaleBoost: 1.58,
+      sourceInset: 1,
+      drawInset: 2,
+      keyLow: 24,
+      keyHigh: 76,
+      alphaGamma: 1.16,
+      alphaErodeIterations: 1,
+      edgeFeather: 0.68,
+      edgeSoftFeather: 0.3,
+      edgeSoftAlphaMax: 224
+    }
+  },
+  active: false,
+  playbackMode: 'inactive',
+  playbackLayerKey: '',
+  scrollProgress: 0,
+  scrollFrame: 0,
+  progress: 0,
+  released: false,
+  touchStartY: 0
+};
+
+const vrHeroReducedMotionQuery = typeof window.matchMedia === 'function'
+  ? window.matchMedia('(prefers-reduced-motion: reduce)')
+  : null;
+
+Object.values(vrHero.layers).forEach((layer) => {
+  if (layer.canvas) {
+    layer.context = layer.canvas.getContext('2d', { willReadFrequently: true });
+  }
+});
+
+function syncVrHeroLayerSize(layer) {
+  if (!layer || !layer.canvas || !layer.video || !layer.video.videoWidth || !layer.video.videoHeight) {
+    return false;
+  }
+
+  const rect = layer.canvas.getBoundingClientRect();
+  const pixelRatio = Math.max(1, Math.min(window.devicePixelRatio || 1, 1.5));
+  const targetWidth = Math.max(1, Math.round(rect.width * pixelRatio));
+  const targetHeight = Math.max(1, Math.round(rect.height * pixelRatio));
+
+  if (layer.canvas.width !== targetWidth || layer.canvas.height !== targetHeight) {
+    layer.canvas.width = targetWidth;
+    layer.canvas.height = targetHeight;
+  }
+
+  return true;
+}
+
+function drawVideoCentered(context, video, canvas, scaleBoost = 1, sourceInset = 0, drawInset = 0) {
+  const canvasWidth = canvas.width;
+  const canvasHeight = canvas.height;
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
+  const safeInset = Math.max(0, Math.min(sourceInset || 0, Math.floor((videoWidth - 2) / 2), Math.floor((videoHeight - 2) / 2)));
+  const sourceWidth = Math.max(1, videoWidth - (safeInset * 2));
+  const sourceHeight = Math.max(1, videoHeight - (safeInset * 2));
+  const baseScale = Math.min(canvasWidth / videoWidth, canvasHeight / videoHeight);
+  const scale = baseScale * scaleBoost;
+  const rawDrawWidth = videoWidth * scale;
+  const rawDrawHeight = videoHeight * scale;
+  const insetPixels = Math.max(0, drawInset || 0);
+  const drawWidth = Math.max(1, rawDrawWidth - (insetPixels * 2));
+  const drawHeight = Math.max(1, rawDrawHeight - (insetPixels * 2));
+  const offsetX = ((canvasWidth - rawDrawWidth) * 0.5) + insetPixels;
+  const offsetY = ((canvasHeight - rawDrawHeight) * 0.5) + insetPixels;
+
+  context.drawImage(video, safeInset, safeInset, sourceWidth, sourceHeight, offsetX, offsetY, drawWidth, drawHeight);
+}
+
+function stopVrHeroLayer(layer) {
+  if (!layer || layer.requestId == null) return;
+
+  if (layer.requestType === 'video' && layer.video && typeof layer.video.cancelVideoFrameCallback === 'function') {
+    layer.video.cancelVideoFrameCallback(layer.requestId);
+  } else {
+    cancelAnimationFrame(layer.requestId);
+  }
+
+  layer.requestId = null;
+  layer.requestType = '';
+}
+
+function clearVrHeroLayer(layer) {
+  if (!layer || !layer.context || !layer.canvas) return;
+  layer.context.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+}
+
+function captureVrHeroAlpha(pixels) {
+  const pixelCount = pixels.length / 4;
+  const alpha = new Uint8ClampedArray(pixelCount);
+
+  for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    alpha[pixelIndex] = pixels[(pixelIndex * 4) + 3];
+  }
+
+  return alpha;
+}
+
+function applyVrHeroAlphaErode(alphaSource, width, height, iterations = 0) {
+  if (!iterations || width <= 2 || height <= 2) {
+    return alphaSource;
+  }
+
+  let current = alphaSource;
+
+  for (let iteration = 0; iteration < iterations; iteration += 1) {
+    const next = new Uint8ClampedArray(current);
+
+    for (let y = 1; y < height - 1; y += 1) {
+      for (let x = 1; x < width - 1; x += 1) {
+        const pixelIndex = (y * width) + x;
+        const alpha = current[pixelIndex];
+
+        if (!alpha) {
+          next[pixelIndex] = 0;
+          continue;
+        }
+
+        next[pixelIndex] = Math.min(
+          alpha,
+          current[pixelIndex - 1],
+          current[pixelIndex + 1],
+          current[pixelIndex - width],
+          current[pixelIndex + width],
+          current[pixelIndex - width - 1],
+          current[pixelIndex - width + 1],
+          current[pixelIndex + width - 1],
+          current[pixelIndex + width + 1]
+        );
+      }
+    }
+
+    current = next;
+  }
+
+  return current;
+}
+
+function drawVrHeroLayer(layer) {
+  if (!vrHero.active || !layer || !layer.context || !layer.video) {
+    return false;
+  }
+
+  if (!syncVrHeroLayerSize(layer)) {
+    return false;
+  }
+
+  layer.context.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+  drawVideoCentered(
+    layer.context,
+    layer.video,
+    layer.canvas,
+    layer.scaleBoost || 1,
+    layer.sourceInset || 0,
+    layer.drawInset || 0
+  );
+
+  const frame = layer.context.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
+  const pixels = frame.data;
+  const pixelCount = pixels.length / 4;
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const red = pixels[index];
+    const green = pixels[index + 1];
+    const blue = pixels[index + 2];
+    const brightness = Math.max(red, green, blue);
+
+    if (brightness <= layer.keyLow) {
+      pixels[index + 3] = 0;
+      continue;
+    }
+
+    if (brightness < layer.keyHigh) {
+      let alpha = (brightness - layer.keyLow) / (layer.keyHigh - layer.keyLow);
+      if (layer.alphaGamma) {
+        alpha = Math.pow(alpha, layer.alphaGamma);
+      }
+      pixels[index + 3] = Math.round(alpha * 255);
+      continue;
+    }
+  }
+
+  const width = layer.canvas.width;
+  const height = layer.canvas.height;
+  let alphaSnapshot = captureVrHeroAlpha(pixels);
+
+  if (layer.alphaErodeIterations) {
+    alphaSnapshot = applyVrHeroAlphaErode(alphaSnapshot, width, height, layer.alphaErodeIterations);
+
+    for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+      pixels[(pixelIndex * 4) + 3] = alphaSnapshot[pixelIndex];
+    }
+  }
+
+  if (layer.edgeFeather && layer.canvas.width > 2 && layer.canvas.height > 2) {
+    alphaSnapshot = captureVrHeroAlpha(pixels);
+
+    for (let y = 1; y < height - 1; y += 1) {
+      for (let x = 1; x < width - 1; x += 1) {
+        const pixelIndex = (y * width) + x;
+        const alpha = alphaSnapshot[pixelIndex];
+
+        if (!alpha) continue;
+
+        const hasTransparentNeighbor =
+          alphaSnapshot[pixelIndex - 1] === 0 ||
+          alphaSnapshot[pixelIndex + 1] === 0 ||
+          alphaSnapshot[pixelIndex - width] === 0 ||
+          alphaSnapshot[pixelIndex + width] === 0 ||
+          alphaSnapshot[pixelIndex - width - 1] === 0 ||
+          alphaSnapshot[pixelIndex - width + 1] === 0 ||
+          alphaSnapshot[pixelIndex + width - 1] === 0 ||
+          alphaSnapshot[pixelIndex + width + 1] === 0;
+
+        if (!hasTransparentNeighbor) continue;
+
+        const featherAmount = alpha <= (layer.edgeSoftAlphaMax || 188)
+          ? (layer.edgeSoftFeather || 0.54)
+          : layer.edgeFeather;
+
+        pixels[(pixelIndex * 4) + 3] = Math.round(alpha * featherAmount);
+      }
+    }
+  }
+
+  layer.context.putImageData(frame, 0, 0);
+  return true;
+}
+
+function queueVrHeroLayer(layer) {
+  if (!vrHero.active || !layer || !layer.video) {
+    stopVrHeroLayer(layer);
+    return;
+  }
+
+  const loop = () => {
+    layer.requestId = null;
+    layer.requestType = '';
+
+    if (!vrHero.active || !layer.video || layer.video.paused || layer.video.ended) {
+      return;
+    }
+
+    drawVrHeroLayer(layer);
+    queueVrHeroLayer(layer);
+  };
+
+  if (typeof layer.video.requestVideoFrameCallback === 'function') {
+    layer.requestType = 'video';
+    layer.requestId = layer.video.requestVideoFrameCallback(loop);
+    return;
+  }
+
+  layer.requestType = 'raf';
+  layer.requestId = requestAnimationFrame(loop);
+}
+
+function startVrHeroLayer(layer) {
+  if (!vrHero.active || !layer || !layer.video || !layer.context) return;
+  stopVrHeroLayer(layer);
+
+  if (!drawVrHeroLayer(layer)) {
+    layer.requestType = 'raf';
+    layer.requestId = requestAnimationFrame(() => {
+      layer.requestId = null;
+      layer.requestType = '';
+      startVrHeroLayer(layer);
+    });
+    return;
+  }
+
+  queueVrHeroLayer(layer);
+}
+
+function safelySetVrHeroTime(video, nextTime = 0) {
+  if (!video) return;
+  try {
+    video.currentTime = nextTime;
+  } catch (error) {
+    /* Ignore until the video becomes seekable. */
+  }
+}
+
+function ensureVrHeroLayerReady(layer) {
+  if (!layer || !layer.video) return;
+  layer.video.preload = 'auto';
+  if (layer.video.readyState >= 2) return;
+  try {
+    layer.video.load();
+  } catch (error) {
+    /* Ignore load errors and let the browser keep buffering. */
+  }
+}
+
+function playVrHeroVideo(video) {
+  if (!video) return;
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {});
+  }
+}
+
+function pauseVrHeroVideo(video) {
+  if (!video) return;
+  video.pause();
+}
+
+function getVrHeroViewportSettings() {
+  if (window.innerWidth <= 480) {
+    return {
+      openHeight: 390,
+      marginTop: -60,
+      marginBottom: 4,
+      copyMarginTop: -4,
+      collapseDistance: 190,
+      translateY: 28,
+      blurMax: 8,
+      sectionPaddingBottom: 8
+    };
+  }
+
+  if (window.innerWidth <= 768) {
+    return {
+      openHeight: 500,
+      marginTop: -92,
+      marginBottom: 8,
+      copyMarginTop: -14,
+      collapseDistance: 230,
+      translateY: 34,
+      blurMax: 9,
+      sectionPaddingBottom: 14
+    };
+  }
+
+  return {
+    openHeight: 680,
+    marginTop: -172,
+    marginBottom: -4,
+    copyMarginTop: -96,
+    collapseDistance: 280,
+    translateY: 40,
+    blurMax: 10,
+    sectionPaddingBottom: 8
+  };
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function getActiveVrHeroLayerKey() {
+  return getActiveTheme() === 'light' ? 'light' : 'dark';
+}
+
+function resetVrHeroScrollStyles() {
+  if (!vrHero.showcase || !vrHero.copy || !vrHero.section) return;
+  vrHero.scrollProgress = 0;
+  vrHero.showcase.style.removeProperty('max-height');
+  vrHero.showcase.style.removeProperty('opacity');
+  vrHero.showcase.style.removeProperty('transform');
+  vrHero.showcase.style.removeProperty('filter');
+  vrHero.showcase.style.removeProperty('margin-top');
+  vrHero.showcase.style.removeProperty('margin-bottom');
+  vrHero.copy.style.removeProperty('margin-top');
+  vrHero.copy.style.removeProperty('transform');
+  vrHero.copy.style.removeProperty('opacity');
+  vrHero.section.style.removeProperty('padding-bottom');
+}
+
+function setVrHeroPlaybackMode(mode, options = {}) {
+  const nextMode = mode || 'inactive';
+  const activeLayerKey = getActiveVrHeroLayerKey();
+  const force = Boolean(options.force);
+
+  if (!force && vrHero.playbackMode === nextMode && vrHero.playbackLayerKey === activeLayerKey) {
+    return;
+  }
+
+  Object.entries(vrHero.layers).forEach(([layerKey, layer]) => {
+    stopVrHeroLayer(layer);
+    pauseVrHeroVideo(layer.video);
+
+    if (nextMode === 'inactive') {
+      safelySetVrHeroTime(layer.video, 0);
+      clearVrHeroLayer(layer);
+      return;
+    }
+
+    if (layerKey !== activeLayerKey) {
+      clearVrHeroLayer(layer);
+      return;
+    }
+
+    ensureVrHeroLayerReady(layer);
+
+    if (nextMode === 'poster') {
+      safelySetVrHeroTime(layer.video, 0);
+      if (!drawVrHeroLayer(layer)) {
+        layer.requestType = 'raf';
+        layer.requestId = requestAnimationFrame(() => {
+          layer.requestId = null;
+          layer.requestType = '';
+          if (vrHero.active && vrHero.playbackMode === 'poster') {
+            drawVrHeroLayer(layer);
+          }
+        });
+      }
+      return;
+    }
+
+    if (nextMode === 'playing') {
+      if (Number.isFinite(layer.video.duration) && layer.video.duration > 0 && layer.video.currentTime >= layer.video.duration - 0.08) {
+        safelySetVrHeroTime(layer.video, 0);
+      }
+      playVrHeroVideo(layer.video);
+      startVrHeroLayer(layer);
+    }
+  });
+
+  vrHero.playbackMode = nextMode;
+  vrHero.playbackLayerKey = activeLayerKey;
+}
+
+function isVrHeroShowcaseVisible() {
+  if (!vrHero.showcase) return false;
+  const rect = vrHero.showcase.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  return rect.bottom > 72 && rect.top < viewportHeight * 0.92;
+}
+
+function syncVrHeroScrollState() {
+  if (!vrHero.section || !vrHero.showcase || !vrHero.copy) return;
+
+  if (!vrHero.active) {
+    setVrHeroPlaybackMode('inactive');
+    resetVrHeroScrollStyles();
+    return;
+  }
+
+  const settings = getVrHeroViewportSettings();
+  const reducedMotion = Boolean(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches);
+  const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  const progress = clampNumber(scrollTop / settings.collapseDistance, 0, 1);
+  const easedProgress = 1 - Math.pow(1 - progress, 2);
+  const isVisible = isVrHeroShowcaseVisible();
+
+  vrHero.scrollProgress = easedProgress;
+
+  const maxHeight = Math.max(0, settings.openHeight * (1 - easedProgress));
+  const opacity = clampNumber(1 - (easedProgress * 1.14), 0, 1);
+  const showcaseTranslateY = -settings.translateY * easedProgress;
+  const showcaseScale = 1 - (easedProgress * 0.08);
+  const showcaseBlur = settings.blurMax * easedProgress;
+  const showcaseMarginTop = settings.marginTop - (18 * easedProgress);
+  const showcaseMarginBottom = settings.marginBottom - (12 * easedProgress);
+  const copyMarginTop = settings.copyMarginTop - (14 * easedProgress);
+  const copyTranslateY = -12 * easedProgress;
+  const copyOpacity = clampNumber(1 - (easedProgress * 0.08), 0.9, 1);
+  const sectionPaddingBottom = Math.max(0, settings.sectionPaddingBottom * (1 - easedProgress));
+
+  vrHero.showcase.style.maxHeight = `${maxHeight.toFixed(2)}px`;
+  vrHero.showcase.style.opacity = opacity.toFixed(4);
+  vrHero.showcase.style.transform = `translateY(${showcaseTranslateY.toFixed(2)}px) scale(${showcaseScale.toFixed(4)})`;
+  vrHero.showcase.style.filter = `blur(${showcaseBlur.toFixed(2)}px)`;
+  vrHero.showcase.style.marginTop = `${showcaseMarginTop.toFixed(2)}px`;
+  vrHero.showcase.style.marginBottom = `${showcaseMarginBottom.toFixed(2)}px`;
+  vrHero.copy.style.marginTop = `${copyMarginTop.toFixed(2)}px`;
+  vrHero.copy.style.transform = `translateY(${copyTranslateY.toFixed(2)}px)`;
+  vrHero.copy.style.opacity = copyOpacity.toFixed(4);
+  vrHero.section.style.paddingBottom = `${sectionPaddingBottom.toFixed(2)}px`;
+
+  if (reducedMotion) {
+    setVrHeroPlaybackMode('poster');
+    return;
+  }
+
+  if (document.hidden || !isVisible || progress >= 0.9) {
+    setVrHeroPlaybackMode('poster');
+    return;
+  }
+
+  setVrHeroPlaybackMode('playing');
+}
+
+function queueVrHeroScrollSync() {
+  if (vrHero.scrollFrame) return;
+  vrHero.scrollFrame = requestAnimationFrame(() => {
+    vrHero.scrollFrame = 0;
+    syncVrHeroScrollState();
+  });
+}
+
+function setVrHeroShowcaseState(isActive, options = {}) {
+  if (!vrHero.section || !vrHero.showcase) return;
+
+  if (!isActive) {
+    vrHero.active = false;
+    vrHero.progress = 0;
+    vrHero.section.classList.remove('vr-showcase-active');
+    vrHero.showcase.setAttribute('aria-hidden', 'true');
+    setVrHeroPlaybackMode('inactive', { force: true });
+    resetVrHeroScrollStyles();
+    return;
+  }
+
+  vrHero.active = true;
+  vrHero.progress = 0;
+  vrHero.section.classList.add('vr-showcase-active');
+  vrHero.showcase.setAttribute('aria-hidden', 'false');
+  vrHero.playbackMode = 'inactive';
+  vrHero.playbackLayerKey = '';
+
+  if (options.restart !== false) {
+    Object.values(vrHero.layers).forEach((layer) => {
+      ensureVrHeroLayerReady(layer);
+      safelySetVrHeroTime(layer.video, 0);
+    });
+  } else {
+    Object.values(vrHero.layers).forEach((layer) => ensureVrHeroLayerReady(layer));
+  }
+
+  if ((window.scrollY || document.documentElement.scrollTop || 0) > 0) {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  syncVrHeroScrollState();
+}
+
+Object.values(vrHero.layers).forEach((layer) => {
+  if (!layer.video) return;
+
+  layer.video.preload = 'auto';
+  layer.video.addEventListener('loadedmetadata', () => {
+    syncVrHeroLayerSize(layer);
+    if (vrHero.active) {
+      queueVrHeroScrollSync();
+    }
+  });
+  layer.video.addEventListener('loadeddata', () => {
+    if (vrHero.active) {
+      queueVrHeroScrollSync();
+    }
+  });
+  layer.video.addEventListener('play', () => {
+    if (vrHero.active) {
+      startVrHeroLayer(layer);
+    }
+  });
+  layer.video.addEventListener('pause', () => stopVrHeroLayer(layer));
+  layer.video.addEventListener('seeked', () => {
+    if (vrHero.active && vrHero.playbackMode !== 'inactive') {
+      drawVrHeroLayer(layer);
+    }
+  });
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    setVrHeroPlaybackMode(vrHero.active ? 'poster' : 'inactive', { force: true });
+    return;
+  }
+
+  if (vrHero.active) {
+    queueVrHeroScrollSync();
+  }
+});
+
+window.addEventListener('resize', () => {
+  Object.values(vrHero.layers).forEach((layer) => {
+    syncVrHeroLayerSize(layer);
+  });
+  queueVrHeroScrollSync();
+});
+
+window.addEventListener('scroll', () => {
+  if (vrHero.active) {
+    queueVrHeroScrollSync();
+  }
+}, { passive: true });
+
+document.addEventListener('site-theme-change', () => {
+  if (vrHero.active) {
+    setVrHeroPlaybackMode(vrHero.playbackMode, { force: true });
+    queueVrHeroScrollSync();
+  }
+});
 
 // --- ABOUT MODAL ---
 function openAbout() {
@@ -2605,6 +3216,7 @@ function applyCategoryFilter(catId, options = {}) {
   const catName = catLabels[normalizedCatId] || normalizedCatId;
   renderProjects(results, 'Browsing <strong>' + catName + "</strong> - " + results.length + " project" + (results.length > 1 ? "s" : "") + " in this category");
   renderSuggestedPrompts(normalizedCatId);
+  setVrHeroShowcaseState(normalizedCatId === 'vr-ar', { restart: true });
   if (!options.keepInput) {
     const input = document.getElementById("chatInput");
     if (input) input.value = "";
@@ -2778,6 +3390,7 @@ async function handleQuery() {
       return;
     }
 
+    setVrHeroShowcaseState(false);
     const results = searchProjects(query);
     const response = results.length > 0 ? generateResponse(query, results.length) : null;
     renderProjects(results, response || 'No matches for "' + query + '" - try broader terms or pick a category.');
@@ -2786,6 +3399,7 @@ async function handleQuery() {
     updateUrlForCategory('', { replace: true });
   } catch (err) {
     console.error("handleQuery failed:", err);
+    setVrHeroShowcaseState(false);
     const grounded = getSiteGroundedAnswer(query);
     renderAiAnswer(query, slightlyExpandAnswer(grounded.answer), grounded.followups);
   }
@@ -2831,6 +3445,7 @@ function resetView(options = {}) {
   applyRandomSearchPlaceholder({ force: true });
   toggleSubmit();
   renderSuggestedPrompts();
+  setVrHeroShowcaseState(false);
   renderAiRelatedProject(null);
   const answerContainer = document.getElementById("aiAnswerContainer");
   if (answerContainer) {
@@ -3419,11 +4034,11 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
   function getSpacePalette() {
     return document.documentElement.dataset.theme === 'light'
       ? [
-          { r: 108, g: 131, b: 33 },
-          { r: 162, g: 98, b: 82 },
-          { r: 82, g: 117, b: 186 },
-          { r: 184, g: 136, b: 64 },
-          { r: 176, g: 151, b: 130 },
+          { r: 102, g: 125, b: 34 },
+          { r: 145, g: 167, b: 58 },
+          { r: 96, g: 132, b: 205 },
+          { r: 198, g: 162, b: 92 },
+          { r: 222, g: 206, b: 188 },
         ]
       : [
           { r: 196, g: 240, b: 77 },
@@ -3495,12 +4110,12 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     const palette = getSpacePalette();
     const lightMode = document.documentElement.dataset.theme === 'light';
     const color = palette[star.colorIndex % palette.length];
-    const a = star.alpha * (lightMode ? 0.88 : 1);
+    const a = star.alpha * (lightMode ? 1.08 : 1);
     if (a < 0.01) return;
 
     const { x, y, size, glowSize, isBright } = star;
     const s = isBright ? size * 2 : size;
-    const g = (isBright ? glowSize * 1.5 : glowSize) * (lightMode ? 0.9 : 1);
+    const g = (isBright ? glowSize * 1.5 : glowSize) * (lightMode ? 1.04 : 1);
 
     // Outer glow
     const grad = ctx.createRadialGradient(x, y, 0, x, y, g);
@@ -3548,7 +4163,7 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     const size = obj.baseSize * perspective;
     const yDist = Math.abs(obj.y - focusY);
     const focusFade = Math.max(0.12, 1 - (yDist / (h * 0.95)));
-    const baseAlpha = obj.alpha * focusFade * (lightMode ? 0.9 : 1);
+    const baseAlpha = obj.alpha * focusFade * (lightMode ? 1.14 : 1);
     if (baseAlpha < 0.02) return;
 
     // Motion blur trail
