@@ -623,12 +623,6 @@ function handleVrHeroDirectionalGesture(direction, event) {
       snapVrHeroToTop();
       return true;
     }
-
-    if (vrHero.stage === 'free' && scrollTop <= collapsedTop + 72) {
-      if (event) event.preventDefault();
-      snapVrHeroToTop();
-      return true;
-    }
   }
 
   return false;
