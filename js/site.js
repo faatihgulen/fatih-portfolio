@@ -546,8 +546,8 @@ function beginVrHeroSnapLock(duration = 560) {
 
 function snapVrHeroToCollapsed() {
   setVrHeroStage('collapsed');
-  vrHero.searchHoldUntil = performance.now() + 640;
-  beginVrHeroSnapLock(640);
+  vrHero.searchHoldUntil = performance.now() + 420;
+  beginVrHeroSnapLock(420);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -563,7 +563,9 @@ function maybeSnapVrHeroByScroll(scrollTop) {
   const collapsedTop = getVrHeroCollapsedTop();
   vrHero.searchTargetTop = collapsedTop;
 
-  if (vrHero.stage === 'collapsed' && !vrHero.snapLock) {
+  const holdCollapsed = vrHero.snapLock || performance.now() < vrHero.searchHoldUntil;
+
+  if (vrHero.stage === 'collapsed' && holdCollapsed) {
     if (scrollTop > 4) {
       window.scrollTo({ top: 0, behavior: 'auto' });
       return;
@@ -595,9 +597,8 @@ function handleVrHeroDirectionalGesture(direction, event) {
 
     if (vrHero.stage === 'collapsed') {
       const holdActive = performance.now() < vrHero.searchHoldUntil || vrHero.snapLock;
-      const nearTop = scrollTop <= 6;
 
-      if (holdActive || !nearTop) {
+      if (holdActive) {
         if (event) event.preventDefault();
         window.scrollTo({ top: 0, behavior: 'auto' });
         return true;
