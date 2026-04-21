@@ -143,7 +143,10 @@ const vrHero = {
   scrollFrame: 0,
   progress: 0,
   released: false,
-  touchStartY: 0
+  touchStartY: 0,
+  lastScrollTop: 0,
+  snapLock: false,
+  snapTimer: 0
 };
 
 const vrHeroReducedMotionQuery = typeof window.matchMedia === 'function'
@@ -409,8 +412,23 @@ function safelySetVrHeroTime(video, nextTime = 0) {
   }
 }
 
+function primeVrHeroVideo(video) {
+  if (!video) return;
+  video.muted = true;
+  video.defaultMuted = true;
+  video.autoplay = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('loop', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+}
+
 function ensureVrHeroLayerReady(layer) {
   if (!layer || !layer.video) return;
+  primeVrHeroVideo(layer.video);
   layer.video.preload = 'auto';
   if (layer.video.readyState >= 2) return;
   try {
@@ -438,8 +456,8 @@ function getVrHeroViewportSettings() {
     return {
       openHeight: 390,
       marginTop: -60,
-      marginBottom: 4,
-      copyMarginTop: -4,
+      marginBottom: -8,
+      copyMarginTop: -16,
       collapseDistance: 190,
       translateY: 28,
       blurMax: 8,
@@ -480,6 +498,53 @@ function getActiveVrHeroLayerKey() {
   return getActiveTheme() === 'light' ? 'light' : 'dark';
 }
 
+function getVrHeroSearchAnchor() {
+  return document.getElementById('categories') || document.querySelector('.chat-input-wrap');
+}
+
+function getVrHeroSnapTop() {
+  const anchor = getVrHeroSearchAnchor();
+  if (!anchor) return null;
+  const header = document.querySelector('header');
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  const gap = window.innerWidth <= 768 ? 10 : 14;
+  return Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - headerHeight - gap);
+}
+
+function clearVrHeroSnapLock() {
+  if (vrHero.snapTimer) {
+    clearTimeout(vrHero.snapTimer);
+    vrHero.snapTimer = 0;
+  }
+  vrHero.snapLock = false;
+}
+
+function snapVrHeroToSearch() {
+  const targetTop = getVrHeroSnapTop();
+  if (targetTop == null) return;
+  vrHero.released = true;
+  vrHero.snapLock = true;
+  window.scrollTo({ top: targetTop, behavior: 'smooth' });
+  clearVrHeroSnapLock();
+  vrHero.snapTimer = window.setTimeout(() => {
+    vrHero.snapLock = false;
+    vrHero.snapTimer = 0;
+  }, 560);
+}
+
+function maybeSnapVrHeroToSearch(scrollTop, progress) {
+  if (!vrHero.active || vrHero.released || vrHero.snapLock) return;
+
+  const scrollingDown = scrollTop > (vrHero.lastScrollTop + 3);
+  if (!scrollingDown) return;
+  if (scrollTop < 18) return;
+
+  const triggerProgress = window.innerWidth <= 480 ? 0.5 : 0.56;
+  if (progress < triggerProgress) return;
+
+  snapVrHeroToSearch();
+}
+
 function resetVrHeroScrollStyles() {
   if (!vrHero.showcase || !vrHero.copy || !vrHero.section) return;
   vrHero.scrollProgress = 0;
@@ -499,8 +564,14 @@ function setVrHeroPlaybackMode(mode, options = {}) {
   const nextMode = mode || 'inactive';
   const activeLayerKey = getActiveVrHeroLayerKey();
   const force = Boolean(options.force);
+  const activeLayer = vrHero.layers[activeLayerKey];
+  const activeVideo = activeLayer && activeLayer.video;
+  const needsPlayRetry =
+    nextMode === 'playing' &&
+    activeVideo &&
+    (activeVideo.paused || activeVideo.readyState < 2);
 
-  if (!force && vrHero.playbackMode === nextMode && vrHero.playbackLayerKey === activeLayerKey) {
+  if (!force && !needsPlayRetry && vrHero.playbackMode === nextMode && vrHero.playbackLayerKey === activeLayerKey) {
     return;
   }
 
@@ -560,6 +631,7 @@ function syncVrHeroScrollState() {
   if (!vrHero.section || !vrHero.showcase || !vrHero.copy) return;
 
   if (!vrHero.active) {
+    vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
     setVrHeroPlaybackMode('inactive');
     resetVrHeroScrollStyles();
     return;
@@ -597,6 +669,15 @@ function syncVrHeroScrollState() {
   vrHero.copy.style.opacity = copyOpacity.toFixed(4);
   vrHero.section.style.paddingBottom = `${sectionPaddingBottom.toFixed(2)}px`;
 
+  if (scrollTop <= 6) {
+    vrHero.released = false;
+    clearVrHeroSnapLock();
+  } else {
+    maybeSnapVrHeroToSearch(scrollTop, progress);
+  }
+
+  vrHero.lastScrollTop = scrollTop;
+
   if (reducedMotion) {
     setVrHeroPlaybackMode('poster');
     return;
@@ -624,6 +705,9 @@ function setVrHeroShowcaseState(isActive, options = {}) {
   if (!isActive) {
     vrHero.active = false;
     vrHero.progress = 0;
+    vrHero.released = false;
+    vrHero.lastScrollTop = 0;
+    clearVrHeroSnapLock();
     vrHero.section.classList.remove('vr-showcase-active');
     vrHero.showcase.setAttribute('aria-hidden', 'true');
     setVrHeroPlaybackMode('inactive', { force: true });
@@ -633,6 +717,9 @@ function setVrHeroShowcaseState(isActive, options = {}) {
 
   vrHero.active = true;
   vrHero.progress = 0;
+  vrHero.released = false;
+  vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  clearVrHeroSnapLock();
   vrHero.section.classList.add('vr-showcase-active');
   vrHero.showcase.setAttribute('aria-hidden', 'false');
   vrHero.playbackMode = 'inactive';
@@ -651,12 +738,17 @@ function setVrHeroShowcaseState(isActive, options = {}) {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }
 
+  if (!(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches)) {
+    setVrHeroPlaybackMode('playing', { force: true });
+  }
+
   syncVrHeroScrollState();
 }
 
-Object.values(vrHero.layers).forEach((layer) => {
+Object.entries(vrHero.layers).forEach(([layerKey, layer]) => {
   if (!layer.video) return;
 
+  primeVrHeroVideo(layer.video);
   layer.video.preload = 'auto';
   layer.video.addEventListener('loadedmetadata', () => {
     syncVrHeroLayerSize(layer);
@@ -664,7 +756,18 @@ Object.values(vrHero.layers).forEach((layer) => {
       queueVrHeroScrollSync();
     }
   });
-  layer.video.addEventListener('loadeddata', () => {
+  const retryActivePlayback = () => {
+    if (!vrHero.active) return;
+    if (getActiveVrHeroLayerKey() === layerKey && vrHero.playbackMode === 'playing') {
+      setVrHeroPlaybackMode('playing', { force: true });
+      return;
+    }
+    queueVrHeroScrollSync();
+  };
+  layer.video.addEventListener('loadeddata', retryActivePlayback);
+  layer.video.addEventListener('canplay', retryActivePlayback);
+  layer.video.addEventListener('canplaythrough', retryActivePlayback);
+  layer.video.addEventListener('playing', () => {
     if (vrHero.active) {
       queueVrHeroScrollSync();
     }

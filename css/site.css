@@ -675,7 +675,7 @@
 
   /* --- Chat Input --- */
   .chat-input-wrap {
-    display: flex; justify-content: center; padding: 0 40px 20px;
+    display: flex; justify-content: center; padding: 0 40px 28px;
     animation: fadeUp 1s ease-out 0.5s both;
   }
   .chat-input-container {
@@ -2113,7 +2113,7 @@
     }
     .hero.vr-showcase-active ~ .categories { padding-top: 10px; padding-bottom: 24px; }
     .categories, .suggested { padding-left: 20px; padding-right: 20px; }
-    .chat-input-wrap { padding: 0 20px 16px; }
+    .chat-input-wrap { padding: 0 20px 22px; }
     .ai-answer-container { margin: 0 20px 20px; width: auto; }
     .response-area { padding: 0 20px 40px; }
     .project-grid { grid-template-columns: 1fr; }
@@ -2156,8 +2156,8 @@
     .hero h1 { font-size: 2.1rem; }
     .hero.vr-showcase-active { padding-top: 30px; padding-bottom: 8px; }
     .hero.vr-showcase-active .hero-label { margin-bottom: 10px; }
-    .hero.vr-showcase-active .hero-vr-showcase { max-height: 390px; margin-top: -60px; margin-bottom: 4px; }
-    .hero.vr-showcase-active .hero-copy { margin-top: -2px; gap: 6px; }
+    .hero.vr-showcase-active .hero-vr-showcase { max-height: 390px; margin-top: -60px; margin-bottom: -8px; }
+    .hero.vr-showcase-active .hero-copy { margin-top: -16px; gap: 4px; }
     .hero.vr-showcase-active h1 { margin-bottom: 2px; }
     .hero.vr-showcase-active .hero-line-primary { margin-bottom: 0.1em; }
     .hero.vr-showcase-active .hero-sub {
