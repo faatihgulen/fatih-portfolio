@@ -553,6 +553,9 @@ function snapVrHeroToCollapsed() {
 
 function snapVrHeroToTop() {
   setVrHeroStage('video');
+  if (!(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches)) {
+    setVrHeroPlaybackMode('playing', { force: true });
+  }
   beginVrHeroSnapLock();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -573,7 +576,10 @@ function maybeSnapVrHeroByScroll(scrollTop) {
   }
 
   if (vrHero.stage === 'free' && scrollTop <= 6 && !vrHero.snapLock) {
-    setVrHeroStage('collapsed');
+    setVrHeroStage('video');
+    if (!(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches)) {
+      setVrHeroPlaybackMode('playing', { force: true });
+    }
   }
 }
 
@@ -620,9 +626,7 @@ function handleVrHeroDirectionalGesture(direction, event) {
 
     if (vrHero.stage === 'free' && scrollTop <= collapsedTop + 72) {
       if (event) event.preventDefault();
-      setVrHeroStage('collapsed');
-      beginVrHeroSnapLock(360);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      snapVrHeroToTop();
       return true;
     }
   }
