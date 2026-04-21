@@ -461,7 +461,7 @@ function getVrHeroViewportSettings() {
       marginTop: -60,
       marginBottom: -8,
       copyMarginTop: -16,
-      collapseDistance: 190,
+      collapseDistance: 96,
       translateY: 28,
       blurMax: 8,
       sectionPaddingBottom: 8
@@ -474,7 +474,7 @@ function getVrHeroViewportSettings() {
       marginTop: -92,
       marginBottom: 8,
       copyMarginTop: -14,
-      collapseDistance: 230,
+      collapseDistance: 112,
       translateY: 34,
       blurMax: 9,
       sectionPaddingBottom: 14
@@ -486,7 +486,7 @@ function getVrHeroViewportSettings() {
     marginTop: -172,
     marginBottom: -4,
     copyMarginTop: -96,
-    collapseDistance: 280,
+    collapseDistance: 128,
     translateY: 40,
     blurMax: 10,
     sectionPaddingBottom: 8
@@ -501,20 +501,28 @@ function getActiveVrHeroLayerKey() {
   return getActiveTheme() === 'light' ? 'light' : 'dark';
 }
 
-function getVrHeroSearchAnchor() {
-  return document.querySelector('.chat-input-wrap') || document.getElementById('categories');
+function getVrHeroCollapsedTop() {
+  const settings = getVrHeroViewportSettings();
+  return Math.max(0, Math.round(settings.collapseDistance));
 }
 
-function getVrHeroSnapTop() {
-  const anchor = getVrHeroSearchAnchor();
-  if (!anchor) return null;
-  const header = document.querySelector('header');
-  const headerHeight = header ? header.getBoundingClientRect().height : 0;
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-  const rect = anchor.getBoundingClientRect();
-  const visibleViewport = Math.max(0, viewportHeight - headerHeight);
-  const centerOffset = Math.max(0, (visibleViewport - rect.height) * 0.5);
-  return Math.max(0, window.scrollY + rect.top - headerHeight - centerOffset);
+function setVrHeroStage(nextStage) {
+  const stage = nextStage === 'video' ? 'video' : nextStage === 'free' ? 'free' : 'collapsed';
+  vrHero.stage = stage;
+
+  if (vrHero.section) {
+    vrHero.section.classList.toggle('vr-showcase-collapsed', stage !== 'video');
+  }
+
+  if (stage === 'video') {
+    vrHero.released = false;
+    vrHero.searchHoldUntil = 0;
+    vrHero.searchTargetTop = 0;
+    return;
+  }
+
+  vrHero.released = true;
+  vrHero.searchTargetTop = getVrHeroCollapsedTop();
 }
 
 function clearVrHeroSnapLock() {
@@ -536,80 +544,89 @@ function beginVrHeroSnapLock(duration = 560) {
   }, duration);
 }
 
-function snapVrHeroToSearch() {
-  const targetTop = getVrHeroSnapTop();
-  if (targetTop == null) return;
-  vrHero.stage = 'search';
-  vrHero.searchTargetTop = targetTop;
-  vrHero.searchHoldUntil = performance.now() + 900;
-  vrHero.released = true;
-  beginVrHeroSnapLock();
-  window.scrollTo({ top: targetTop, behavior: 'smooth' });
+function snapVrHeroToCollapsed() {
+  setVrHeroStage('collapsed');
+  vrHero.searchHoldUntil = performance.now() + 640;
+  beginVrHeroSnapLock(640);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function snapVrHeroToTop() {
-  vrHero.stage = 'video';
-  vrHero.searchHoldUntil = 0;
-  vrHero.searchTargetTop = 0;
-  vrHero.released = false;
+  setVrHeroStage('video');
   beginVrHeroSnapLock();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function maybeSnapVrHeroByScroll(scrollTop) {
-  if (!vrHero.active || vrHero.snapLock) return;
+  if (!vrHero.active) return;
 
-  const delta = scrollTop - vrHero.lastScrollTop;
-  const snapTop = getVrHeroSnapTop();
-  if (snapTop == null) return;
+  const collapsedTop = getVrHeroCollapsedTop();
+  vrHero.searchTargetTop = collapsedTop;
 
-  vrHero.searchTargetTop = snapTop;
-
-  if (vrHero.stage === 'video') {
-    const scrollingDown = delta > 2;
-    if (scrollingDown && scrollTop > 6) {
-      snapVrHeroToSearch();
+  if (vrHero.stage === 'collapsed' && !vrHero.snapLock) {
+    if (scrollTop > 4) {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
     }
-    return;
   }
 
-  if (vrHero.stage === 'search') {
-    const now = performance.now();
-    const holdActive = now < vrHero.searchHoldUntil;
-    const targetDelta = scrollTop - snapTop;
+  if (vrHero.stage === 'free' && scrollTop <= 6 && !vrHero.snapLock) {
+    setVrHeroStage('collapsed');
+  }
+}
 
-    if (holdActive) {
-      if (Math.abs(targetDelta) > 4) {
-        window.scrollTo({ top: snapTop, behavior: 'auto' });
+function shouldHandleVrHeroGesture() {
+  return Boolean(vrHero.active && vrHero.section && vrHero.showcase);
+}
+
+function handleVrHeroDirectionalGesture(direction, event) {
+  if (!shouldHandleVrHeroGesture()) return false;
+
+  const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  const collapsedTop = getVrHeroCollapsedTop();
+  vrHero.searchTargetTop = collapsedTop;
+
+  if (direction > 0) {
+    if (vrHero.stage === 'video') {
+      if (event) event.preventDefault();
+      snapVrHeroToCollapsed();
+      return true;
+    }
+
+    if (vrHero.stage === 'collapsed') {
+      const holdActive = performance.now() < vrHero.searchHoldUntil || vrHero.snapLock;
+      const nearTop = scrollTop <= 6;
+
+      if (holdActive || !nearTop) {
+        if (event) event.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return true;
       }
-      return;
+
+      setVrHeroStage('free');
+      return false;
     }
 
-    const scrollingDown = delta > 2;
-    const scrollingUp = delta < -2;
-
-    if (scrollingDown && targetDelta > 12) {
-      vrHero.stage = 'free';
-      return;
-    }
-
-    if (scrollingUp && targetDelta < -12) {
-      snapVrHeroToTop();
-      return;
-    }
-
-    if (Math.abs(targetDelta) > 28) {
-      window.scrollTo({ top: snapTop, behavior: 'auto' });
-    }
-    return;
+    return false;
   }
 
-  if (vrHero.stage === 'free') {
-    const scrollingUp = delta < -2;
-    if (scrollingUp && scrollTop <= snapTop + 54) {
+  if (direction < 0) {
+    if (vrHero.stage === 'collapsed') {
+      if (event) event.preventDefault();
       snapVrHeroToTop();
+      return true;
+    }
+
+    if (vrHero.stage === 'free' && scrollTop <= collapsedTop + 72) {
+      if (event) event.preventDefault();
+      setVrHeroStage('collapsed');
+      beginVrHeroSnapLock(360);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return true;
     }
   }
+
+  return false;
 }
 
 function resetVrHeroScrollStyles() {
@@ -699,9 +716,7 @@ function syncVrHeroScrollState() {
 
   if (!vrHero.active) {
     vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
-    vrHero.stage = 'video';
-    vrHero.searchTargetTop = 0;
-    vrHero.searchHoldUntil = 0;
+    setVrHeroStage('video');
     setVrHeroPlaybackMode('inactive');
     resetVrHeroScrollStyles();
     return;
@@ -710,7 +725,8 @@ function syncVrHeroScrollState() {
   const settings = getVrHeroViewportSettings();
   const reducedMotion = Boolean(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches);
   const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
-  const progress = clampNumber(scrollTop / settings.collapseDistance, 0, 1);
+  const forcedCollapsed = vrHero.stage !== 'video';
+  const progress = forcedCollapsed ? 1 : clampNumber(scrollTop / settings.collapseDistance, 0, 1);
   const easedProgress = 1 - Math.pow(1 - progress, 2);
   const isVisible = isVrHeroShowcaseVisible();
 
@@ -722,35 +738,31 @@ function syncVrHeroScrollState() {
   const showcaseScale = 1 - (easedProgress * 0.08);
   const showcaseBlur = settings.blurMax * easedProgress;
   const showcaseMarginTop = settings.marginTop - (18 * easedProgress);
-  const showcaseMarginBottom = settings.marginBottom - (12 * easedProgress);
-  const copyMarginTop = settings.copyMarginTop - (14 * easedProgress);
-  const copyTranslateY = -12 * easedProgress;
+  const showcaseMarginBottom = settings.marginBottom - (22 * easedProgress);
+  const copyMarginTop = settings.copyMarginTop - (34 * easedProgress);
+  const copyTranslateY = -18 * easedProgress;
   const copyOpacity = clampNumber(1 - (easedProgress * 0.08), 0.9, 1);
   const sectionPaddingBottom = Math.max(0, settings.sectionPaddingBottom * (1 - easedProgress));
 
-  vrHero.showcase.style.maxHeight = `${maxHeight.toFixed(2)}px`;
-  vrHero.showcase.style.opacity = opacity.toFixed(4);
-  vrHero.showcase.style.transform = `translateY(${showcaseTranslateY.toFixed(2)}px) scale(${showcaseScale.toFixed(4)})`;
-  vrHero.showcase.style.filter = `blur(${showcaseBlur.toFixed(2)}px)`;
-  vrHero.showcase.style.marginTop = `${showcaseMarginTop.toFixed(2)}px`;
-  vrHero.showcase.style.marginBottom = `${showcaseMarginBottom.toFixed(2)}px`;
-  vrHero.copy.style.marginTop = `${copyMarginTop.toFixed(2)}px`;
-  vrHero.copy.style.transform = `translateY(${copyTranslateY.toFixed(2)}px)`;
-  vrHero.copy.style.opacity = copyOpacity.toFixed(4);
-  vrHero.section.style.paddingBottom = `${sectionPaddingBottom.toFixed(2)}px`;
-
-  if (scrollTop <= 6 && !vrHero.snapLock) {
-    vrHero.released = false;
-    vrHero.stage = 'video';
-    vrHero.searchHoldUntil = 0;
-    vrHero.searchTargetTop = 0;
-  } else {
+  if (forcedCollapsed) {
+    resetVrHeroScrollStyles();
     maybeSnapVrHeroByScroll(scrollTop);
+  } else {
+    vrHero.showcase.style.maxHeight = `${maxHeight.toFixed(2)}px`;
+    vrHero.showcase.style.opacity = opacity.toFixed(4);
+    vrHero.showcase.style.transform = `translateY(${showcaseTranslateY.toFixed(2)}px) scale(${showcaseScale.toFixed(4)})`;
+    vrHero.showcase.style.filter = `blur(${showcaseBlur.toFixed(2)}px)`;
+    vrHero.showcase.style.marginTop = `${showcaseMarginTop.toFixed(2)}px`;
+    vrHero.showcase.style.marginBottom = `${showcaseMarginBottom.toFixed(2)}px`;
+    vrHero.copy.style.marginTop = `${copyMarginTop.toFixed(2)}px`;
+    vrHero.copy.style.transform = `translateY(${copyTranslateY.toFixed(2)}px)`;
+    vrHero.copy.style.opacity = copyOpacity.toFixed(4);
+    vrHero.section.style.paddingBottom = `${sectionPaddingBottom.toFixed(2)}px`;
   }
 
   vrHero.lastScrollTop = scrollTop;
 
-  if (reducedMotion) {
+  if (reducedMotion || forcedCollapsed) {
     setVrHeroPlaybackMode('poster');
     return;
   }
@@ -777,11 +789,8 @@ function setVrHeroShowcaseState(isActive, options = {}) {
   if (!isActive) {
     vrHero.active = false;
     vrHero.progress = 0;
-    vrHero.released = false;
     vrHero.lastScrollTop = 0;
-    vrHero.stage = 'video';
-    vrHero.searchTargetTop = 0;
-    vrHero.searchHoldUntil = 0;
+    setVrHeroStage('video');
     clearVrHeroSnapLock();
     vrHero.section.classList.remove('vr-showcase-active');
     vrHero.showcase.setAttribute('aria-hidden', 'true');
@@ -792,11 +801,8 @@ function setVrHeroShowcaseState(isActive, options = {}) {
 
   vrHero.active = true;
   vrHero.progress = 0;
-  vrHero.released = false;
   vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
-  vrHero.stage = 'video';
-  vrHero.searchTargetTop = 0;
-  vrHero.searchHoldUntil = 0;
+  setVrHeroStage('video');
   clearVrHeroSnapLock();
   vrHero.section.classList.add('vr-showcase-active');
   vrHero.showcase.setAttribute('aria-hidden', 'false');
@@ -886,6 +892,31 @@ window.addEventListener('scroll', () => {
     queueVrHeroScrollSync();
   }
 }, { passive: true });
+
+window.addEventListener('wheel', (event) => {
+  if (!shouldHandleVrHeroGesture()) return;
+  if (Math.abs(event.deltaY) < 4) return;
+  handleVrHeroDirectionalGesture(event.deltaY > 0 ? 1 : -1, event);
+}, { passive: false });
+
+window.addEventListener('touchstart', (event) => {
+  if (!shouldHandleVrHeroGesture()) return;
+  if (!event.changedTouches || !event.changedTouches.length) return;
+  vrHero.touchStartY = event.changedTouches[0].clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', (event) => {
+  if (!shouldHandleVrHeroGesture()) return;
+  if (!event.changedTouches || !event.changedTouches.length) return;
+  const nextY = event.changedTouches[0].clientY;
+  const deltaY = vrHero.touchStartY - nextY;
+  if (Math.abs(deltaY) < 8) return;
+
+  const handled = handleVrHeroDirectionalGesture(deltaY > 0 ? 1 : -1, event);
+  if (handled) {
+    vrHero.touchStartY = nextY;
+  }
+}, { passive: false });
 
 document.addEventListener('site-theme-change', () => {
   if (vrHero.active) {

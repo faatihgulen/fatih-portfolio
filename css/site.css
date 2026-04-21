@@ -488,6 +488,43 @@
   .hero.vr-showcase-active .hero-sub {
     display: none;
   }
+  .hero.vr-showcase-collapsed {
+    padding-top: 42px;
+    padding-bottom: 10px;
+  }
+  .hero.vr-showcase-collapsed .hero-label {
+    margin-bottom: 16px;
+  }
+  .hero.vr-showcase-collapsed .hero-vr-showcase {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    transform: translateY(-24px) scale(0.96) !important;
+    filter: blur(18px) !important;
+    margin-top: 0 !important;
+    margin-bottom: 6px !important;
+    pointer-events: none;
+  }
+  .hero.vr-showcase-collapsed .hero-copy {
+    max-height: none;
+    opacity: 1;
+    transform: none;
+    margin-top: 10px !important;
+  }
+  .hero.vr-showcase-collapsed h1 {
+    margin-bottom: 14px;
+  }
+  .hero.vr-showcase-collapsed .hero-line-primary {
+    margin-bottom: 0.1em;
+  }
+  .hero.vr-showcase-collapsed .hero-sub {
+    display: block;
+    margin: 0 auto;
+    max-width: 34ch;
+  }
+  .hero.vr-showcase-collapsed ~ .categories {
+    padding-top: 8px;
+    padding-bottom: 18px;
+  }
   .hero.vr-showcase-active ~ .categories {
     padding-top: 0;
     padding-bottom: 28px;
@@ -2101,6 +2138,13 @@
     .hero.vr-showcase-active h1 { margin-bottom: 8px; }
     .hero.vr-showcase-active .hero-line-primary { margin-bottom: 0.12em; }
     .hero.vr-showcase-active .hero-sub { display: none; }
+    .hero.vr-showcase-collapsed { padding-top: 32px; padding-bottom: 8px; }
+    .hero.vr-showcase-collapsed .hero-label { margin-bottom: 12px; }
+    .hero.vr-showcase-collapsed .hero-vr-showcase { margin-top: 0 !important; margin-bottom: 4px !important; }
+    .hero.vr-showcase-collapsed .hero-copy { margin-top: 8px !important; }
+    .hero.vr-showcase-collapsed h1 { margin-bottom: 10px; }
+    .hero.vr-showcase-collapsed .hero-sub { display: block; font-size: 0.96rem; line-height: 1.52; max-width: 32ch; }
+    .hero.vr-showcase-collapsed ~ .categories { padding-top: 8px; padding-bottom: 18px; }
     .hero-vr-overlay {
       display: none;
     }
@@ -2167,6 +2211,13 @@
       font-size: 0.84rem;
       line-height: 1.42;
     }
+    .hero.vr-showcase-collapsed { padding-top: 26px; padding-bottom: 6px; }
+    .hero.vr-showcase-collapsed .hero-label { margin-bottom: 10px; }
+    .hero.vr-showcase-collapsed .hero-vr-showcase { margin-top: 0 !important; margin-bottom: 2px !important; }
+    .hero.vr-showcase-collapsed .hero-copy { margin-top: 6px !important; }
+    .hero.vr-showcase-collapsed h1 { margin-bottom: 8px; }
+    .hero.vr-showcase-collapsed .hero-sub { display: block; font-size: 0.84rem; line-height: 1.42; max-width: 30ch; }
+    .hero.vr-showcase-collapsed ~ .categories { padding-top: 8px; padding-bottom: 16px; }
     .hero-vr-frame { aspect-ratio: 5 / 4.9; }
     .hero-vr-overlay {
       display: none;
