@@ -546,8 +546,8 @@ function beginVrHeroSnapLock(duration = 560) {
 
 function snapVrHeroToCollapsed() {
   setVrHeroStage('collapsed');
-  vrHero.searchHoldUntil = performance.now() + 420;
-  beginVrHeroSnapLock(420);
+  vrHero.searchHoldUntil = 0;
+  beginVrHeroSnapLock(160);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -565,15 +565,6 @@ function maybeSnapVrHeroByScroll(scrollTop) {
 
   const collapsedTop = getVrHeroCollapsedTop();
   vrHero.searchTargetTop = collapsedTop;
-
-  const holdCollapsed = vrHero.snapLock || performance.now() < vrHero.searchHoldUntil;
-
-  if (vrHero.stage === 'collapsed' && holdCollapsed) {
-    if (scrollTop > 4) {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      return;
-    }
-  }
 
   if (vrHero.stage === 'free' && scrollTop <= 6 && !vrHero.snapLock) {
     setVrHeroStage('video');
@@ -602,14 +593,6 @@ function handleVrHeroDirectionalGesture(direction, event) {
     }
 
     if (vrHero.stage === 'collapsed') {
-      const holdActive = performance.now() < vrHero.searchHoldUntil || vrHero.snapLock;
-
-      if (holdActive) {
-        if (event) event.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        return true;
-      }
-
       setVrHeroStage('free');
       return false;
     }
@@ -724,8 +707,8 @@ function syncVrHeroScrollState() {
   const settings = getVrHeroViewportSettings();
   const reducedMotion = Boolean(vrHeroReducedMotionQuery && vrHeroReducedMotionQuery.matches);
   const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
-  const forcedCollapsed = vrHero.stage !== 'video';
-  const progress = forcedCollapsed ? 1 : clampNumber(scrollTop / settings.collapseDistance, 0, 1);
+  const startedCollapsed = vrHero.stage !== 'video';
+  const progress = startedCollapsed ? 1 : clampNumber(scrollTop / settings.collapseDistance, 0, 1);
   const easedProgress = 1 - Math.pow(1 - progress, 2);
   const isVisible = isVrHeroShowcaseVisible();
 
@@ -743,7 +726,7 @@ function syncVrHeroScrollState() {
   const copyOpacity = clampNumber(1 - (easedProgress * 0.08), 0.9, 1);
   const sectionPaddingBottom = Math.max(0, settings.sectionPaddingBottom * (1 - easedProgress));
 
-  if (forcedCollapsed) {
+  if (startedCollapsed) {
     resetVrHeroScrollStyles();
     maybeSnapVrHeroByScroll(scrollTop);
   } else {
@@ -761,12 +744,15 @@ function syncVrHeroScrollState() {
 
   vrHero.lastScrollTop = scrollTop;
 
-  if (reducedMotion || forcedCollapsed) {
+  const stageIsVideo = vrHero.stage === 'video';
+  const shouldForcePlay = stageIsVideo && (vrHero.snapLock || scrollTop <= getVrHeroCollapsedTop());
+
+  if (reducedMotion || !stageIsVideo) {
     setVrHeroPlaybackMode('poster');
     return;
   }
 
-  if (document.hidden || !isVisible || progress >= 0.9) {
+  if (!shouldForcePlay && (document.hidden || !isVisible || progress >= 0.9)) {
     setVrHeroPlaybackMode('poster');
     return;
   }
