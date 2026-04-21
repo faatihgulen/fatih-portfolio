@@ -146,7 +146,10 @@ const vrHero = {
   touchStartY: 0,
   lastScrollTop: 0,
   snapLock: false,
-  snapTimer: 0
+  snapTimer: 0,
+  stage: 'video',
+  searchTargetTop: 0,
+  searchHoldUntil: 0
 };
 
 const vrHeroReducedMotionQuery = typeof window.matchMedia === 'function'
@@ -499,7 +502,7 @@ function getActiveVrHeroLayerKey() {
 }
 
 function getVrHeroSearchAnchor() {
-  return document.getElementById('categories') || document.querySelector('.chat-input-wrap');
+  return document.querySelector('.chat-input-wrap') || document.getElementById('categories');
 }
 
 function getVrHeroSnapTop() {
@@ -507,8 +510,11 @@ function getVrHeroSnapTop() {
   if (!anchor) return null;
   const header = document.querySelector('header');
   const headerHeight = header ? header.getBoundingClientRect().height : 0;
-  const gap = window.innerWidth <= 768 ? 10 : 14;
-  return Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - headerHeight - gap);
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const rect = anchor.getBoundingClientRect();
+  const visibleViewport = Math.max(0, viewportHeight - headerHeight);
+  const centerOffset = Math.max(0, (visibleViewport - rect.height) * 0.5);
+  return Math.max(0, window.scrollY + rect.top - headerHeight - centerOffset);
 }
 
 function clearVrHeroSnapLock() {
@@ -519,30 +525,91 @@ function clearVrHeroSnapLock() {
   vrHero.snapLock = false;
 }
 
-function snapVrHeroToSearch() {
-  const targetTop = getVrHeroSnapTop();
-  if (targetTop == null) return;
-  vrHero.released = true;
+function beginVrHeroSnapLock(duration = 560) {
+  if (vrHero.snapTimer) {
+    clearTimeout(vrHero.snapTimer);
+  }
   vrHero.snapLock = true;
-  window.scrollTo({ top: targetTop, behavior: 'smooth' });
-  clearVrHeroSnapLock();
   vrHero.snapTimer = window.setTimeout(() => {
     vrHero.snapLock = false;
     vrHero.snapTimer = 0;
-  }, 560);
+  }, duration);
 }
 
-function maybeSnapVrHeroToSearch(scrollTop, progress) {
-  if (!vrHero.active || vrHero.released || vrHero.snapLock) return;
+function snapVrHeroToSearch() {
+  const targetTop = getVrHeroSnapTop();
+  if (targetTop == null) return;
+  vrHero.stage = 'search';
+  vrHero.searchTargetTop = targetTop;
+  vrHero.searchHoldUntil = performance.now() + 900;
+  vrHero.released = true;
+  beginVrHeroSnapLock();
+  window.scrollTo({ top: targetTop, behavior: 'smooth' });
+}
 
-  const scrollingDown = scrollTop > (vrHero.lastScrollTop + 3);
-  if (!scrollingDown) return;
-  if (scrollTop < 18) return;
+function snapVrHeroToTop() {
+  vrHero.stage = 'video';
+  vrHero.searchHoldUntil = 0;
+  vrHero.searchTargetTop = 0;
+  vrHero.released = false;
+  beginVrHeroSnapLock();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  const triggerProgress = window.innerWidth <= 480 ? 0.5 : 0.56;
-  if (progress < triggerProgress) return;
+function maybeSnapVrHeroByScroll(scrollTop) {
+  if (!vrHero.active || vrHero.snapLock) return;
 
-  snapVrHeroToSearch();
+  const delta = scrollTop - vrHero.lastScrollTop;
+  const snapTop = getVrHeroSnapTop();
+  if (snapTop == null) return;
+
+  vrHero.searchTargetTop = snapTop;
+
+  if (vrHero.stage === 'video') {
+    const scrollingDown = delta > 2;
+    if (scrollingDown && scrollTop > 6) {
+      snapVrHeroToSearch();
+    }
+    return;
+  }
+
+  if (vrHero.stage === 'search') {
+    const now = performance.now();
+    const holdActive = now < vrHero.searchHoldUntil;
+    const targetDelta = scrollTop - snapTop;
+
+    if (holdActive) {
+      if (Math.abs(targetDelta) > 4) {
+        window.scrollTo({ top: snapTop, behavior: 'auto' });
+      }
+      return;
+    }
+
+    const scrollingDown = delta > 2;
+    const scrollingUp = delta < -2;
+
+    if (scrollingDown && targetDelta > 12) {
+      vrHero.stage = 'free';
+      return;
+    }
+
+    if (scrollingUp && targetDelta < -12) {
+      snapVrHeroToTop();
+      return;
+    }
+
+    if (Math.abs(targetDelta) > 28) {
+      window.scrollTo({ top: snapTop, behavior: 'auto' });
+    }
+    return;
+  }
+
+  if (vrHero.stage === 'free') {
+    const scrollingUp = delta < -2;
+    if (scrollingUp && scrollTop <= snapTop + 54) {
+      snapVrHeroToTop();
+    }
+  }
 }
 
 function resetVrHeroScrollStyles() {
@@ -632,6 +699,9 @@ function syncVrHeroScrollState() {
 
   if (!vrHero.active) {
     vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+    vrHero.stage = 'video';
+    vrHero.searchTargetTop = 0;
+    vrHero.searchHoldUntil = 0;
     setVrHeroPlaybackMode('inactive');
     resetVrHeroScrollStyles();
     return;
@@ -669,11 +739,13 @@ function syncVrHeroScrollState() {
   vrHero.copy.style.opacity = copyOpacity.toFixed(4);
   vrHero.section.style.paddingBottom = `${sectionPaddingBottom.toFixed(2)}px`;
 
-  if (scrollTop <= 6) {
+  if (scrollTop <= 6 && !vrHero.snapLock) {
     vrHero.released = false;
-    clearVrHeroSnapLock();
+    vrHero.stage = 'video';
+    vrHero.searchHoldUntil = 0;
+    vrHero.searchTargetTop = 0;
   } else {
-    maybeSnapVrHeroToSearch(scrollTop, progress);
+    maybeSnapVrHeroByScroll(scrollTop);
   }
 
   vrHero.lastScrollTop = scrollTop;
@@ -707,6 +779,9 @@ function setVrHeroShowcaseState(isActive, options = {}) {
     vrHero.progress = 0;
     vrHero.released = false;
     vrHero.lastScrollTop = 0;
+    vrHero.stage = 'video';
+    vrHero.searchTargetTop = 0;
+    vrHero.searchHoldUntil = 0;
     clearVrHeroSnapLock();
     vrHero.section.classList.remove('vr-showcase-active');
     vrHero.showcase.setAttribute('aria-hidden', 'true');
@@ -719,6 +794,9 @@ function setVrHeroShowcaseState(isActive, options = {}) {
   vrHero.progress = 0;
   vrHero.released = false;
   vrHero.lastScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+  vrHero.stage = 'video';
+  vrHero.searchTargetTop = 0;
+  vrHero.searchHoldUntil = 0;
   clearVrHeroSnapLock();
   vrHero.section.classList.add('vr-showcase-active');
   vrHero.showcase.setAttribute('aria-hidden', 'false');
