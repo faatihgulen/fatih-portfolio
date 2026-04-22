@@ -309,7 +309,7 @@ const vrHeroShowcaseConfig = {
     layers: {
       dark: {
         ...vrHeroLayerDefaults.dark,
-        alphaMode: 'white-key',
+        alphaMode: 'source-alpha',
         scaleBoost: 0.54,
         ...spatialHeroMobileOverrides.dark,
         whiteKeyLow: 214,
@@ -336,7 +336,7 @@ const vrHeroShowcaseConfig = {
     layers: {
       dark: {
         ...vrHeroLayerDefaults.dark,
-        alphaMode: 'white-key',
+        alphaMode: 'source-alpha',
         scaleBoost: 0.54,
         ...spatialHeroMobileOverrides.dark,
         whiteKeyLow: 214,
