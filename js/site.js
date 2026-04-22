@@ -172,13 +172,13 @@ const uiAiHeroMobileOverrides = {
     mobileScaleBoost: 0.78,
     mobileSourceInset: 2,
     mobileDrawInset: 0,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   },
   light: {
     mobileScaleBoost: 0.76,
     mobileSourceInset: 4,
     mobileDrawInset: 1,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   }
 };
 
@@ -187,24 +187,24 @@ const spatialHeroMobileOverrides = {
     mobileScaleBoost: 0.78,
     mobileSourceInset: 0,
     mobileDrawInset: 0,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   },
   light: {
     mobileScaleBoost: 0.78,
     mobileSourceInset: 0,
     mobileDrawInset: 0,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   }
 };
 
 const vrArHeroMobileOverrides = {
   dark: {
     mobileScaleBoost: 1.74,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   },
   light: {
     mobileScaleBoost: 1.74,
-    mobileOffsetY: 60
+    mobileOffsetY: 40
   }
 };
 
