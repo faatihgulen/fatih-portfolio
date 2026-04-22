@@ -170,13 +170,13 @@ const architectureHeroAssets = {
 const uiAiHeroMobileOverrides = {
   dark: {
     mobileScaleBoost: 0.78,
-    mobileSourceInset: 2,
+    mobileSourceInset: 3,
     mobileDrawInset: 0,
     mobileOffsetY: 30
   },
   light: {
     mobileScaleBoost: 0.76,
-    mobileSourceInset: 4,
+    mobileSourceInset: 5,
     mobileDrawInset: 1,
     mobileOffsetY: 30
   }
@@ -261,7 +261,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 80,
+      keyHigh: 100,
       sources: uiUxHeroAssets.light
     }
   }
@@ -298,7 +298,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 80,
+      keyHigh: 100,
       sources: uiUxHeroAssets.light
     }
   }
