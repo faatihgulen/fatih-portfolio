@@ -261,7 +261,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 24,
+      keyHigh: 40,
       sources: uiUxHeroAssets.light
     }
   }
@@ -298,7 +298,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 24,
+      keyHigh: 40,
       sources: uiUxHeroAssets.light
     }
   }
@@ -325,7 +325,7 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 24,
+      keyHigh: 6,
       sources: architectureHeroAssets.light
     }
   }
@@ -352,7 +352,7 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 24,
+      keyHigh: 6,
       sources: architectureHeroAssets.light
     }
   }
