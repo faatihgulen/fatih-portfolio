@@ -518,8 +518,7 @@ function getVrHeroEffectiveAlphaMode(layer) {
     return layer && layer.alphaMode ? layer.alphaMode : 'source-alpha';
   }
 
-  const configured = layer && layer.alphaMode;
-  if (configured === 'white-key') return 'white-key';
+
   return 'luma-key';
 }
 
