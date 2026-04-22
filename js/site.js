@@ -518,7 +518,9 @@ function getVrHeroEffectiveAlphaMode(layer) {
     return layer && layer.alphaMode ? layer.alphaMode : 'source-alpha';
   }
 
-  return layer === vrHero.layers.light ? 'white-key' : 'luma-key';
+  const configured = layer && layer.alphaMode;
+  if (configured === 'white-key') return 'white-key';
+  return 'luma-key';
 }
 
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
