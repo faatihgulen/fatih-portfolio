@@ -229,76 +229,80 @@ const vrHeroShowcaseConfig = {
       }
     }
   },
-  'ui-ux': {
-    kicker: 'UI / UX',
-    caption: 'Interface motion',
-    layers: {
-      dark: {
-        ...vrHeroLayerDefaults.dark,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.48,
-        sourceInset: 4,
-        drawInset: 1,
-        ...uiAiHeroMobileOverrides.dark,
-        edgeFeather: 0.48,
-        edgeSoftFeather: 0.44,
-        clipWhiteLow: 162,
-        clipWhiteHigh: 255,
-        sources: uiUxHeroAssets.dark
-      },
-      light: {
-        ...vrHeroLayerDefaults.light,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.46,
-        sourceInset: 8,
-        drawInset: 3,
-        ...uiAiHeroMobileOverrides.light,
-        alphaErodeIterations: 0,
-        edgeFeather: 0.38,
-        edgeSoftFeather: 0.24,
-        edgeSoftAlphaMax: 148,
-        edgeMatteColor: { r: 248, g: 244, b: 236 },
-        edgeMatteStrength: 0.72,
-        edgeMatteMaxAlpha: 204,
-        sources: uiUxHeroAssets.light
-      }
+'ui-ux': {
+  kicker: 'UI / UX',
+  caption: 'Interface motion',
+  layers: {
+    dark: {
+      ...vrHeroLayerDefaults.dark,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.48,
+      sourceInset: 4,
+      drawInset: 1,
+      ...uiAiHeroMobileOverrides.dark,
+      edgeFeather: 0.48,
+      edgeSoftFeather: 0.44,
+      clipWhiteLow: 162,
+      clipWhiteHigh: 255,
+      sources: uiUxHeroAssets.dark
+    },
+    light: {
+      ...vrHeroLayerDefaults.light,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.46,
+      sourceInset: 8,
+      drawInset: 3,
+      ...uiAiHeroMobileOverrides.light,
+      alphaErodeIterations: 0,
+      edgeFeather: 0.38,
+      edgeSoftFeather: 0.24,
+      edgeSoftAlphaMax: 148,
+      edgeMatteColor: { r: 248, g: 244, b: 236 },
+      edgeMatteStrength: 0.72,
+      edgeMatteMaxAlpha: 204,
+      keyLow: 12,   // ← EKLE
+      keyHigh: 48,  // ← EKLE
+      sources: uiUxHeroAssets.light
     }
-  },
+  }
+},
   'ai': {
-    kicker: 'AI',
-    caption: 'Interface motion',
-    layers: {
-      dark: {
-        ...vrHeroLayerDefaults.dark,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.48,
-        ...uiAiHeroMobileOverrides.dark,
-        edgeFeather: 0.48,
-        edgeSoftFeather: 0.44,
-        clipWhiteLow: 162,
-        clipWhiteHigh: 255,
-        sourceInset: 4,
-        drawInset: 1,
-        sources: uiUxHeroAssets.dark
-      },
-      light: {
-        ...vrHeroLayerDefaults.light,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.46,
-        sourceInset: 8,
-        drawInset: 3,
-        ...uiAiHeroMobileOverrides.light,
-        alphaErodeIterations: 0,
-        edgeFeather: 0.38,
-        edgeSoftFeather: 0.24,
-        edgeSoftAlphaMax: 148,
-        edgeMatteColor: { r: 248, g: 244, b: 236 },
-        edgeMatteStrength: 0.72,
-        edgeMatteMaxAlpha: 204,
-        sources: uiUxHeroAssets.light
-      }
+  kicker: 'AI',
+  caption: 'Interface motion',
+  layers: {
+    dark: {
+      ...vrHeroLayerDefaults.dark,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.48,
+      ...uiAiHeroMobileOverrides.dark,
+      edgeFeather: 0.48,
+      edgeSoftFeather: 0.44,
+      clipWhiteLow: 162,
+      clipWhiteHigh: 255,
+      sourceInset: 4,
+      drawInset: 1,
+      sources: uiUxHeroAssets.dark
+    },
+    light: {
+      ...vrHeroLayerDefaults.light,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.46,
+      sourceInset: 8,
+      drawInset: 3,
+      ...uiAiHeroMobileOverrides.light,
+      alphaErodeIterations: 0,
+      edgeFeather: 0.38,
+      edgeSoftFeather: 0.24,
+      edgeSoftAlphaMax: 148,
+      edgeMatteColor: { r: 248, g: 244, b: 236 },
+      edgeMatteStrength: 0.72,
+      edgeMatteMaxAlpha: 204,
+      keyLow: 12,   // ← EKLE
+      keyHigh: 48,  // ← EKLE
+      sources: uiUxHeroAssets.light
     }
-  },
+  }
+},
   'architecture': {
     kicker: 'Architecture',
     caption: 'Spatial motion',
@@ -320,6 +324,8 @@ const vrHeroShowcaseConfig = {
         alphaMode: 'source-alpha',
         scaleBoost: 0.58,
         ...spatialHeroMobileOverrides.light,
+        keyLow: 12,   // ← EKLE
+        keyHigh: 48,  // ← EKLE
         sources: architectureHeroAssets.light
       }
     }
@@ -345,6 +351,8 @@ const vrHeroShowcaseConfig = {
         alphaMode: 'source-alpha',
         scaleBoost: 0.58,
         ...spatialHeroMobileOverrides.light,
+        keyLow: 12,   // ← EKLE
+        keyHigh: 48,  // ← EKLE
         sources: architectureHeroAssets.light
       }
     }
