@@ -496,9 +496,26 @@ function getVrHeroBrowserProfile() {
   };
 }
 
+const vrHeroBrowserProfile = getVrHeroBrowserProfile();
+
+function shouldUseVrHeroMp4KeyFallback(layer) {
+  if (!layer || layer.alphaMode !== 'source-alpha' || !layer.video) return false;
+  if (!(vrHeroBrowserProfile.isSafari || vrHeroBrowserProfile.isIOS)) return false;
+  const currentSrc = normalizeImagePath(layer.video.currentSrc || layer.video.src || layer.video.dataset.currentSrc || '');
+  return /\.mp4(\?.*)?$/i.test(currentSrc);
+}
+
+function getVrHeroEffectiveAlphaMode(layer) {
+  if (!shouldUseVrHeroMp4KeyFallback(layer)) {
+    return layer && layer.alphaMode ? layer.alphaMode : 'source-alpha';
+  }
+
+  return layer === vrHero.layers.light ? 'white-key' : 'luma-key';
+}
+
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
   const normalizedSources = (Array.isArray(sources) ? sources : []).filter(Boolean);
-  const browser = getVrHeroBrowserProfile();
+  const browser = vrHeroBrowserProfile;
   const playable = normalizedSources.map((source, index) => {
     const type = source.type || getVideoMimeType(source.src || '');
     const supportScore = video && type && typeof video.canPlayType === 'function'
@@ -1013,8 +1030,9 @@ function drawVrHeroLayer(layer) {
   const frame = layer.context.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
   const pixels = frame.data;
   const pixelCount = pixels.length / 4;
+  const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
 
-  if (layer.alphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
+  if (effectiveAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
     const clipLow = layer.clipWhiteLow || Math.max(0, layer.clipWhiteHigh - 3);
     const clipHigh = layer.clipWhiteHigh;
 
@@ -1036,14 +1054,14 @@ function drawVrHeroLayer(layer) {
     }
   }
 
-  if (layer.alphaMode !== 'source-alpha') {
+  if (effectiveAlphaMode !== 'source-alpha') {
     for (let index = 0; index < pixels.length; index += 4) {
       const red = pixels[index];
       const green = pixels[index + 1];
       const blue = pixels[index + 2];
       const brightness = Math.max(red, green, blue);
 
-      if (layer.alphaMode === 'white-key') {
+      if (effectiveAlphaMode === 'white-key') {
         const whiteness = Math.min(red, green, blue);
 
         if (whiteness >= layer.whiteKeyHigh) {
@@ -1080,7 +1098,7 @@ function drawVrHeroLayer(layer) {
   let alphaSnapshot = captureVrHeroAlpha(pixels);
 
   if (
-    layer.alphaMode === 'source-alpha' &&
+    effectiveAlphaMode === 'source-alpha' &&
     layer.edgeMatteColor &&
     layer.edgeMatteStrength &&
     width > 2 &&
