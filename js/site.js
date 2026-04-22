@@ -303,60 +303,60 @@ const vrHeroShowcaseConfig = {
     }
   }
 },
-  'architecture': {
-    kicker: 'Architecture',
-    caption: 'Spatial motion',
-    layers: {
-      dark: {
-        ...vrHeroLayerDefaults.dark,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.54,
-        ...spatialHeroMobileOverrides.dark,
-        whiteKeyLow: 214,
-        whiteKeyHigh: 255,
-        edgeFeather: 0.88,
-        edgeSoftFeather: 0.62,
-        edgeSoftAlphaMax: 168,
-        sources: architectureHeroAssets.dark
-      },
-      light: {
-        ...vrHeroLayerDefaults.light,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.58,
-        ...spatialHeroMobileOverrides.light,
-        keyLow: 12,   // ← EKLE
-        keyHigh: 48,  // ← EKLE
-        sources: architectureHeroAssets.light
-      }
-    }
-  },
-  '3d': {
-    kicker: '3D',
-    caption: 'Spatial motion',
-    layers: {
-      dark: {
-        ...vrHeroLayerDefaults.dark,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.54,
-        ...spatialHeroMobileOverrides.dark,
-        whiteKeyLow: 214,
-        whiteKeyHigh: 255,
-        edgeFeather: 0.88,
-        edgeSoftFeather: 0.62,
-        edgeSoftAlphaMax: 168,
-        sources: architectureHeroAssets.dark
-      },
-      light: {
-        ...vrHeroLayerDefaults.light,
-        alphaMode: 'source-alpha',
-        scaleBoost: 0.58,
-        ...spatialHeroMobileOverrides.light,
-        keyLow: 12,   // ← EKLE
-        keyHigh: 48,  // ← EKLE
-        sources: architectureHeroAssets.light
-      }
+'architecture': {
+  kicker: 'Architecture',
+  caption: 'Spatial motion',
+  layers: {
+    dark: {
+      ...vrHeroLayerDefaults.dark,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.54,
+      ...spatialHeroMobileOverrides.dark,
+      keyLow: 10,   // ← whiteKeyLow/whiteKeyHigh SİL, bunu EKLE
+      keyHigh: 60,  // ← bunu EKLE
+      edgeFeather: 0.88,
+      edgeSoftFeather: 0.62,
+      edgeSoftAlphaMax: 168,
+      sources: architectureHeroAssets.dark
+    },
+    light: {
+      ...vrHeroLayerDefaults.light,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.58,
+      ...spatialHeroMobileOverrides.light,
+      keyLow: 12,
+      keyHigh: 48,
+      sources: architectureHeroAssets.light
     }
   }
+},
+'3d': {
+  kicker: '3D',
+  caption: 'Spatial motion',
+  layers: {
+    dark: {
+      ...vrHeroLayerDefaults.dark,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.54,
+      ...spatialHeroMobileOverrides.dark,
+      keyLow: 10,   // ← whiteKeyLow/whiteKeyHigh SİL, bunu EKLE
+      keyHigh: 60,  // ← bunu EKLE
+      edgeFeather: 0.88,
+      edgeSoftFeather: 0.62,
+      edgeSoftAlphaMax: 168,
+      sources: architectureHeroAssets.dark
+    },
+    light: {
+      ...vrHeroLayerDefaults.light,
+      alphaMode: 'source-alpha',
+      scaleBoost: 0.58,
+      ...spatialHeroMobileOverrides.light,
+      keyLow: 12,
+      keyHigh: 48,
+      sources: architectureHeroAssets.light
+    }
+  }
+}
 };
 
 const vrHero = {
