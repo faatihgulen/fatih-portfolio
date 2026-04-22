@@ -397,6 +397,7 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 100px 40px 60px; text-align: center; animation: fadeUp 1s ease-out;
     position: relative;
+    isolation: isolate;
     gap: 0;
   }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -409,6 +410,8 @@
     font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.2em;
     text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px;
     animation: fadeUp 1s ease-out 0.1s both;
+    position: relative;
+    z-index: 4;
   }
   .hero-copy {
     width: 100%;
@@ -424,6 +427,8 @@
       opacity 0.42s ease,
       transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: transform, opacity, max-height;
+    position: relative;
+    z-index: 3;
   }
   .hero.vr-showcase-active .hero-copy {
     max-height: 320px;
@@ -462,6 +467,8 @@
       margin-bottom 0.48s ease;
     pointer-events: none;
     will-change: transform, opacity, max-height, filter;
+    position: relative;
+    z-index: 1;
   }
   .hero.vr-showcase-active .hero-vr-showcase {
     max-height: 680px;
@@ -471,6 +478,13 @@
     margin-top: -172px;
     margin-bottom: -4px;
     pointer-events: auto;
+  }
+  .hero.vr-showcase-active.vr-showcase-pending .hero-vr-showcase {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  .hero.vr-showcase-active .hero-vr-overlay {
+    display: none;
   }
   .hero.vr-showcase-active {
     padding-top: 56px;
@@ -561,7 +575,7 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity 0.55s ease;
+    transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 1;
   }
   .hero.vr-showcase-active .hero-vr-media {
@@ -592,17 +606,32 @@
     background: transparent;
     filter: saturate(1.02) contrast(1.01);
   }
+  .hero-vr-transition-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hero-vr-showcase.vr-showcase-transition-active .hero-vr-transition-canvas {
+    opacity: 1;
+  }
+  .hero-vr-showcase.vr-showcase-transition-active.vr-showcase-transition-fading .hero-vr-transition-canvas {
+    opacity: 0;
+  }
   .hero-vr-media-dark .hero-vr-canvas {
     filter: brightness(0.96) saturate(1.12) contrast(1.08);
   }
   .hero-vr-media-light .hero-vr-canvas {
     filter:
-      brightness(0.99)
-      saturate(0.82)
-      contrast(1.06)
-      hue-rotate(-2deg)
-      drop-shadow(0 0 1.1px rgba(248,244,236,0.98))
-      drop-shadow(0 0 2.2px rgba(102,125,34,0.14));
+      brightness(1.01)
+      saturate(0.8)
+      contrast(1.04)
+      hue-rotate(-2deg);
   }
   .hero-vr-video-source {
     position: absolute;
@@ -2126,6 +2155,16 @@
   }
 
   /* --- Responsive --- */
+  @media (max-width: 1100px) {
+    .hero { padding: 84px 32px 48px; }
+    .hero.vr-showcase-active { padding-top: 46px; padding-bottom: 16px; }
+    .hero.vr-showcase-active .hero-label { margin-bottom: 10px; }
+    .hero.vr-showcase-active .hero-vr-showcase { max-height: 580px; margin-top: -126px; margin-bottom: 4px; }
+    .hero.vr-showcase-active .hero-copy { margin-top: -46px; gap: 6px; }
+    .hero.vr-showcase-active h1 { margin-bottom: 18px; }
+    .hero.vr-showcase-active .hero-line-primary { margin-bottom: 0.13em; }
+    .hero.vr-showcase-active ~ .categories { padding-top: 8px; padding-bottom: 26px; }
+  }
   @media (max-width: 768px) {
     header { padding: 16px 20px; }
     .hero { padding: 60px 20px 40px; }

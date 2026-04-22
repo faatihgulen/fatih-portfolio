@@ -6,7 +6,10 @@
     "start": "node server.js",
     "generate": "node generate-data.js",
     "convert": "node convert-to-webp.js",
-    "generate:cards": "node generate-card-thumbs.js"
+    "generate:cards": "node generate-card-thumbs.js",
+    "health:dashboard": "node .local/site-health/open-dashboard.js",
+    "health:site": "node .local/site-health/site-health-monitor.js --config .local/site-health/site-health.config.js",
+    "health:site:json": "node .local/site-health/site-health-monitor.js --config .local/site-health/site-health.config.js --json-file site-health-report.json"
   },
   "dependencies": {
     "express": "^4.21.0",

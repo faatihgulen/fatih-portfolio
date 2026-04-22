@@ -1,9 +1,13 @@
 const express = require('express');
+const { execFile } = require('child_process');
 const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
+const { promisify } = require('util');
+
+const execFileAsync = promisify(execFile);
 
 function loadEnvFromFile() {
   const envPath = path.join(__dirname, '.env');
@@ -25,7 +29,11 @@ const app = express();
 const PORT = 3000;
 const DATA_PATH = path.join(__dirname, 'data', 'site.json');
 const IMAGES_ROOT = path.join(__dirname, 'images');
+const LOCAL_SITE_HEALTH_DIR = path.join(__dirname, '.local', 'site-health');
+const LOCAL_SITE_HEALTH_HTML = path.join(LOCAL_SITE_HEALTH_DIR, 'site-health.html');
 const CATEGORY_ROUTE_PATHS = ['/architecture', '/uiux', '/ui-ux', '/ai', '/3d', '/vr-ar', '/vr'];
+const WORKSPACE_SCAN_EXCLUDED_DIRS = new Set(['.git', '.local', '.vscode', '.claude', 'node_modules', 'uploads', 'private']);
+const WORKSPACE_SCAN_EXCLUDED_FILES = new Set(['site-health-report.json', '.env']);
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const ALLOWED_ORIGINS = new Set([
@@ -86,6 +94,18 @@ function isLoopbackAddress(address) {
   return LOOPBACK_ADDRESSES.has(String(address || '').toLowerCase());
 }
 
+function isLocalAdminOrigin(origin) {
+  const raw = String(origin || '').trim();
+  if (!raw) return false;
+  try {
+    const parsed = new URL(raw);
+    if (!/^https?:$/i.test(parsed.protocol)) return false;
+    return LOCAL_ADMIN_ORIGINS.has(raw) || isLoopbackHostname(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function isSubpath(parentPath, childPath) {
   const relative = path.relative(parentPath, childPath);
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
@@ -126,14 +146,16 @@ function isLocalAdminRequest(req) {
 
   const origin = req.get('origin');
   if (origin) {
-    if (!LOCAL_ADMIN_ORIGINS.has(origin)) return false;
-    try {
-      return isLoopbackHostname(new URL(origin).hostname);
-    } catch {
-      return false;
-    }
+    return isLocalAdminOrigin(origin);
   }
   return true;
+}
+
+function applyLocalAdminCors(req, res) {
+  const origin = req.get('origin');
+  if (!isLocalAdminOrigin(origin)) return;
+  res.set('Access-Control-Allow-Origin', origin);
+  res.set('Vary', 'Origin');
 }
 
 function enforceLocalAdminRequest(req, res) {
@@ -145,6 +167,8 @@ function enforceLocalAdminRequest(req, res) {
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/images', express.static(IMAGES_ROOT));
 app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/Video', express.static(path.join(__dirname, 'Video')));
+app.use('/site-health-assets', express.static(LOCAL_SITE_HEALTH_DIR));
 app.get('/data/site.json', (_req, res) => {
   res.sendFile(DATA_PATH);
 });
@@ -157,9 +181,141 @@ app.get('/', (_req, res) => {
 app.get('/index.html', (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+app.get('/robots.txt', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+app.get('/sitemap.xml', (_req, res) => {
+  res.type('application/xml');
+  res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+app.get(['/site-health', '/site-health.html'], (_req, res) => {
+  if (!fs.existsSync(LOCAL_SITE_HEALTH_HTML)) {
+    res.status(404).send('Site health dashboard is available only in the local workspace.');
+    return;
+  }
+  res.sendFile(LOCAL_SITE_HEALTH_HTML);
+});
 app.get(CATEGORY_ROUTE_PATHS, (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+function describeGitStatus(indexStatus, worktreeStatus) {
+  if (indexStatus === '?' && worktreeStatus === '?') return 'untracked';
+  if (indexStatus === 'R' || worktreeStatus === 'R') return 'renamed';
+  if (indexStatus === 'A' || worktreeStatus === 'A') return 'added';
+  if (indexStatus === 'D' || worktreeStatus === 'D') return 'deleted';
+  if (indexStatus === 'U' || worktreeStatus === 'U') return 'conflict';
+  if (indexStatus === 'M' || worktreeStatus === 'M') return 'modified';
+  return 'changed';
+}
+
+function parseGitStatusLine(line) {
+  const raw = String(line || '');
+  if (raw.length < 3) return null;
+
+  const indexStatus = raw[0];
+  const worktreeStatus = raw[1];
+  let filePath = raw.slice(3).trim();
+  let previousPath = '';
+
+  if (filePath.includes(' -> ')) {
+    const parts = filePath.split(' -> ');
+    previousPath = String(parts.shift() || '').trim();
+    filePath = parts.join(' -> ').trim();
+  }
+
+  return {
+    code: `${indexStatus}${worktreeStatus}`.trim() || `${indexStatus}${worktreeStatus}`,
+    indexStatus,
+    worktreeStatus,
+    path: filePath.replace(/\\/g, '/'),
+    previousPath: previousPath.replace(/\\/g, '/'),
+    state: describeGitStatus(indexStatus, worktreeStatus)
+  };
+}
+
+async function getLocalGitStatus() {
+  try {
+    const [{ stdout: branchStdout }, { stdout: statusStdout }] = await Promise.all([
+      execFileAsync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { cwd: __dirname }),
+      execFileAsync('git', ['status', '--short', '--untracked-files=all'], { cwd: __dirname })
+    ]);
+
+    const files = String(statusStdout || '')
+      .split(/\r?\n/)
+      .map(parseGitStatusLine)
+      .filter(Boolean);
+
+    return {
+      branch: String(branchStdout || '').trim() || 'main',
+      files,
+      mode: 'git-status',
+      warning: ''
+    };
+  } catch (err) {
+    const headPath = path.join(__dirname, '.git', 'HEAD');
+    let branch = 'main';
+
+    try {
+      const headRef = fs.readFileSync(headPath, 'utf8').trim();
+      if (headRef.startsWith('ref:')) {
+        const refName = headRef.slice(4).trim();
+        branch = refName.split('/').pop() || branch;
+      } else if (headRef) {
+        branch = 'detached';
+      }
+    } catch {}
+
+    const files = [];
+    const stack = [__dirname];
+
+    while (stack.length) {
+      const currentDir = stack.pop();
+      const entries = fs.readdirSync(currentDir, { withFileTypes: true })
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      for (const entry of entries) {
+        const absolutePath = path.join(currentDir, entry.name);
+        const relativePath = path.relative(__dirname, absolutePath).replace(/\\/g, '/');
+        const segments = relativePath.split('/').filter(Boolean);
+        const baseName = segments[segments.length - 1] || entry.name;
+
+        if (segments.some((segment) => WORKSPACE_SCAN_EXCLUDED_DIRS.has(segment))) {
+          continue;
+        }
+        if (entry.isFile() && WORKSPACE_SCAN_EXCLUDED_FILES.has(baseName)) {
+          continue;
+        }
+
+        if (entry.isDirectory()) {
+          stack.push(absolutePath);
+          continue;
+        }
+        if (!entry.isFile()) {
+          continue;
+        }
+
+        files.push({
+          code: 'FS',
+          indexStatus: 'F',
+          worktreeStatus: 'S',
+          path: relativePath,
+          previousPath: '',
+          state: 'workspace-file'
+        });
+      }
+    }
+
+    files.sort((a, b) => a.path.localeCompare(b.path));
+
+    return {
+      branch,
+      files,
+      mode: 'filesystem-fallback',
+      warning: 'Git status could not be read from Node on this machine, so the dashboard is listing current workspace files instead.'
+    };
+  }
+}
 
 function isAllowedOrigin(req) {
   const origin = String(req.get('origin') || '').trim();
@@ -465,6 +621,26 @@ app.get('/api/ask/health', async (req, res) => {
     resumeSourcesAvailable: availableCount,
     sources: sourceStatus
   });
+});
+
+app.get('/site-health/git-status', async (req, res) => {
+  applyLocalAdminCors(req, res);
+  if (!enforceLocalAdminRequest(req, res)) return;
+
+  try {
+    const gitStatus = await getLocalGitStatus();
+    res.json({
+      ok: true,
+      generatedAt: new Date().toISOString(),
+      ...gitStatus
+    });
+  } catch (err) {
+    res.status(500).json({
+      ok: false,
+      error: 'git_status_failed',
+      message: err && err.message ? err.message : 'Unable to read git status.'
+    });
+  }
 });
 
 app.listen(PORT, () => {
