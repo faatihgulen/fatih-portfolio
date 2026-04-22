@@ -260,8 +260,8 @@ const vrHeroShowcaseConfig = {
       edgeMatteColor: { r: 248, g: 244, b: 236 },
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
-      keyLow: 12,   // ← EKLE
-      keyHigh: 48,  // ← EKLE
+      keyLow: 0,
+      keyHigh: 24,
       sources: uiUxHeroAssets.light
     }
   }
@@ -297,8 +297,8 @@ const vrHeroShowcaseConfig = {
       edgeMatteColor: { r: 248, g: 244, b: 236 },
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
-      keyLow: 12,   // ← EKLE
-      keyHigh: 48,  // ← EKLE
+      keyLow: 0,
+      keyHigh: 24,
       sources: uiUxHeroAssets.light
     }
   }
@@ -312,8 +312,8 @@ const vrHeroShowcaseConfig = {
       alphaMode: 'source-alpha',
       scaleBoost: 0.54,
       ...spatialHeroMobileOverrides.dark,
-      keyLow: 10,   // ← whiteKeyLow/whiteKeyHigh SİL, bunu EKLE
-      keyHigh: 60,  // ← bunu EKLE
+      keyLow: 0,
+      keyHigh: 20,
       edgeFeather: 0.88,
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
@@ -324,8 +324,8 @@ const vrHeroShowcaseConfig = {
       alphaMode: 'source-alpha',
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
-      keyLow: 12,
-      keyHigh: 48,
+      keyLow: 0,
+      keyHigh: 24,
       sources: architectureHeroAssets.light
     }
   }
@@ -339,8 +339,8 @@ const vrHeroShowcaseConfig = {
       alphaMode: 'source-alpha',
       scaleBoost: 0.54,
       ...spatialHeroMobileOverrides.dark,
-      keyLow: 10,   // ← whiteKeyLow/whiteKeyHigh SİL, bunu EKLE
-      keyHigh: 60,  // ← bunu EKLE
+      keyLow: 0,
+      keyHigh: 20,
       edgeFeather: 0.88,
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
@@ -351,8 +351,8 @@ const vrHeroShowcaseConfig = {
       alphaMode: 'source-alpha',
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
-      keyLow: 12,
-      keyHigh: 48,
+      keyLow: 0,
+      keyHigh: 24,
       sources: architectureHeroAssets.light
     }
   }
