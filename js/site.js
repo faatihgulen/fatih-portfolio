@@ -261,7 +261,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 140,
+      keyHigh: 200,
       sources: uiUxHeroAssets.light
     }
   }
@@ -298,7 +298,7 @@ const vrHeroShowcaseConfig = {
       edgeMatteStrength: 0.72,
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
-      keyHigh: 140,
+      keyHigh: 200,
       sources: uiUxHeroAssets.light
     }
   }
