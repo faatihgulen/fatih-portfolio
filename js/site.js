@@ -202,17 +202,17 @@ const spatialHeroMp4BlueFallback = {
   keyHigh: 6,
   alphaGamma: 1,
   alphaErodeIterations: 1,
-  edgeFeather: 0.98,
-  edgeSoftFeather: 0.96,
+  edgeFeather: 0.88,
+  edgeSoftFeather: 0.86,
   edgeSoftAlphaMax: 192,
   colorKey: {
     r: 0,
     g: 0,
     b: 255,
-    distanceLow: 18,
+    distanceLow: 28,
     distanceHigh: 82,
     minBlue: 148,
-    dominanceLow: 96
+    dominanceLow: 36
   }
 };
 
