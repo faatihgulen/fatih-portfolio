@@ -357,7 +357,6 @@ const vrHeroShowcaseConfig = {
       edgeFeather: 0.64,
       edgeSoftFeather: 0.36,
       edgeSoftAlphaMax: 196,
-      mp4MaskSrc: 'Video/ARCH_light_mask.mp4',
       sources: architectureHeroAssets.light
     }
   }
@@ -388,7 +387,6 @@ const vrHeroShowcaseConfig = {
       edgeFeather: 0.64,
       edgeSoftFeather: 0.36,
       edgeSoftAlphaMax: 196,
-      mp4MaskSrc: 'Video/ARCH_light_mask.mp4',
       sources: architectureHeroAssets.light
     }
   }
@@ -491,10 +489,6 @@ window.__getVrHeroHealthSnapshot = function getVrHeroHealthSnapshot() {
         drawInset: layer.drawInset || 0,
         currentSrc: layer.video ? normalizeImagePath(layer.video.currentSrc || layer.video.src || '') : '',
         fallbackSrc: layer.video ? normalizeImagePath(layer.video.dataset.fallbackSrc || '') : '',
-        mp4MaskSrc: normalizeImagePath(layer.mp4MaskSrc || ''),
-        mp4MaskReadyState: layer.mp4MaskVideo ? layer.mp4MaskVideo.readyState : 0,
-        mp4MaskFailed: Boolean(layer.mp4MaskFailed),
-        mp4MaskApplied: Boolean(layer.mp4MaskApplied),
         readyState: layer.video ? layer.video.readyState : 0,
         paused: layer.video ? layer.video.paused : true,
         ended: layer.video ? layer.video.ended : false,
@@ -574,156 +568,6 @@ function getVrHeroMp4FallbackNumber(config, prop) {
   }
 
   return config[prop];
-}
-
-function shouldUseVrHeroMp4Mask(layer) {
-  return Boolean(layer && layer.mp4MaskSrc && shouldUseVrHeroMp4KeyFallback(layer));
-}
-
-function getVrHeroMp4MaskVideo(layer) {
-  if (!layer) return null;
-  if (!layer.mp4MaskVideo) {
-    const maskVideo = document.createElement('video');
-    primeVrHeroVideo(maskVideo);
-    maskVideo.preload = 'auto';
-    maskVideo.addEventListener('error', () => {
-      layer.mp4MaskFailed = true;
-      layer.mp4MaskApplied = false;
-    });
-    maskVideo.addEventListener('loadeddata', () => {
-      layer.mp4MaskFailed = false;
-    });
-
-    layer.mp4MaskVideo = maskVideo;
-    layer.mp4MaskCanvas = document.createElement('canvas');
-    layer.mp4MaskContext = layer.mp4MaskCanvas.getContext('2d', { willReadFrequently: true });
-  }
-
-  return layer.mp4MaskVideo;
-}
-
-function ensureVrHeroMp4MaskReady(layer) {
-  if (!shouldUseVrHeroMp4Mask(layer) || layer.mp4MaskFailed) return null;
-  const src = normalizeImagePath(layer.mp4MaskSrc || '');
-  if (!src) return null;
-
-  const maskVideo = getVrHeroMp4MaskVideo(layer);
-  if (!maskVideo) return null;
-
-  if ((maskVideo.dataset.currentSrc || '') !== src) {
-    pauseVrHeroVideo(maskVideo);
-    maskVideo.src = src;
-    maskVideo.dataset.currentSrc = src;
-    maskVideo.preload = 'auto';
-    layer.mp4MaskFailed = false;
-    layer.mp4MaskApplied = false;
-    try {
-      maskVideo.load();
-    } catch (error) {
-      layer.mp4MaskFailed = true;
-      return null;
-    }
-  }
-
-  return maskVideo;
-}
-
-function syncVrHeroMp4MaskPlayback(layer, maskVideo) {
-  if (!layer || !layer.video || !maskVideo) return;
-
-  if (maskVideo.readyState >= 1 && Number.isFinite(layer.video.currentTime)) {
-    let targetTime = Math.max(0, layer.video.currentTime || 0);
-    if (Number.isFinite(maskVideo.duration) && maskVideo.duration > 0) {
-      targetTime = Math.min(targetTime, Math.max(0, maskVideo.duration - 0.04));
-    }
-    if (Math.abs((maskVideo.currentTime || 0) - targetTime) > 0.08) {
-      safelySetVrHeroTime(maskVideo, targetTime);
-    }
-  }
-
-  if (layer.video.paused || layer.video.ended) {
-    pauseVrHeroVideo(maskVideo);
-    return;
-  }
-
-  if (maskVideo.readyState >= 2 && maskVideo.paused) {
-    const playPromise = maskVideo.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(() => {});
-    }
-  }
-}
-
-function applyVrHeroMp4Mask(layer, pixels, width, height) {
-  const maskVideo = ensureVrHeroMp4MaskReady(layer);
-  if (!maskVideo || !layer.mp4MaskCanvas || !layer.mp4MaskContext) return false;
-  if (!maskVideo.videoWidth || !maskVideo.videoHeight || maskVideo.readyState < 2) return false;
-
-  syncVrHeroMp4MaskPlayback(layer, maskVideo);
-
-  const maskCanvas = layer.mp4MaskCanvas;
-  const maskContext = layer.mp4MaskContext;
-  if (maskCanvas.width !== width || maskCanvas.height !== height) {
-    maskCanvas.width = width;
-    maskCanvas.height = height;
-  }
-
-  maskContext.clearRect(0, 0, width, height);
-  try {
-    drawVideoCenteredWithReference(
-      maskContext,
-      maskVideo,
-      layer.video,
-      maskCanvas,
-      layer.scaleBoost || 1,
-      layer.sourceInset || 0,
-      layer.drawInset || 0,
-      layer.offsetX || 0,
-      layer.offsetY || 0
-    );
-  } catch (error) {
-    return false;
-  }
-
-  let maskFrame;
-  try {
-    maskFrame = maskContext.getImageData(0, 0, width, height);
-  } catch (error) {
-    layer.mp4MaskFailed = true;
-    return false;
-  }
-
-  const maskPixels = maskFrame.data;
-  let minAlpha = 255;
-  let maxAlpha = 0;
-  let minLuma = 255;
-  let maxLuma = 0;
-
-  for (let index = 0; index < maskPixels.length; index += 4) {
-    const red = maskPixels[index];
-    const green = maskPixels[index + 1];
-    const blue = maskPixels[index + 2];
-    const alpha = maskPixels[index + 3];
-    const luma = Math.max(red, green, blue);
-    minAlpha = Math.min(minAlpha, alpha);
-    maxAlpha = Math.max(maxAlpha, alpha);
-    minLuma = Math.min(minLuma, luma);
-    maxLuma = Math.max(maxLuma, luma);
-  }
-
-  const useAlpha = minAlpha < 250 && maxAlpha > 5;
-  const useLuma = !useAlpha && minLuma < 250 && maxLuma > 5;
-  if (!useAlpha && !useLuma) return false;
-
-  for (let index = 0; index < pixels.length; index += 4) {
-    const maskAlpha = useAlpha
-      ? maskPixels[index + 3]
-      : Math.max(maskPixels[index], maskPixels[index + 1], maskPixels[index + 2]);
-    pixels[index + 3] = Math.round(pixels[index + 3] * (maskAlpha / 255));
-  }
-
-  layer.mp4MaskApplied = true;
-  return true;
 }
 
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
@@ -920,8 +764,7 @@ function applyVrHeroLayerAsset(layerKey, layerConfig = {}) {
     'clipWhiteLow',
     'clipWhiteHigh',
     'whiteKeyLow',
-    'whiteKeyHigh',
-    'mp4MaskSrc'
+    'whiteKeyHigh'
   ].forEach(syncProp);
 
   if (setVideoElementSources(layer.video, nextConfig.sources || [])) {
@@ -1148,36 +991,6 @@ function drawVideoCentered(context, video, canvas, scaleBoost = 1, sourceInset =
   context.drawImage(video, safeInset, safeInset, sourceWidth, sourceHeight, drawOffsetX, drawOffsetY, drawWidth, drawHeight);
 }
 
-function drawVideoCenteredWithReference(context, video, referenceVideo, canvas, scaleBoost = 1, sourceInset = 0, drawInset = 0, offsetX = 0, offsetY = 0) {
-  if (!referenceVideo || !referenceVideo.videoWidth || !referenceVideo.videoHeight) {
-    drawVideoCentered(context, video, canvas, scaleBoost, sourceInset, drawInset, offsetX, offsetY);
-    return;
-  }
-
-  const canvasWidth = canvas.width;
-  const canvasHeight = canvas.height;
-  const referenceWidth = referenceVideo.videoWidth;
-  const referenceHeight = referenceVideo.videoHeight;
-  const videoWidth = video.videoWidth;
-  const videoHeight = video.videoHeight;
-  const referenceInset = Math.max(0, Math.min(sourceInset || 0, Math.floor((referenceWidth - 2) / 2), Math.floor((referenceHeight - 2) / 2)));
-  const safeInsetX = Math.max(0, Math.min(Math.round((referenceInset / referenceWidth) * videoWidth), Math.floor((videoWidth - 2) / 2)));
-  const safeInsetY = Math.max(0, Math.min(Math.round((referenceInset / referenceHeight) * videoHeight), Math.floor((videoHeight - 2) / 2)));
-  const sourceWidth = Math.max(1, videoWidth - (safeInsetX * 2));
-  const sourceHeight = Math.max(1, videoHeight - (safeInsetY * 2));
-  const baseScale = Math.min(canvasWidth / referenceWidth, canvasHeight / referenceHeight);
-  const scale = baseScale * scaleBoost;
-  const rawDrawWidth = referenceWidth * scale;
-  const rawDrawHeight = referenceHeight * scale;
-  const insetPixels = Math.max(0, drawInset || 0);
-  const drawWidth = Math.max(1, rawDrawWidth - (insetPixels * 2));
-  const drawHeight = Math.max(1, rawDrawHeight - (insetPixels * 2));
-  const drawOffsetX = ((canvasWidth - rawDrawWidth) * 0.5) + insetPixels + (Number.isFinite(offsetX) ? offsetX : 0);
-  const drawOffsetY = ((canvasHeight - rawDrawHeight) * 0.5) + insetPixels + (Number.isFinite(offsetY) ? offsetY : 0);
-
-  context.drawImage(video, safeInsetX, safeInsetY, sourceWidth, sourceHeight, drawOffsetX, drawOffsetY, drawWidth, drawHeight);
-}
-
 function stopVrHeroLayer(layer) {
   if (!layer || layer.requestId == null) return;
 
@@ -1276,9 +1089,7 @@ function drawVrHeroLayer(layer) {
   const pixels = frame.data;
   const pixelCount = pixels.length / 4;
   const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
-  const mp4MaskApplied = applyVrHeroMp4Mask(layer, pixels, layer.canvas.width, layer.canvas.height);
-  const resolvedAlphaMode = mp4MaskApplied ? 'source-alpha' : effectiveAlphaMode;
-  const mp4FallbackConfig = mp4MaskApplied ? null : getVrHeroMp4FallbackConfig(layer);
+  const mp4FallbackConfig = getVrHeroMp4FallbackConfig(layer);
   const fallbackKeyLow = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyLow');
   const fallbackKeyHigh = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyHigh');
   const fallbackAlphaGamma = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'alphaGamma');
@@ -1294,7 +1105,7 @@ function drawVrHeroLayer(layer) {
   const edgeSoftFeather = fallbackEdgeSoftFeather ?? (layer.edgeSoftFeather || 0.54);
   const edgeSoftAlphaMax = fallbackEdgeSoftAlphaMax ?? (layer.edgeSoftAlphaMax || 188);
 
-  if (resolvedAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
+  if (effectiveAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
     const clipLow = layer.clipWhiteLow || Math.max(0, layer.clipWhiteHigh - 3);
     const clipHigh = layer.clipWhiteHigh;
 
@@ -1316,14 +1127,14 @@ function drawVrHeroLayer(layer) {
     }
   }
 
-  if (resolvedAlphaMode !== 'source-alpha') {
+  if (effectiveAlphaMode !== 'source-alpha') {
     for (let index = 0; index < pixels.length; index += 4) {
       const red = pixels[index];
       const green = pixels[index + 1];
       const blue = pixels[index + 2];
       const brightness = Math.max(red, green, blue);
 
-      if (resolvedAlphaMode === 'white-key') {
+      if (effectiveAlphaMode === 'white-key') {
         const whiteness = Math.min(red, green, blue);
 
         if (whiteness >= layer.whiteKeyHigh) {
@@ -1360,7 +1171,7 @@ function drawVrHeroLayer(layer) {
   let alphaSnapshot = captureVrHeroAlpha(pixels);
 
   if (
-    resolvedAlphaMode === 'source-alpha' &&
+    effectiveAlphaMode === 'source-alpha' &&
     layer.edgeMatteColor &&
     layer.edgeMatteStrength &&
     width > 2 &&
@@ -1563,13 +1374,10 @@ function resetVrHeroLayerPlayback(layer) {
   if (!layer) return;
   stopVrHeroLayer(layer);
   pauseVrHeroVideo(layer.video);
-  pauseVrHeroVideo(layer.mp4MaskVideo);
   safelySetVrHeroTime(layer.video, 0);
-  safelySetVrHeroTime(layer.mp4MaskVideo, 0);
   clearVrHeroLayer(layer);
   layer.assetTransitionId = 0;
   layer.loadToken = '';
-  layer.mp4MaskApplied = false;
 }
 
 function fallbackVrHeroVideoSource(layer) {
@@ -1588,7 +1396,6 @@ function fallbackVrHeroVideoSource(layer) {
   ensureVrHeroLayerReady(layer, { eager: true, preserveVrArBehavior: isVrArShowcaseCategory(vrHero.activeCategory) });
   if (vrHero.playbackMode === 'playing') {
     playVrHeroVideo(layer.video);
-    syncVrHeroMp4MaskPlayback(layer, layer.mp4MaskVideo);
   }
   return true;
 }
@@ -1823,11 +1630,9 @@ function setVrHeroPlaybackMode(mode, options = {}) {
   Object.entries(vrHero.layers).forEach(([layerKey, layer]) => {
     stopVrHeroLayer(layer);
     pauseVrHeroVideo(layer.video);
-    pauseVrHeroVideo(layer.mp4MaskVideo);
 
     if (nextMode === 'inactive') {
       safelySetVrHeroTime(layer.video, 0);
-      safelySetVrHeroTime(layer.mp4MaskVideo, 0);
       clearVrHeroLayer(layer);
       return;
     }
@@ -1857,10 +1662,8 @@ function setVrHeroPlaybackMode(mode, options = {}) {
     if (nextMode === 'playing') {
       if (Number.isFinite(layer.video.duration) && layer.video.duration > 0 && layer.video.currentTime >= layer.video.duration - 0.08) {
         safelySetVrHeroTime(layer.video, 0);
-        safelySetVrHeroTime(layer.mp4MaskVideo, 0);
       }
       if (playVrHeroVideo(layer.video)) {
-        syncVrHeroMp4MaskPlayback(layer, layer.mp4MaskVideo);
         startVrHeroLayer(layer);
       }
     }
