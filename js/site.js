@@ -353,10 +353,22 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 6,
+      keyHigh: 4,
       edgeFeather: 0.64,
+      edgeMatteStrength: 0.72,
+      drawInset: 3,
+      edgeMatteMaxAlpha: 204,
       edgeSoftFeather: 0.56,
-      edgeSoftAlphaMax: 196,
+      edgeSoftAlphaMax: 244,
+      mp4Fallback: {
+        keyLow: 0,
+        keyHigh: 18,
+        alphaGamma: 1.35,
+        alphaErodeIterations: 1,
+        edgeFeather: 0.54,
+        edgeSoftFeather: 0.48,
+        edgeSoftAlphaMax: 220
+      },
       sources: architectureHeroAssets.light
     }
   }
@@ -383,10 +395,19 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 6,
+      keyHigh: 4,
       edgeFeather: 0.64,
       edgeSoftFeather: 0.56,
-      edgeSoftAlphaMax: 196,
+      edgeSoftAlphaMax: 244,
+      mp4Fallback: {
+        keyLow: 0,
+        keyHigh: 18,
+        alphaGamma: 1.35,
+        alphaErodeIterations: 1,
+        edgeFeather: 0.54,
+        edgeSoftFeather: 0.48,
+        edgeSoftAlphaMax: 220
+      },
       sources: architectureHeroAssets.light
     }
   }
