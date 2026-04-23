@@ -4856,11 +4856,24 @@ function setAiServiceStatus(isOnline) {
   const text = document.getElementById("aiStatusText");
   const link = document.getElementById("aiStatusLink");
   if (!dot || !text || !link) return;
+  dot.classList.remove("pending");
   dot.classList.toggle("offline", !isOnline);
   text.textContent = isOnline ? "Online" : "Offline";
   link.title = isOnline
     ? "Currently live AI is online."
     : "Currently live AI is offline.";
+  link.setAttribute("aria-label", link.title);
+}
+
+function setAiServiceStatusPending() {
+  const dot = document.getElementById("aiStatusDot");
+  const text = document.getElementById("aiStatusText");
+  const link = document.getElementById("aiStatusLink");
+  if (!dot || !text || !link) return;
+  dot.classList.add("pending");
+  dot.classList.remove("offline");
+  text.textContent = "Checking...";
+  link.title = "Checking live AI availability.";
   link.setAttribute("aria-label", link.title);
 }
 
@@ -4919,6 +4932,7 @@ async function refreshAiServiceStatus() {
 }
 
 function initAiServiceStatus() {
+  setAiServiceStatusPending();
   refreshAiServiceStatus();
   if (aiStatusTimer) clearInterval(aiStatusTimer);
   aiStatusTimer = setInterval(refreshAiServiceStatus, 120000);
@@ -4947,6 +4961,13 @@ function scheduleAiServiceStatusInit() {
   window.addEventListener('keydown', earlyBoot);
   window.addEventListener('touchstart', earlyBoot, { passive: true });
   document.addEventListener('focusin', earlyBoot);
+
+  const idleBoot = () => boot();
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(idleBoot, { timeout: 2400 });
+  } else {
+    window.setTimeout(idleBoot, 1600);
+  }
 }
 
 function applyCategoryFilter(catId, options = {}) {
@@ -4990,7 +5011,17 @@ function renderProjectCardMarkup(project, index) {
   const cardImage = getProjectCardImage(project);
   const eagerAboveFold = index < 2;
   const fetchPriority = index === 0 ? 'high' : (eagerAboveFold ? 'auto' : 'low');
-  return '<div class="project-card" onclick="openProject(\''+project.id+'\')" style="transition-delay:'+Math.min(index, 5)*0.05+'s"><div class="card-thumbnail">'+(cardImage ? '<img class="card-thumbnail-img" src="'+cardImage+'" alt="'+project.title+'" loading="'+(eagerAboveFold ? 'eager' : 'lazy')+'" decoding="async" fetchpriority="'+fetchPriority+'">' : '<div class="card-thumbnail-inner">'+project.thumbnail+'</div>')+'<div class="card-gradient"></div></div><div class="card-body"><div class="card-tags">'+project.categories.map(c=>'<span class="card-tag">'+(catLabels[c]||c)+'</span>').join('')+'</div><div class="card-title">'+project.title+'</div><div class="card-desc">'+project.description+'</div><div class="card-meta"><div class="card-tools-wrap"><span class="card-tools">'+project.tools.join(' ? ')+'</span>'+(project.year ? '<span class="card-year">? '+project.year+'</span>' : '')+'</div><div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></div></div></div>';
+  const tools = Array.isArray(project.tools) ? project.tools.filter(Boolean) : [];
+  const toolsHtml = tools.length
+    ? '<span class="card-tools">' + tools.join(' <span class="card-meta-sep">&middot;</span> ') + '</span>'
+    : '';
+  const yearHtml = project.year
+    ? '<span class="card-year">' + project.year + '</span>'
+    : '';
+  const metaHtml = toolsHtml && yearHtml
+    ? toolsHtml + '<span class="card-meta-sep" aria-hidden="true">&middot;</span>' + yearHtml
+    : (toolsHtml || yearHtml);
+  return '<div class="project-card" onclick="openProject(\''+project.id+'\')" style="transition-delay:'+Math.min(index, 5)*0.05+'s"><div class="card-thumbnail">'+(cardImage ? '<img class="card-thumbnail-img" src="'+cardImage+'" alt="'+project.title+'" loading="'+(eagerAboveFold ? 'eager' : 'lazy')+'" decoding="async" fetchpriority="'+fetchPriority+'">' : '<div class="card-thumbnail-inner">'+project.thumbnail+'</div>')+'<div class="card-gradient"></div></div><div class="card-body"><div class="card-tags">'+project.categories.map(c=>'<span class="card-tag">'+(catLabels[c]||c)+'</span>').join('')+'</div><div class="card-title">'+project.title+'</div><div class="card-desc">'+project.description+'</div><div class="card-meta"><div class="card-tools-wrap">'+metaHtml+'</div><div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></div></div></div>';
 }
 
 function renderRelatedProjectCardMarkup(project) {

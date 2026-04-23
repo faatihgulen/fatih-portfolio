@@ -106,7 +106,7 @@
     document.documentElement.dataset.theme = getGermanyTheme(new Date());
   })();
 </script>
-<link rel="stylesheet" href="css/site.css?v=202604240030" fetchpriority="high">
+<link rel="stylesheet" href="css/site.css?v=202604240120" fetchpriority="high">
 </head>
 <body>
 <div class="ambient-glow"></div>
@@ -243,7 +243,7 @@
   <header>
     <div class="logo" onclick="resetView()"><span>*</span> Fatih Gulen</div>
     <div class="header-meta">
-      <span class="header-link" id="aiStatusLink" onclick="resetView()"><span class="status-dot" id="aiStatusDot"></span><span id="aiStatusText">Standby</span></span>
+      <span class="header-link" id="aiStatusLink" onclick="resetView()"><span class="status-dot pending" id="aiStatusDot"></span><span id="aiStatusText">Checking...</span></span>
       <span class="header-link" id="aboutTrigger" onclick="openAbout()">About</span>
       <button class="theme-toggle" id="themeToggle" type="button" onclick="toggleTheme()" aria-label="Switch to light mode" title="Switch to light mode" data-theme="dark">
         <span class="theme-toggle-icon" aria-hidden="true">
@@ -382,6 +382,6 @@
   </footer>
 </div>
 
-<script src="js/site.js?v=202604240045" defer fetchpriority="high"></script>
+<script src="js/site.js?v=202604240120" defer fetchpriority="high"></script>
 </body>
 </html>

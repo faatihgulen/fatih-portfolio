@@ -31,9 +31,14 @@ const DATA_PATH = path.join(__dirname, 'data', 'site.json');
 const IMAGES_ROOT = path.join(__dirname, 'images');
 const LOCAL_SITE_HEALTH_DIR = path.join(__dirname, '.local', 'site-health');
 const LOCAL_SITE_HEALTH_HTML = path.join(LOCAL_SITE_HEALTH_DIR, 'site-health.html');
+const SITE_HEALTH_REPORTS = {
+  'site-health': path.join(__dirname, 'site-health-report.json'),
+  'browser-health': path.join(__dirname, 'browser-health-report.json'),
+  'routes-check': path.join(__dirname, 'routes-check-report.json')
+};
 const CATEGORY_ROUTE_PATHS = ['/architecture', '/uiux', '/ui-ux', '/ai', '/3d', '/vr-ar', '/vr'];
 const WORKSPACE_SCAN_EXCLUDED_DIRS = new Set(['.git', '.local', '.vscode', '.claude', 'node_modules', 'uploads', 'private']);
-const WORKSPACE_SCAN_EXCLUDED_FILES = new Set(['site-health-report.json', '.env']);
+const WORKSPACE_SCAN_EXCLUDED_FILES = new Set(['site-health-report.json', 'browser-health-report.json', 'routes-check-report.json', '.env']);
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const ALLOWED_ORIGINS = new Set([
@@ -207,6 +212,34 @@ app.get(['/site-health', '/site-health.html'], (_req, res) => {
     return;
   }
   res.sendFile(LOCAL_SITE_HEALTH_HTML);
+});
+app.get('/site-health/report/:reportName', (req, res) => {
+  applyLocalAdminCors(req, res);
+  if (!enforceLocalAdminRequest(req, res)) return;
+
+  const reportName = String(req.params && req.params.reportName || '').trim();
+  const reportPath = SITE_HEALTH_REPORTS[reportName];
+
+  if (!reportPath) {
+    res.status(404).json({
+      ok: false,
+      error: 'unknown_report',
+      message: `Unknown site health report: ${reportName}`
+    });
+    return;
+  }
+
+  if (!fs.existsSync(reportPath)) {
+    res.status(404).json({
+      ok: false,
+      error: 'report_not_found',
+      message: `${path.basename(reportPath)} has not been generated yet. Run the related script first.`
+    });
+    return;
+  }
+
+  res.type('application/json');
+  res.sendFile(reportPath);
 });
 app.get(CATEGORY_ROUTE_PATHS, (req, res) => {
   const routeDir = String(req.path || '').replace(/^\/+|\/+$/g, '');

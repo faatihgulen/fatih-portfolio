@@ -321,6 +321,9 @@
     width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
     animation: statusBlink 3s ease-in-out infinite; display: flex; flex-shrink: 0; margin-top: 1px;
   }
+  .status-dot.pending {
+    background: var(--warn);
+  }
   .status-dot.offline {
     background: #ff6b6b;
     animation: none;
@@ -1253,6 +1256,12 @@
   }
   .card-tools-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .card-tools { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.04em; }
+  .card-meta-sep {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    opacity: 0.8;
+  }
   .card-year {
     font-family: var(--font-mono);
     font-size: 0.68rem;
