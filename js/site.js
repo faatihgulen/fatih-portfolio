@@ -325,7 +325,10 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 3,
+      keyHigh: 6,
+      edgeFeather: 0.64,
+      edgeSoftFeather: 0.36,
+      edgeSoftAlphaMax: 196,
       sources: architectureHeroAssets.light
     }
   }
@@ -352,7 +355,10 @@ const vrHeroShowcaseConfig = {
       scaleBoost: 0.58,
       ...spatialHeroMobileOverrides.light,
       keyLow: 0,
-      keyHigh: 3,
+      keyHigh: 6,
+      edgeFeather: 0.64,
+      edgeSoftFeather: 0.36,
+      edgeSoftAlphaMax: 196,
       sources: architectureHeroAssets.light
     }
   }
