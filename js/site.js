@@ -2605,8 +2605,8 @@ const galleryConfig = {
   p11: [],
   p21: [
     'images/3D/VFX/2 (1) (3).webp',
-    'imagesEB055C3B-930B-43BC-B21A-82ABD9A06B89 (1).webp',
-    'images/3D/EFD15A56-B0E5-41F8-8F8C-2D48C5023A8B.webp',
+    'images/3D/VFX/EB055C3B-930B-43BC-B21A-82ABD9A06B89 (1).webp',
+    'images/3D/VFX/EFD15A56-B0E5-41F8-8F8C-2D48C5023A8B.webp',
     'images/3D/VFX/posst.webp',
     'images/3D/VFX/s.webp',
   ],

@@ -8,6 +8,10 @@
     "generate:share": "node scripts/generate-share-pages.js",
     "convert": "node convert-to-webp.js",
     "generate:cards": "node generate-card-thumbs.js",
+    "lint:paths": "node scripts/lint-paths.js",
+    "routes:check": "node scripts/routes-check.js",
+    "health:browser:json": "node scripts/health-browser-json.js",
+    "validate:all": "node scripts/validate-all.js",
     "health:dashboard": "node .local/site-health/open-dashboard.js",
     "health:site": "node .local/site-health/site-health-monitor.js --config .local/site-health/site-health.config.js",
     "health:site:json": "node .local/site-health/site-health-monitor.js --config .local/site-health/site-health.config.js --json-file site-health-report.json"

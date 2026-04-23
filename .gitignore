@@ -10,3 +10,6 @@ uploads/
 private/
 data/resume_fallback_kb.generated.json
 data/resume_sources.generated.json
+browser-health-report.json
+routes-check-report.json
+site-health-report.json

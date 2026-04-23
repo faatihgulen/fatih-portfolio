@@ -86,6 +86,19 @@ const RESUME_SOURCES = loadResumeSources();
 app.disable('x-powered-by');
 app.use(express.json({ limit: '50mb' }));
 
+function sendDirectoryIndex(res, relativeDir, fallbackFilePath = '') {
+  const targetPath = path.join(__dirname, relativeDir, 'index.html');
+  if (fs.existsSync(targetPath)) {
+    res.sendFile(targetPath);
+    return;
+  }
+  if (fallbackFilePath) {
+    res.sendFile(fallbackFilePath);
+    return;
+  }
+  res.status(404).send('Not found');
+}
+
 function isLoopbackHostname(hostname) {
   return LOOPBACK_HOSTNAMES.has(String(hostname || '').toLowerCase());
 }
@@ -195,8 +208,25 @@ app.get(['/site-health', '/site-health.html'], (_req, res) => {
   }
   res.sendFile(LOCAL_SITE_HEALTH_HTML);
 });
-app.get(CATEGORY_ROUTE_PATHS, (_req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+app.get(CATEGORY_ROUTE_PATHS, (req, res) => {
+  const routeDir = String(req.path || '').replace(/^\/+|\/+$/g, '');
+  sendDirectoryIndex(res, routeDir, path.join(__dirname, 'index.html'));
+});
+app.get('/project/:slug', (req, res) => {
+  const slug = String(req.params && req.params.slug || '').trim();
+  if (!slug || slug.includes('/') || slug.includes('\\')) {
+    res.status(404).send('Project route not found.');
+    return;
+  }
+
+  const projectRoot = path.join(__dirname, 'project');
+  const projectIndexPath = path.join(projectRoot, slug, 'index.html');
+  if (isSubpath(projectRoot, projectIndexPath) && fs.existsSync(projectIndexPath)) {
+    res.sendFile(projectIndexPath);
+    return;
+  }
+
+  res.status(404).send('Project route not found.');
 });
 
 function describeGitStatus(indexStatus, worktreeStatus) {
