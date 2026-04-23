@@ -169,13 +169,13 @@ const architectureHeroAssets = {
 
 const uiAiHeroMobileOverrides = {
   dark: {
-    mobileScaleBoost: 0.78,
+    mobileScaleBoost: 0.84,
     mobileSourceInset: 3,
     mobileDrawInset: 0,
     mobileOffsetY: 30
   },
   light: {
-    mobileScaleBoost: 0.76,
+    mobileScaleBoost: 0.82,
     mobileSourceInset: 5,
     mobileDrawInset: 1,
     mobileOffsetY: 30
@@ -187,7 +187,7 @@ const spatialHeroMobileOverrides = {
     mobileScaleBoost: 0.78,
     mobileSourceInset: 0,
     mobileDrawInset: 0,
-    mobileOffsetY: 30
+    mobileOffsetY: 40
   },
   light: {
     mobileScaleBoost: 0.78,
@@ -244,6 +244,13 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.44,
       clipWhiteLow: 162,
       clipWhiteHigh: 255,
+      mp4Fallback: {
+        keyLow: 14,
+        keyHigh: 72,
+        edgeFeather: 0.62,
+        edgeSoftFeather: 0.38,
+        edgeSoftAlphaMax: 190
+      },
       sources: uiUxHeroAssets.dark
     },
     light: {
@@ -262,6 +269,13 @@ const vrHeroShowcaseConfig = {
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
       keyHigh: 200,
+      mp4Fallback: {
+        keyLow: 0,
+        keyHigh: 200,
+        edgeFeather: 0.56,
+        edgeSoftFeather: 0.34,
+        edgeSoftAlphaMax: 184
+      },
       sources: uiUxHeroAssets.light
     }
   }
@@ -281,6 +295,13 @@ const vrHeroShowcaseConfig = {
       clipWhiteHigh: 255,
       sourceInset: 4,
       drawInset: 1,
+      mp4Fallback: {
+        keyLow: 14,
+        keyHigh: 72,
+        edgeFeather: 0.62,
+        edgeSoftFeather: 0.38,
+        edgeSoftAlphaMax: 190
+      },
       sources: uiUxHeroAssets.dark
     },
     light: {
@@ -299,6 +320,13 @@ const vrHeroShowcaseConfig = {
       edgeMatteMaxAlpha: 204,
       keyLow: 0,
       keyHigh: 200,
+      mp4Fallback: {
+        keyLow: 0,
+        keyHigh: 200,
+        edgeFeather: 0.56,
+        edgeSoftFeather: 0.34,
+        edgeSoftAlphaMax: 184
+      },
       sources: uiUxHeroAssets.light
     }
   }
@@ -528,6 +556,20 @@ function getVrHeroEffectiveAlphaMode(layer) {
   return 'luma-key';
 }
 
+function getVrHeroMp4FallbackConfig(layer) {
+  if (!shouldUseVrHeroMp4KeyFallback(layer)) return null;
+  const config = layer && layer.mp4Fallback;
+  return config && typeof config === 'object' ? config : null;
+}
+
+function getVrHeroMp4FallbackNumber(config, prop) {
+  if (!config || typeof config[prop] !== 'number' || !Number.isFinite(config[prop])) {
+    return null;
+  }
+
+  return config[prop];
+}
+
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
   const normalizedSources = (Array.isArray(sources) ? sources : []).filter(Boolean);
   const browser = vrHeroBrowserProfile;
@@ -710,6 +752,7 @@ function applyVrHeroLayerAsset(layerKey, layerConfig = {}) {
     'offsetY',
     'keyLow',
     'keyHigh',
+    'mp4Fallback',
     'alphaGamma',
     'alphaErodeIterations',
     'edgeFeather',
@@ -1046,6 +1089,21 @@ function drawVrHeroLayer(layer) {
   const pixels = frame.data;
   const pixelCount = pixels.length / 4;
   const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
+  const mp4FallbackConfig = getVrHeroMp4FallbackConfig(layer);
+  const fallbackKeyLow = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyLow');
+  const fallbackKeyHigh = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyHigh');
+  const fallbackAlphaGamma = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'alphaGamma');
+  const fallbackAlphaErodeIterations = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'alphaErodeIterations');
+  const fallbackEdgeFeather = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeFeather');
+  const fallbackEdgeSoftFeather = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeSoftFeather');
+  const fallbackEdgeSoftAlphaMax = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeSoftAlphaMax');
+  const keyLow = fallbackKeyLow ?? layer.keyLow;
+  const keyHigh = fallbackKeyHigh ?? layer.keyHigh;
+  const alphaGamma = fallbackAlphaGamma ?? layer.alphaGamma;
+  const alphaErodeIterations = fallbackAlphaErodeIterations ?? layer.alphaErodeIterations;
+  const edgeFeather = fallbackEdgeFeather ?? layer.edgeFeather;
+  const edgeSoftFeather = fallbackEdgeSoftFeather ?? (layer.edgeSoftFeather || 0.54);
+  const edgeSoftAlphaMax = fallbackEdgeSoftAlphaMax ?? (layer.edgeSoftAlphaMax || 188);
 
   if (effectiveAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
     const clipLow = layer.clipWhiteLow || Math.max(0, layer.clipWhiteHigh - 3);
@@ -1092,15 +1150,15 @@ function drawVrHeroLayer(layer) {
         continue;
       }
 
-      if (brightness <= layer.keyLow) {
+      if (brightness <= keyLow) {
         pixels[index + 3] = 0;
         continue;
       }
 
-      if (brightness < layer.keyHigh) {
-        let alpha = (brightness - layer.keyLow) / (layer.keyHigh - layer.keyLow);
-        if (layer.alphaGamma) {
-          alpha = Math.pow(alpha, layer.alphaGamma);
+      if (brightness < keyHigh) {
+        let alpha = (brightness - keyLow) / Math.max(1, keyHigh - keyLow);
+        if (alphaGamma) {
+          alpha = Math.pow(alpha, alphaGamma);
         }
         pixels[index + 3] = Math.round(alpha * 255);
         continue;
@@ -1149,15 +1207,15 @@ function drawVrHeroLayer(layer) {
     }
   }
 
-  if (layer.alphaErodeIterations) {
-    alphaSnapshot = applyVrHeroAlphaErode(alphaSnapshot, width, height, layer.alphaErodeIterations);
+  if (alphaErodeIterations) {
+    alphaSnapshot = applyVrHeroAlphaErode(alphaSnapshot, width, height, alphaErodeIterations);
 
     for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
       pixels[(pixelIndex * 4) + 3] = alphaSnapshot[pixelIndex];
     }
   }
 
-  if (layer.edgeFeather && layer.canvas.width > 2 && layer.canvas.height > 2) {
+  if (edgeFeather && layer.canvas.width > 2 && layer.canvas.height > 2) {
     alphaSnapshot = captureVrHeroAlpha(pixels);
 
     for (let y = 1; y < height - 1; y += 1) {
@@ -1179,9 +1237,9 @@ function drawVrHeroLayer(layer) {
 
         if (!hasTransparentNeighbor) continue;
 
-        const featherAmount = alpha <= (layer.edgeSoftAlphaMax || 188)
-          ? (layer.edgeSoftFeather || 0.54)
-          : layer.edgeFeather;
+        const featherAmount = alpha <= edgeSoftAlphaMax
+          ? edgeSoftFeather
+          : edgeFeather;
 
         pixels[(pixelIndex * 4) + 3] = Math.round(alpha * featherAmount);
       }
