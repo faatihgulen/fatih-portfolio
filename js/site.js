@@ -199,21 +199,35 @@ const spatialHeroMobileOverrides = {
 
 const spatialHeroMp4BlueFallback = {
   keyLow: 0,
-  keyHigh: 0,
-  alphaGamma: 1.12,
-  alphaErodeIterations: 0,
-  edgeFeather: 0.88,
-  edgeSoftFeather: 0.76,
-  edgeSoftAlphaMax: 172,
+  keyHigh: 6,
+  alphaGamma: 1,
+  alphaErodeIterations: 1,
+  edgeFeather: 0.98,
+  edgeSoftFeather: 0.96,
+  edgeSoftAlphaMax: 192,
   colorKey: {
     r: 0,
     g: 0,
     b: 255,
-    distanceLow: 28,
+    distanceLow: 18,
     distanceHigh: 82,
     minBlue: 148,
     dominanceLow: 96
   }
+};
+
+const spatialHeroMp4BlueFallbackLight = {
+  ...spatialHeroMp4BlueFallback,
+  edgeFeather: 0.92,
+  edgeSoftFeather: 0.82,
+  edgeSoftAlphaMax: 160
+};
+
+const spatialHeroMp4BlueFallbackDark = {
+  ...spatialHeroMp4BlueFallback,
+  edgeFeather: 0.9,
+  edgeSoftFeather: 0.8,
+  edgeSoftAlphaMax: 164
 };
 
 const vrArHeroMobileOverrides = {
@@ -365,7 +379,8 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
       mp4Fallback: {
-        ...spatialHeroMp4BlueFallback
+        ...spatialHeroMp4BlueFallbackDark,
+        drawInset: 4
       },
       sources: architectureHeroAssets.dark
     },
@@ -383,7 +398,8 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
-        ...spatialHeroMp4BlueFallback
+        ...spatialHeroMp4BlueFallbackLight,
+        drawInset: 4
       },
       sources: architectureHeroAssets.light
     }
@@ -404,7 +420,8 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
       mp4Fallback: {
-        ...spatialHeroMp4BlueFallback
+        ...spatialHeroMp4BlueFallbackDark,
+        drawInset: 4
       },
       sources: architectureHeroAssets.dark
     },
@@ -419,7 +436,8 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
-        ...spatialHeroMp4BlueFallback
+        ...spatialHeroMp4BlueFallbackLight,
+        drawInset: 3
       },
       sources: architectureHeroAssets.light
     }
@@ -1158,14 +1176,25 @@ function drawVrHeroLayer(layer) {
     return false;
   }
 
+  const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
+  const mp4FallbackConfig = getVrHeroMp4FallbackConfig(layer);
+  const fallbackSourceInset = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'sourceInset');
+  const fallbackDrawInset = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'drawInset');
+  const renderSourceInset = fallbackSourceInset != null
+    ? fallbackSourceInset
+    : (layer.sourceInset || 0);
+  const renderDrawInset = fallbackDrawInset != null
+    ? fallbackDrawInset
+    : (layer.drawInset || 0);
+
   layer.context.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
   drawVideoCentered(
     layer.context,
     layer.video,
     layer.canvas,
     layer.scaleBoost || 1,
-    layer.sourceInset || 0,
-    layer.drawInset || 0,
+    renderSourceInset,
+    renderDrawInset,
     layer.offsetX || 0,
     layer.offsetY || 0
   );
@@ -1174,11 +1203,8 @@ function drawVrHeroLayer(layer) {
     setVrHeroFrameReady(true);
   }
 
-  const frame = layer.context.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
-  const pixels = frame.data;
-  const pixelCount = pixels.length / 4;
-  const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
-  const mp4FallbackConfig = getVrHeroMp4FallbackConfig(layer);
+  const imageData = layer.context.getImageData(0, 0, layer.canvas.width, layer.canvas.height);
+  const pixels = imageData.data;
   const fallbackKeyLow = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyLow');
   const fallbackKeyHigh = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyHigh');
   const fallbackAlphaGamma = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'alphaGamma');
@@ -1186,13 +1212,13 @@ function drawVrHeroLayer(layer) {
   const fallbackEdgeFeather = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeFeather');
   const fallbackEdgeSoftFeather = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeSoftFeather');
   const fallbackEdgeSoftAlphaMax = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'edgeSoftAlphaMax');
-  const keyLow = fallbackKeyLow ?? layer.keyLow;
-  const keyHigh = fallbackKeyHigh ?? layer.keyHigh;
-  const alphaGamma = fallbackAlphaGamma ?? layer.alphaGamma;
-  const alphaErodeIterations = fallbackAlphaErodeIterations ?? layer.alphaErodeIterations;
-  const edgeFeather = fallbackEdgeFeather ?? layer.edgeFeather;
-  const edgeSoftFeather = fallbackEdgeSoftFeather ?? (layer.edgeSoftFeather || 0.54);
-  const edgeSoftAlphaMax = fallbackEdgeSoftAlphaMax ?? (layer.edgeSoftAlphaMax || 188);
+  const keyLow = fallbackKeyLow != null ? fallbackKeyLow : layer.keyLow;
+  const keyHigh = fallbackKeyHigh != null ? fallbackKeyHigh : layer.keyHigh;
+  const alphaGamma = fallbackAlphaGamma != null ? fallbackAlphaGamma : layer.alphaGamma;
+  const alphaErodeIterations = fallbackAlphaErodeIterations != null ? fallbackAlphaErodeIterations : layer.alphaErodeIterations;
+  const edgeFeather = fallbackEdgeFeather != null ? fallbackEdgeFeather : layer.edgeFeather;
+  const edgeSoftFeather = fallbackEdgeSoftFeather != null ? fallbackEdgeSoftFeather : (layer.edgeSoftFeather || 0.54);
+  const edgeSoftAlphaMax = fallbackEdgeSoftAlphaMax != null ? fallbackEdgeSoftAlphaMax : (layer.edgeSoftAlphaMax || 188);
 
   if (effectiveAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
     const clipLow = layer.clipWhiteLow || Math.max(0, layer.clipWhiteHigh - 3);
@@ -1306,7 +1332,7 @@ function drawVrHeroLayer(layer) {
   if (alphaErodeIterations) {
     alphaSnapshot = applyVrHeroAlphaErode(alphaSnapshot, width, height, alphaErodeIterations);
 
-    for (let pixelIndex = 0; pixelIndex < pixelCount; pixelIndex += 1) {
+    for (let pixelIndex = 0; pixelIndex < alphaSnapshot.length; pixelIndex += 1) {
       pixels[(pixelIndex * 4) + 3] = alphaSnapshot[pixelIndex];
     }
   }
@@ -1342,7 +1368,7 @@ function drawVrHeroLayer(layer) {
     }
   }
 
-  layer.context.putImageData(frame, 0, 0);
+  layer.context.putImageData(imageData, 0, 0);
   return true;
 }
 
@@ -5274,8 +5300,8 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
       return;
     }
 
-    const pad = step.pad ?? 6;
-    const radius = step.radius ?? 10;
+    const pad = step.pad != null ? step.pad : 6;
+    const radius = step.radius != null ? step.radius : 10;
     const hole = setOverlayHole(rect, pad);
     if (!hole) return;
 
