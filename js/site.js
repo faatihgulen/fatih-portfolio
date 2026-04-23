@@ -2163,6 +2163,7 @@ const preferredImagePending = new Map();
 let imageLightboxSources = [];
 let imageLightboxIndex = 0;
 let imageLightboxRequestId = 0;
+const prefetchedImageAssets = new Set();
 
 function onProjectModalScroll() {
   const modal = document.getElementById('projectModalContent');
@@ -2327,7 +2328,17 @@ function setProjectExpanded(expanded) {
 }
 
 function normalizeImagePath(path) {
-  return String(path || '').trim().replace(/\\/g, '/');
+  const normalized = String(path || '').trim().replace(/\\/g, '/');
+  if (!normalized) return '';
+  if (
+    normalized.startsWith('/') ||
+    normalized.startsWith('#') ||
+    /^[a-z]+:/i.test(normalized) ||
+    normalized.startsWith('//')
+  ) {
+    return normalized;
+  }
+  return `/${normalized.replace(/^\.?\//, '')}`;
 }
 
 function isVideoMedia(src) {
@@ -2744,8 +2755,50 @@ projects.forEach((project) => {
   project.cardImage = `images/_card/${project.id}.webp`;
 });
 
+function buildProjectRouteSlug(project) {
+  const raw = `${project && project.id ? project.id : 'project'}-${project && project.title ? project.title : ''}`;
+  return raw
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-') || (project && project.id) || 'project';
+}
+
+const projectRouteSlugMap = new Map();
+projects.forEach((project) => {
+  if (!project) return;
+  project.routeSlug = buildProjectRouteSlug(project);
+  projectRouteSlugMap.set(project.routeSlug, project.id);
+});
+
 function getProjectCardImage(project) {
   return normalizeImagePath((project && (project.cardImage || project.image)) || '');
+}
+
+function getProjectById(projectId) {
+  const normalizedProjectId = String(projectId || '').trim();
+  if (!normalizedProjectId) return null;
+  return projects.find((project) => project && project.id === normalizedProjectId) || null;
+}
+
+function getProjectByRouteSlug(slug) {
+  const normalizedSlug = String(slug || '').trim().toLowerCase();
+  if (!normalizedSlug) return null;
+  const projectId = projectRouteSlugMap.get(normalizedSlug);
+  return projectId ? getProjectById(projectId) : null;
+}
+
+function getProjectPrimaryCategory(project) {
+  const primaryCategory = Array.isArray(project && project.categories) ? project.categories.find((category) => catLabels[category]) : '';
+  return primaryCategory || '';
+}
+
+function getProjectSharePath(project) {
+  if (!project) return '/';
+  return `/project/${project.routeSlug || buildProjectRouteSlug(project)}`;
 }
 
 function getProjectGallery(p) {
@@ -2874,7 +2927,45 @@ function mountProjectEmbeds(projectId) {
   });
 }
 
-function openProject(projectId) {
+function prefetchImageAsset(src) {
+  const normalizedSrc = normalizeImagePath(src);
+  if (!normalizedSrc || prefetchedImageAssets.has(normalizedSrc) || isVideoMedia(normalizedSrc)) return;
+  prefetchedImageAssets.add(normalizedSrc);
+  const img = new Image();
+  img.decoding = 'async';
+  img.loading = 'eager';
+  img.src = normalizedSrc;
+}
+
+function prefetchProjectCardImages(projectList, limit = 6) {
+  (Array.isArray(projectList) ? projectList : []).slice(0, limit).forEach((project) => {
+    prefetchImageAsset(getProjectCardImage(project) || (project && project.image));
+  });
+}
+
+function prefetchProjectMedia(project, limit = 3) {
+  if (!project) return;
+  getProjectGallery(project).slice(0, limit).forEach((src) => {
+    prefetchImageAsset(getImmediatePreferredImage(src));
+  });
+}
+
+function warmCategoryProjectThumbs(catId, limit = 4) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  if (!normalizedCatId) return;
+  prefetchProjectCardImages(projects.filter((project) => Array.isArray(project.categories) && project.categories.includes(normalizedCatId)), limit);
+}
+
+function bindCategoryThumbnailPrefetch() {
+  document.querySelectorAll('.cat-pill').forEach((pill) => {
+    const warm = () => warmCategoryProjectThumbs(pill.dataset.cat, 4);
+    pill.addEventListener('mouseenter', warm, { passive: true });
+    pill.addEventListener('focus', warm, { passive: true });
+    pill.addEventListener('touchstart', warm, { passive: true, once: true });
+  });
+}
+
+function openProject(projectId, options = {}) {
   const p = projects.find(pr => pr.id === projectId);
   if (!p) return;
   projectStoryTrackIgnoreScroll = false;
@@ -2893,9 +2984,18 @@ function openProject(projectId) {
   document.getElementById('projectModal').classList.add('open');
   document.body.style.overflow = 'hidden';
   onProjectModalScroll();
+  prefetchProjectMedia(p, 4);
+  if (!options.skipUrl) {
+    updateUrlForView({
+      category: getActiveCategoryId() || getProjectPrimaryCategory(p),
+      projectId: p.id,
+      replace: Boolean(options.replaceUrl)
+    });
+  }
+  applySeoMeta(buildProjectSeoMeta(p));
 }
 
-function closeProject() {
+function closeProject(options = {}) {
   closeProjectSummary();
   closeImageLightbox();
   projectStoryTrackIgnoreScroll = false;
@@ -2920,6 +3020,14 @@ function closeProject() {
       }
     }, 220);
   }
+  const activeCategoryId = getActiveCategoryId();
+  if (!options.skipUrl) {
+    updateUrlForView({
+      category: activeCategoryId,
+      replace: true
+    });
+  }
+  applySeoMeta(activeCategoryId ? buildCategorySeoMeta(activeCategoryId) : buildHomeSeoMeta());
 }
 
 function navProject(dir) {
@@ -2938,6 +3046,13 @@ function navProject(dir) {
   storyPreviewActive = false;
   setProjectExpanded(false);
   renderProjectModal(p);
+  prefetchProjectMedia(p, 4);
+  updateUrlForView({
+    category: getActiveCategoryId() || getProjectPrimaryCategory(p),
+    projectId: p.id,
+    replace: true
+  });
+  applySeoMeta(buildProjectSeoMeta(p));
 }
 
 function syncProjectImageState(options = {}) {
@@ -3425,6 +3540,127 @@ const routeCategoryAliases = {
   "/vr": "vr-ar",
   "/architecture": "architecture"
 };
+const SITE_ORIGIN = "https://fatihgulen.com";
+const SEO_DEFAULTS = {
+  title: "Fatih Gulen | Realtime Experience Designer Portfolio",
+  description: "Fatih Gulen is a realtime experience designer creating UI/UX, 3D, AI, VR/AR, and architectural visualization work from Germany.",
+  path: "/",
+  image: "images/3D/Whaf/image (3).webp",
+  imageAlt: "Selected realtime experience design work by Fatih Gulen"
+};
+const categorySeoMeta = {
+  "ui-ux": {
+    title: "UI/UX Design Projects | Fatih Gulen",
+    description: "Product, dashboard, and interface design case studies by Fatih Gulen spanning mobile, SaaS, and automotive UI."
+  },
+  "3d": {
+    title: "3D Projects | Fatih Gulen",
+    description: "Realtime and high-fidelity 3D visualization work covering product visuals, materials, assets, and VFX."
+  },
+  "ai": {
+    title: "AI Projects | Fatih Gulen",
+    description: "AI-assisted creative pipelines, generative visuals, and research-driven workflows by Fatih Gulen."
+  },
+  "vr-ar": {
+    title: "VR/AR Projects | Fatih Gulen",
+    description: "Immersive VR and AR work including training, prototyping, spatial UI, and interactive experiences."
+  },
+  "architecture": {
+    title: "Architecture Projects | Fatih Gulen",
+    description: "Architectural visualization, interior design, and presentation work for residential and commercial spaces."
+  }
+};
+
+function stripMetaFormatting(text) {
+  return String(text || '')
+    .replace(/\*\*/g, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function clampMetaDescription(text, maxLength = 180) {
+  const normalizedText = stripMetaFormatting(text);
+  if (normalizedText.length <= maxLength) return normalizedText;
+  const clipped = normalizedText.slice(0, maxLength - 1);
+  const lastBreak = clipped.lastIndexOf(' ');
+  return `${(lastBreak > 72 ? clipped.slice(0, lastBreak) : clipped).trim()}…`;
+}
+
+function toAbsoluteSiteUrl(path) {
+  const normalizedPath = normalizeImagePath(path || '/');
+  try {
+    return new URL(normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`, SITE_ORIGIN).toString();
+  } catch (error) {
+    return SITE_ORIGIN;
+  }
+}
+
+function setMetaTagContent(selector, value) {
+  const el = document.querySelector(selector);
+  if (el && value) el.setAttribute('content', value);
+}
+
+function setLinkHref(selector, value) {
+  const el = document.querySelector(selector);
+  if (el && value) el.setAttribute('href', value);
+}
+
+function getActiveCategoryId() {
+  const activePill = document.querySelector('.cat-pill.active');
+  return normalizeCategoryId(activePill ? activePill.dataset.cat : '');
+}
+
+function buildHomeSeoMeta() {
+  return {
+    title: SEO_DEFAULTS.title,
+    description: SEO_DEFAULTS.description,
+    url: toAbsoluteSiteUrl(SEO_DEFAULTS.path),
+    image: toAbsoluteSiteUrl(SEO_DEFAULTS.image),
+    imageAlt: SEO_DEFAULTS.imageAlt
+  };
+}
+
+function buildCategorySeoMeta(catId) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  const seoCopy = categorySeoMeta[normalizedCatId] || {};
+  const fallbackProject = projects.find((project) => Array.isArray(project.categories) && project.categories.includes(normalizedCatId));
+  return {
+    title: seoCopy.title || `${catLabels[normalizedCatId] || normalizedCatId} Projects | Fatih Gulen`,
+    description: seoCopy.description || SEO_DEFAULTS.description,
+    url: toAbsoluteSiteUrl(getCategoryPath(normalizedCatId)),
+    image: toAbsoluteSiteUrl(getProjectCardImage(fallbackProject) || (fallbackProject && fallbackProject.image) || SEO_DEFAULTS.image),
+    imageAlt: `${catLabels[normalizedCatId] || normalizedCatId} portfolio work by Fatih Gulen`
+  };
+}
+
+function buildProjectSeoMeta(project) {
+  const primaryCategory = getProjectPrimaryCategory(project);
+  return {
+    title: `${stripMetaFormatting(project.title)} | Fatih Gulen`,
+    description: clampMetaDescription(project.description || SEO_DEFAULTS.description),
+    url: toAbsoluteSiteUrl(getProjectSharePath(project)),
+    image: toAbsoluteSiteUrl(getProjectCardImage(project) || project.image || SEO_DEFAULTS.image),
+    imageAlt: `${stripMetaFormatting(project.title)} by Fatih Gulen`,
+    category: primaryCategory
+  };
+}
+
+function applySeoMeta(meta) {
+  const nextMeta = meta || buildHomeSeoMeta();
+  document.title = nextMeta.title;
+  setMetaTagContent('meta[name="description"]', nextMeta.description);
+  setLinkHref('link[rel="canonical"]', nextMeta.url);
+  setMetaTagContent('meta[property="og:title"]', nextMeta.title);
+  setMetaTagContent('meta[property="og:description"]', nextMeta.description);
+  setMetaTagContent('meta[property="og:url"]', nextMeta.url);
+  setMetaTagContent('meta[property="og:image"]', nextMeta.image);
+  setMetaTagContent('meta[property="og:image:alt"]', nextMeta.imageAlt);
+  setMetaTagContent('meta[name="twitter:title"]', nextMeta.title);
+  setMetaTagContent('meta[name="twitter:description"]', nextMeta.description);
+  setMetaTagContent('meta[name="twitter:image"]', nextMeta.image);
+  setMetaTagContent('meta[name="twitter:image:alt"]', nextMeta.imageAlt);
+}
 // UI text config area: edit these labels from one place.
 const UI_TEXT = {
   projectsGallery: "Projects Gallery",
@@ -3542,8 +3778,19 @@ function normalizeRoutePath(pathname) {
   return normalized || "/";
 }
 
-function getCategoryFromLocation() {
-  const routeCategory = routeCategoryAliases[normalizeRoutePath(window.location.pathname)];
+function getProjectFromLocation() {
+  const params = new URLSearchParams(window.location.search);
+  const queryProjectId = String(params.get("project") || "").trim();
+  if (getProjectById(queryProjectId)) return getProjectById(queryProjectId);
+  const routePath = normalizeRoutePath(window.location.pathname);
+  const projectMatch = routePath.match(/^\/project\/([^/]+)$/i);
+  if (!projectMatch) return null;
+  return getProjectByRouteSlug(decodeURIComponent(projectMatch[1]));
+}
+
+function getCategoryFromLocation(project) {
+  const routePath = normalizeRoutePath(window.location.pathname);
+  const routeCategory = routeCategoryAliases[routePath];
   if (routeCategory) return routeCategory;
   const params = new URLSearchParams(window.location.search);
   const queryCategory = normalizeCategoryId(params.get("category"));
@@ -3555,30 +3802,68 @@ function getCategoryPath(catId) {
   return categoryRoutePaths[normalizedCatId] || "/";
 }
 
-function updateUrlForCategory(catId, options = {}) {
+function buildUrlForView(options = {}) {
+  const project = getProjectById(options.projectId);
+  if (project) return getProjectSharePath(project);
+  const normalizedCatId = normalizeCategoryId(options.category);
+  return normalizedCatId && catLabels[normalizedCatId] ? getCategoryPath(normalizedCatId) : "/";
+}
+
+function updateUrlForView(options = {}) {
   if (typeof window === "undefined" || !window.history || typeof window.history.pushState !== "function") return;
-  const normalizedCatId = normalizeCategoryId(catId);
-  const hasCategory = Boolean(normalizedCatId && catLabels[normalizedCatId]);
-  const nextPath = hasCategory ? getCategoryPath(normalizedCatId) : "/";
+  const nextPath = buildUrlForView(options);
   const currentPath = normalizeRoutePath(window.location.pathname);
-  const currentQuery = new URLSearchParams(window.location.search);
-  const currentQueryCategory = normalizeCategoryId(currentQuery.get("category"));
-  const alreadySynced = currentPath === nextPath && !window.location.search && (!hasCategory || currentQueryCategory === normalizedCatId || !currentQueryCategory);
+  const currentSearch = window.location.search || "";
+  const alreadySynced = currentPath === nextPath && !currentSearch;
   if (alreadySynced) return;
   const method = options.replace ? "replaceState" : "pushState";
-  window.history[method]({ category: hasCategory ? normalizedCatId : null }, "", nextPath);
+  window.history[method]({
+    category: options.category || null,
+    projectId: options.projectId || null
+  }, "", nextPath);
+}
+
+function updateUrlForCategory(catId, options = {}) {
+  const normalizedCatId = normalizeCategoryId(catId);
+  updateUrlForView({
+    category: normalizedCatId,
+    replace: Boolean(options.replace),
+    projectId: options.projectId || ""
+  });
 }
 
 function syncViewWithLocation(options = {}) {
-  const routeCategory = getCategoryFromLocation();
-  if (document.getElementById('projectModal')?.classList.contains('open')) {
-    closeProject();
-  }
+  const project = getProjectFromLocation();
+  const routeCategory = getCategoryFromLocation(project) || getProjectPrimaryCategory(project);
+  const modalOpen = document.getElementById('projectModal')?.classList.contains('open');
+
   if (routeCategory) {
-    applyCategoryFilter(routeCategory, { keepInput: true, replaceUrl: true });
+    applyCategoryFilter(routeCategory, { keepInput: true, replaceUrl: true, skipUrl: true });
+  } else {
+    resetView({ replaceUrl: true, skipUrl: true });
+  }
+
+  if (project) {
+    if (!modalOpen || !currentProject || currentProject.id !== project.id) {
+      openProject(project.id, { replaceUrl: true });
+    } else {
+      applySeoMeta(buildProjectSeoMeta(project));
+    }
     return;
   }
-  resetView({ replaceUrl: true });
+
+  if (modalOpen) {
+    closeProject({ skipUrl: true });
+  }
+
+  if (routeCategory) {
+    applySeoMeta(buildCategorySeoMeta(routeCategory));
+    if (!options.skipUrl) updateUrlForView({ category: routeCategory, replace: true });
+    return;
+  }
+
+  applySeoMeta(buildHomeSeoMeta());
+  if (!options.skipUrl) updateUrlForView({ replace: true });
 }
 
 function normalizeProjectCategories() {
@@ -4627,14 +4912,19 @@ function applyCategoryFilter(catId, options = {}) {
   renderProjects(results, 'Browsing <strong>' + catName + "</strong> - " + results.length + " project" + (results.length > 1 ? "s" : "") + " in this category");
   renderSuggestedPrompts(normalizedCatId);
   setVrHeroShowcaseState(normalizedCatId, { restart: true });
+  prefetchProjectCardImages(results, 6);
   if (!options.keepInput) {
     const input = document.getElementById("chatInput");
     if (input) input.value = "";
     toggleSubmit();
   }
   if (!options.skipUrl) {
-    updateUrlForCategory(normalizedCatId, { replace: Boolean(options.replaceUrl) });
+    updateUrlForView({
+      category: normalizedCatId,
+      replace: Boolean(options.replaceUrl)
+    });
   }
+  applySeoMeta(buildCategorySeoMeta(normalizedCatId));
 }
 
 function generateResponse(query, count) {
@@ -4649,7 +4939,9 @@ function generateResponse(query, count) {
 
 function renderProjectCardMarkup(project, index) {
   const cardImage = getProjectCardImage(project);
-  return '<div class="project-card" onclick="openProject(\''+project.id+'\')" style="transition-delay:'+index*0.08+'s"><div class="card-thumbnail">'+(cardImage ? '<img class="card-thumbnail-img" src="'+cardImage+'" alt="'+project.title+'" loading="lazy" decoding="async" fetchpriority="low">' : '<div class="card-thumbnail-inner">'+project.thumbnail+'</div>')+'<div class="card-gradient"></div></div><div class="card-body"><div class="card-tags">'+project.categories.map(c=>'<span class="card-tag">'+(catLabels[c]||c)+'</span>').join('')+'</div><div class="card-title">'+project.title+'</div><div class="card-desc">'+project.description+'</div><div class="card-meta"><div class="card-tools-wrap"><span class="card-tools">'+project.tools.join(' · ')+'</span>'+(project.year ? '<span class="card-year">· '+project.year+'</span>' : '')+'</div><div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></div></div></div>';
+  const eagerAboveFold = index < 2;
+  const fetchPriority = index === 0 ? 'high' : (eagerAboveFold ? 'auto' : 'low');
+  return '<div class="project-card" onclick="openProject(\''+project.id+'\')" style="transition-delay:'+Math.min(index, 5)*0.05+'s"><div class="card-thumbnail">'+(cardImage ? '<img class="card-thumbnail-img" src="'+cardImage+'" alt="'+project.title+'" loading="'+(eagerAboveFold ? 'eager' : 'lazy')+'" decoding="async" fetchpriority="'+fetchPriority+'">' : '<div class="card-thumbnail-inner">'+project.thumbnail+'</div>')+'<div class="card-gradient"></div></div><div class="card-body"><div class="card-tags">'+project.categories.map(c=>'<span class="card-tag">'+(catLabels[c]||c)+'</span>').join('')+'</div><div class="card-title">'+project.title+'</div><div class="card-desc">'+project.description+'</div><div class="card-meta"><div class="card-tools-wrap"><span class="card-tools">'+project.tools.join(' ? ')+'</span>'+(project.year ? '<span class="card-year">? '+project.year+'</span>' : '')+'</div><div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div></div></div></div>';
 }
 
 function renderRelatedProjectCardMarkup(project) {
@@ -4804,9 +5096,11 @@ async function handleQuery() {
     const results = searchProjects(query);
     const response = results.length > 0 ? generateResponse(query, results.length) : null;
     renderProjects(results, response || 'No matches for "' + query + '" - try broader terms or pick a category.');
+    prefetchProjectCardImages(results, 6);
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     renderSuggestedPrompts();
-    updateUrlForCategory('', { replace: true });
+    updateUrlForView({ replace: true });
+    applySeoMeta(buildHomeSeoMeta());
   } catch (err) {
     console.error("handleQuery failed:", err);
     setVrHeroShowcaseState(false);
@@ -4864,8 +5158,9 @@ function resetView(options = {}) {
   }
   document.getElementById('responseArea').innerHTML = '<div class="initial-state" id="initialState">Select a category or type a query to explore projects. Press <span class="keystroke">Enter</span> to search.</div>';
   if (!options.skipUrl) {
-    updateUrlForCategory('', { replace: Boolean(options.replaceUrl) });
+    updateUrlForView({ replace: Boolean(options.replaceUrl) });
   }
+  applySeoMeta(buildHomeSeoMeta());
 }
 
 normalizeProjectCategories();
@@ -4873,8 +5168,6 @@ syncCategoryCounts();
 setupImageLightboxSwipe();
 scheduleAiServiceStatusInit();
 applyRandomSearchPlaceholder({ force: true });
-syncViewWithLocation({ replaceUrl: true });
-window.addEventListener('popstate', () => syncViewWithLocation({ replaceUrl: true }));
 
 // =========== SKELETON LOADING UI ===========
 function buildSkeletonHTML(count) {
@@ -4900,7 +5193,7 @@ function buildSkeletonHTML(count) {
 
 // Override renderProjects to use skeleton loading
 const _originalRenderProjects = renderProjects;
-const PROJECT_RENDER_DELAY_MS = 140;
+const PROJECT_RENDER_DELAY_MS = 0;
 renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) {
   currentFilteredProjects = filteredProjects;
   const area = document.getElementById('responseArea');
@@ -4909,9 +5202,10 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
 
   // Show skeleton loading instead of typing dots
   const skeletonCount = Math.min(filteredProjects.length || 3, 6);
+  area.classList.add('is-transitioning');
   area.innerHTML = buildSkeletonHTML(skeletonCount);
 
-  setTimeout(() => {
+  const finalizeRender = () => {
     let html = '';
     if (responseHtml) {
       html += '<div class="response-header" id="responseHeader"><div class="response-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="response-text">'+responseHtml+'</div></div>';
@@ -4934,14 +5228,32 @@ renderProjects = function(filteredProjects, responseHtml, relatedProjects = []) 
     }
     area.innerHTML = html;
     requestAnimationFrame(() => {
+      area.classList.remove('is-transitioning');
       const header = document.getElementById('responseHeader');
       if (header) header.classList.add('visible');
       document.querySelectorAll('.project-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 80);
+        setTimeout(() => card.classList.add('visible'), i * 48);
       });
     });
-  }, PROJECT_RENDER_DELAY_MS);
+    prefetchProjectCardImages(filteredProjects, 6);
+  };
+
+  if (PROJECT_RENDER_DELAY_MS > 0) {
+    setTimeout(finalizeRender, PROJECT_RENDER_DELAY_MS);
+    return;
+  }
+
+  requestAnimationFrame(finalizeRender);
 };
+
+bindCategoryThumbnailPrefetch();
+if ('requestIdleCallback' in window) {
+  window.requestIdleCallback(() => prefetchProjectCardImages(projects, 4), { timeout: 1800 });
+} else {
+  window.setTimeout(() => prefetchProjectCardImages(projects, 4), 900);
+}
+syncViewWithLocation({ replaceUrl: true });
+window.addEventListener('popstate', () => syncViewWithLocation({ replaceUrl: true }));
 
 // =========== 3D NEON CURSOR ===========
 (function() {

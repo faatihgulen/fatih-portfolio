@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node server.js",
     "generate": "node generate-data.js",
+    "generate:share": "node scripts/generate-share-pages.js",
     "convert": "node convert-to-webp.js",
     "generate:cards": "node generate-card-thumbs.js",
     "health:dashboard": "node .local/site-health/open-dashboard.js",

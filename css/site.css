@@ -1182,7 +1182,11 @@
   }
 
   /* --- Response Area --- */
-  .response-area { padding: 0 40px 60px; max-width: 1200px; margin: 0 auto; width: 100%; min-height: 200px; }
+  .response-area {
+    padding: 0 40px 60px; max-width: 1200px; margin: 0 auto; width: 100%; min-height: 200px;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+  }
+  .response-area.is-transitioning { opacity: 0.76; transform: translateY(2px); }
   .response-header {
     display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
     opacity: 0; transform: translateY(10px); transition: all 0.5s ease-out;
@@ -1198,11 +1202,15 @@
   .response-text strong { color: var(--text-primary); font-weight: 500; }
 
   /* --- Project Grid --- */
-  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+  .project-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px;
+    content-visibility: auto; contain-intrinsic-size: 1px 1200px;
+  }
   .project-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
     overflow: hidden; cursor: pointer; transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    opacity: 0; transform: translateY(20px);
+    opacity: 0; transform: translateY(20px); will-change: transform, opacity;
+    content-visibility: auto; contain-intrinsic-size: 420px;
   }
   .project-card.visible { opacity: 1; transform: translateY(0); }
   .project-card:hover {
@@ -1216,6 +1224,7 @@
   .card-thumbnail-img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s;
+    backface-visibility: hidden; transform: translateZ(0);
   }
   .project-card:hover .card-thumbnail-img { transform: scale(1.06); }
   .card-thumbnail-inner {
