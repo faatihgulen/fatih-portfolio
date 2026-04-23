@@ -197,6 +197,25 @@ const spatialHeroMobileOverrides = {
   }
 };
 
+const spatialHeroMp4BlueFallback = {
+  keyLow: 0,
+  keyHigh: 0,
+  alphaGamma: 1.12,
+  alphaErodeIterations: 0,
+  edgeFeather: 0.88,
+  edgeSoftFeather: 0.76,
+  edgeSoftAlphaMax: 172,
+  colorKey: {
+    r: 0,
+    g: 0,
+    b: 255,
+    distanceLow: 28,
+    distanceHigh: 82,
+    minBlue: 148,
+    dominanceLow: 96
+  }
+};
+
 const vrArHeroMobileOverrides = {
   dark: {
     mobileScaleBoost: 1.74,
@@ -345,6 +364,9 @@ const vrHeroShowcaseConfig = {
       edgeFeather: 0.88,
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
+      mp4Fallback: {
+        ...spatialHeroMp4BlueFallback
+      },
       sources: architectureHeroAssets.dark
     },
     light: {
@@ -361,13 +383,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
-        keyLow: 0,
-        keyHigh: 18,
-        alphaGamma: 1.35,
-        alphaErodeIterations: 1,
-        edgeFeather: 0.54,
-        edgeSoftFeather: 0.48,
-        edgeSoftAlphaMax: 220
+        ...spatialHeroMp4BlueFallback
       },
       sources: architectureHeroAssets.light
     }
@@ -387,6 +403,9 @@ const vrHeroShowcaseConfig = {
       edgeFeather: 0.88,
       edgeSoftFeather: 0.62,
       edgeSoftAlphaMax: 168,
+      mp4Fallback: {
+        ...spatialHeroMp4BlueFallback
+      },
       sources: architectureHeroAssets.dark
     },
     light: {
@@ -400,13 +419,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
-        keyLow: 0,
-        keyHigh: 18,
-        alphaGamma: 1.35,
-        alphaErodeIterations: 1,
-        edgeFeather: 0.54,
-        edgeSoftFeather: 0.48,
-        edgeSoftAlphaMax: 220
+        ...spatialHeroMp4BlueFallback
       },
       sources: architectureHeroAssets.light
     }
@@ -589,6 +602,61 @@ function getVrHeroMp4FallbackNumber(config, prop) {
   }
 
   return config[prop];
+}
+
+function applyVrHeroMp4ColorKey(pixels, config, alphaGamma) {
+  const colorKey = config && config.colorKey;
+  if (!colorKey || typeof colorKey !== 'object') {
+    return false;
+  }
+
+  const targetRed = Number.isFinite(colorKey.r) ? colorKey.r : 0;
+  const targetGreen = Number.isFinite(colorKey.g) ? colorKey.g : 0;
+  const targetBlue = Number.isFinite(colorKey.b) ? colorKey.b : 255;
+  const distanceLow = Number.isFinite(colorKey.distanceLow) ? colorKey.distanceLow : 0;
+  const distanceHigh = Number.isFinite(colorKey.distanceHigh) ? colorKey.distanceHigh : 0;
+  const minBlue = Number.isFinite(colorKey.minBlue) ? colorKey.minBlue : 0;
+  const dominanceLow = Number.isFinite(colorKey.dominanceLow) ? colorKey.dominanceLow : 0;
+
+  if (distanceHigh <= distanceLow) {
+    return false;
+  }
+
+  let didChange = false;
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const red = pixels[index];
+    const green = pixels[index + 1];
+    const blue = pixels[index + 2];
+    const dominance = blue - Math.max(red, green);
+
+    if (blue < minBlue || dominance < dominanceLow) {
+      continue;
+    }
+
+    const distance = Math.sqrt(
+      ((red - targetRed) ** 2) +
+      ((green - targetGreen) ** 2) +
+      ((blue - targetBlue) ** 2)
+    );
+
+    if (distance <= distanceLow) {
+      pixels[index + 3] = 0;
+      didChange = true;
+      continue;
+    }
+
+    if (distance < distanceHigh) {
+      let alpha = (distance - distanceLow) / Math.max(1, distanceHigh - distanceLow);
+      if (alphaGamma) {
+        alpha = Math.pow(alpha, alphaGamma);
+      }
+      pixels[index + 3] = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
+      didChange = true;
+    }
+  }
+
+  return didChange;
 }
 
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
@@ -1149,40 +1217,47 @@ function drawVrHeroLayer(layer) {
   }
 
   if (effectiveAlphaMode !== 'source-alpha') {
-    for (let index = 0; index < pixels.length; index += 4) {
-      const red = pixels[index];
-      const green = pixels[index + 1];
-      const blue = pixels[index + 2];
-      const brightness = Math.max(red, green, blue);
+    const usedColorKey =
+      effectiveAlphaMode === 'luma-key' &&
+      Boolean(mp4FallbackConfig && mp4FallbackConfig.colorKey) &&
+      applyVrHeroMp4ColorKey(pixels, mp4FallbackConfig, alphaGamma);
 
-      if (effectiveAlphaMode === 'white-key') {
-        const whiteness = Math.min(red, green, blue);
+    if (!usedColorKey) {
+      for (let index = 0; index < pixels.length; index += 4) {
+        const red = pixels[index];
+        const green = pixels[index + 1];
+        const blue = pixels[index + 2];
+        const brightness = Math.max(red, green, blue);
 
-        if (whiteness >= layer.whiteKeyHigh) {
+        if (effectiveAlphaMode === 'white-key') {
+          const whiteness = Math.min(red, green, blue);
+
+          if (whiteness >= layer.whiteKeyHigh) {
+            pixels[index + 3] = 0;
+            continue;
+          }
+
+          if (whiteness > layer.whiteKeyLow) {
+            const alpha = 1 - ((whiteness - layer.whiteKeyLow) / Math.max(1, layer.whiteKeyHigh - layer.whiteKeyLow));
+            pixels[index + 3] = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
+          }
+
+          continue;
+        }
+
+        if (brightness <= keyLow) {
           pixels[index + 3] = 0;
           continue;
         }
 
-        if (whiteness > layer.whiteKeyLow) {
-          const alpha = 1 - ((whiteness - layer.whiteKeyLow) / Math.max(1, layer.whiteKeyHigh - layer.whiteKeyLow));
-          pixels[index + 3] = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
+        if (brightness < keyHigh) {
+          let alpha = (brightness - keyLow) / Math.max(1, keyHigh - keyLow);
+          if (alphaGamma) {
+            alpha = Math.pow(alpha, alphaGamma);
+          }
+          pixels[index + 3] = Math.round(alpha * 255);
+          continue;
         }
-
-        continue;
-      }
-
-      if (brightness <= keyLow) {
-        pixels[index + 3] = 0;
-        continue;
-      }
-
-      if (brightness < keyHigh) {
-        let alpha = (brightness - keyLow) / Math.max(1, keyHigh - keyLow);
-        if (alphaGamma) {
-          alpha = Math.pow(alpha, alphaGamma);
-        }
-        pixels[index + 3] = Math.round(alpha * 255);
-        continue;
       }
     }
   }
