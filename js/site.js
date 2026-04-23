@@ -489,6 +489,11 @@ window.__getVrHeroHealthSnapshot = function getVrHeroHealthSnapshot() {
         drawInset: layer.drawInset || 0,
         currentSrc: layer.video ? normalizeImagePath(layer.video.currentSrc || layer.video.src || '') : '',
         fallbackSrc: layer.video ? normalizeImagePath(layer.video.dataset.fallbackSrc || '') : '',
+        mp4AlphaMaskSrc: normalizeImagePath(layer.mp4AlphaMaskSrc || ''),
+        mp4AlphaMaskReadyState: layer.mp4AlphaMaskVideo ? layer.mp4AlphaMaskVideo.readyState : 0,
+        mp4AlphaMaskFailed: Boolean(layer.mp4AlphaMaskFailed),
+        mp4AlphaMaskHasAlpha: Boolean(layer.mp4AlphaMaskHasAlpha),
+        mp4AlphaMaskApplied: Boolean(layer.mp4AlphaMaskApplied),
         readyState: layer.video ? layer.video.readyState : 0,
         paused: layer.video ? layer.video.paused : true,
         ended: layer.video ? layer.video.ended : false,
@@ -568,6 +573,190 @@ function getVrHeroMp4FallbackNumber(config, prop) {
   }
 
   return config[prop];
+}
+
+function getVrHeroWebmAlphaMaskSource(sources = []) {
+  return (Array.isArray(sources) ? sources : []).find((source) => {
+    if (!source) return false;
+    const src = typeof source === 'string' ? source : source.src;
+    return getVideoMimeType(src || '') === 'video/webm';
+  }) || null;
+}
+
+function setVrHeroMp4AlphaMaskSource(layer, sources = []) {
+  if (!layer) return false;
+  const maskSource = getVrHeroWebmAlphaMaskSource(sources);
+  const nextSrc = normalizeImagePath(maskSource ? (typeof maskSource === 'string' ? maskSource : maskSource.src) : '');
+
+  if ((layer.mp4AlphaMaskSrc || '') === nextSrc) {
+    return false;
+  }
+
+  if (layer.mp4AlphaMaskVideo) {
+    pauseVrHeroVideo(layer.mp4AlphaMaskVideo);
+    layer.mp4AlphaMaskVideo.removeAttribute('src');
+    layer.mp4AlphaMaskVideo.dataset.currentSrc = '';
+    try {
+      layer.mp4AlphaMaskVideo.load();
+    } catch (error) {
+      /* Ignore reset errors for unsupported mask videos. */
+    }
+  }
+
+  layer.mp4AlphaMaskSrc = nextSrc;
+  layer.mp4AlphaMaskFailed = false;
+  layer.mp4AlphaMaskHasAlpha = false;
+  layer.mp4AlphaMaskApplied = false;
+  return true;
+}
+
+function getVrHeroMp4AlphaMaskVideo(layer) {
+  if (!layer) return null;
+  if (!layer.mp4AlphaMaskVideo) {
+    const maskVideo = document.createElement('video');
+    primeVrHeroVideo(maskVideo);
+    maskVideo.preload = 'metadata';
+    maskVideo.addEventListener('error', () => {
+      layer.mp4AlphaMaskFailed = true;
+      layer.mp4AlphaMaskApplied = false;
+    });
+    maskVideo.addEventListener('loadeddata', () => {
+      layer.mp4AlphaMaskFailed = false;
+    });
+
+    layer.mp4AlphaMaskVideo = maskVideo;
+    layer.mp4AlphaMaskCanvas = document.createElement('canvas');
+    layer.mp4AlphaMaskContext = layer.mp4AlphaMaskCanvas.getContext('2d', { willReadFrequently: true });
+  }
+
+  return layer.mp4AlphaMaskVideo;
+}
+
+function ensureVrHeroMp4AlphaMaskReady(layer) {
+  if (!layer || !shouldUseVrHeroMp4KeyFallback(layer) || !layer.mp4AlphaMaskSrc || layer.mp4AlphaMaskFailed) {
+    return null;
+  }
+
+  const type = getVideoMimeType(layer.mp4AlphaMaskSrc);
+  if (layer.video && type && typeof layer.video.canPlayType === 'function' && !layer.video.canPlayType(type)) {
+    layer.mp4AlphaMaskFailed = true;
+    return null;
+  }
+
+  const maskVideo = getVrHeroMp4AlphaMaskVideo(layer);
+  if (!maskVideo) return null;
+
+  if ((maskVideo.dataset.currentSrc || '') !== layer.mp4AlphaMaskSrc) {
+    pauseVrHeroVideo(maskVideo);
+    maskVideo.src = layer.mp4AlphaMaskSrc;
+    maskVideo.dataset.currentSrc = layer.mp4AlphaMaskSrc;
+    maskVideo.preload = 'auto';
+    layer.mp4AlphaMaskFailed = false;
+    layer.mp4AlphaMaskHasAlpha = false;
+    layer.mp4AlphaMaskApplied = false;
+    try {
+      maskVideo.load();
+    } catch (error) {
+      layer.mp4AlphaMaskFailed = true;
+      return null;
+    }
+  }
+
+  return maskVideo;
+}
+
+function syncVrHeroMp4AlphaMaskPlayback(layer, maskVideo) {
+  if (!layer || !layer.video || !maskVideo) return;
+
+  if (maskVideo.readyState >= 1 && Number.isFinite(layer.video.currentTime)) {
+    let targetTime = Math.max(0, layer.video.currentTime || 0);
+    if (Number.isFinite(maskVideo.duration) && maskVideo.duration > 0) {
+      targetTime = Math.min(targetTime, Math.max(0, maskVideo.duration - 0.04));
+    }
+    if (Math.abs((maskVideo.currentTime || 0) - targetTime) > 0.08) {
+      safelySetVrHeroTime(maskVideo, targetTime);
+    }
+  }
+
+  if (layer.video.paused || layer.video.ended) {
+    pauseVrHeroVideo(maskVideo);
+    return;
+  }
+
+  if (maskVideo.readyState >= 2 && maskVideo.paused) {
+    const playPromise = maskVideo.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {});
+    }
+  }
+}
+
+function applyVrHeroMp4AlphaMask(layer, pixels, width, height) {
+  const maskVideo = ensureVrHeroMp4AlphaMaskReady(layer);
+  if (!maskVideo || !layer.mp4AlphaMaskCanvas || !layer.mp4AlphaMaskContext) return false;
+  if (!maskVideo.videoWidth || !maskVideo.videoHeight || maskVideo.readyState < 2) return false;
+
+  syncVrHeroMp4AlphaMaskPlayback(layer, maskVideo);
+
+  const maskCanvas = layer.mp4AlphaMaskCanvas;
+  const maskContext = layer.mp4AlphaMaskContext;
+  if (maskCanvas.width !== width || maskCanvas.height !== height) {
+    maskCanvas.width = width;
+    maskCanvas.height = height;
+  }
+
+  maskContext.clearRect(0, 0, width, height);
+
+  try {
+    drawVideoCentered(
+      maskContext,
+      maskVideo,
+      maskCanvas,
+      layer.scaleBoost || 1,
+      layer.sourceInset || 0,
+      layer.drawInset || 0,
+      layer.offsetX || 0,
+      layer.offsetY || 0
+    );
+  } catch (error) {
+    return false;
+  }
+
+  let maskFrame;
+  try {
+    maskFrame = maskContext.getImageData(0, 0, width, height);
+  } catch (error) {
+    layer.mp4AlphaMaskFailed = true;
+    return false;
+  }
+
+  const maskPixels = maskFrame.data;
+  let hasTransparentPixels = false;
+  let hasVisiblePixels = false;
+
+  for (let index = 3; index < maskPixels.length; index += 4) {
+    const alpha = maskPixels[index];
+    if (alpha < 250) hasTransparentPixels = true;
+    if (alpha > 5) hasVisiblePixels = true;
+    if (hasTransparentPixels && hasVisiblePixels) break;
+  }
+
+  if (!hasVisiblePixels) {
+    return false;
+  }
+
+  if (!hasTransparentPixels) {
+    layer.mp4AlphaMaskFailed = true;
+    return false;
+  }
+
+  for (let index = 3; index < pixels.length; index += 4) {
+    pixels[index] = Math.round(pixels[index] * (maskPixels[index] / 255));
+  }
+
+  layer.mp4AlphaMaskHasAlpha = true;
+  layer.mp4AlphaMaskApplied = true;
+  return true;
 }
 
 function sortVideoSourcesForCurrentBrowser(sources = [], video) {
@@ -766,6 +955,10 @@ function applyVrHeroLayerAsset(layerKey, layerConfig = {}) {
     'whiteKeyLow',
     'whiteKeyHigh'
   ].forEach(syncProp);
+
+  if (setVrHeroMp4AlphaMaskSource(layer, nextConfig.sources || [])) {
+    didChange = true;
+  }
 
   if (setVideoElementSources(layer.video, nextConfig.sources || [])) {
     didChange = true;
@@ -1089,7 +1282,9 @@ function drawVrHeroLayer(layer) {
   const pixels = frame.data;
   const pixelCount = pixels.length / 4;
   const effectiveAlphaMode = getVrHeroEffectiveAlphaMode(layer);
-  const mp4FallbackConfig = getVrHeroMp4FallbackConfig(layer);
+  const alphaMaskApplied = applyVrHeroMp4AlphaMask(layer, pixels, layer.canvas.width, layer.canvas.height);
+  const resolvedAlphaMode = alphaMaskApplied ? 'source-alpha' : effectiveAlphaMode;
+  const mp4FallbackConfig = alphaMaskApplied ? null : getVrHeroMp4FallbackConfig(layer);
   const fallbackKeyLow = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyLow');
   const fallbackKeyHigh = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'keyHigh');
   const fallbackAlphaGamma = getVrHeroMp4FallbackNumber(mp4FallbackConfig, 'alphaGamma');
@@ -1105,7 +1300,7 @@ function drawVrHeroLayer(layer) {
   const edgeSoftFeather = fallbackEdgeSoftFeather ?? (layer.edgeSoftFeather || 0.54);
   const edgeSoftAlphaMax = fallbackEdgeSoftAlphaMax ?? (layer.edgeSoftAlphaMax || 188);
 
-  if (effectiveAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
+  if (resolvedAlphaMode === 'source-alpha' && layer.clipWhiteHigh > 0) {
     const clipLow = layer.clipWhiteLow || Math.max(0, layer.clipWhiteHigh - 3);
     const clipHigh = layer.clipWhiteHigh;
 
@@ -1127,14 +1322,14 @@ function drawVrHeroLayer(layer) {
     }
   }
 
-  if (effectiveAlphaMode !== 'source-alpha') {
+  if (resolvedAlphaMode !== 'source-alpha') {
     for (let index = 0; index < pixels.length; index += 4) {
       const red = pixels[index];
       const green = pixels[index + 1];
       const blue = pixels[index + 2];
       const brightness = Math.max(red, green, blue);
 
-      if (effectiveAlphaMode === 'white-key') {
+      if (resolvedAlphaMode === 'white-key') {
         const whiteness = Math.min(red, green, blue);
 
         if (whiteness >= layer.whiteKeyHigh) {
@@ -1171,7 +1366,7 @@ function drawVrHeroLayer(layer) {
   let alphaSnapshot = captureVrHeroAlpha(pixels);
 
   if (
-    effectiveAlphaMode === 'source-alpha' &&
+    resolvedAlphaMode === 'source-alpha' &&
     layer.edgeMatteColor &&
     layer.edgeMatteStrength &&
     width > 2 &&
@@ -1327,6 +1522,7 @@ function ensureVrHeroLayerReady(layer, options = {}) {
   const preserveVrArBehavior = Boolean(options.preserveVrArBehavior);
   const targetReadyState = eager ? 2 : 1;
   primeVrHeroVideo(layer.video);
+  ensureVrHeroMp4AlphaMaskReady(layer);
   layer.video.preload = preserveVrArBehavior ? 'auto' : (eager ? 'auto' : 'metadata');
   if (layer.video.readyState >= targetReadyState) {
     vrHeroDiagnostics.loadSkips += 1;
@@ -1373,10 +1569,13 @@ function resetVrHeroLayerPlayback(layer) {
   if (!layer) return;
   stopVrHeroLayer(layer);
   pauseVrHeroVideo(layer.video);
+  pauseVrHeroVideo(layer.mp4AlphaMaskVideo);
   safelySetVrHeroTime(layer.video, 0);
+  safelySetVrHeroTime(layer.mp4AlphaMaskVideo, 0);
   clearVrHeroLayer(layer);
   layer.assetTransitionId = 0;
   layer.loadToken = '';
+  layer.mp4AlphaMaskApplied = false;
 }
 
 function fallbackVrHeroVideoSource(layer) {
@@ -1395,6 +1594,7 @@ function fallbackVrHeroVideoSource(layer) {
   ensureVrHeroLayerReady(layer, { eager: true, preserveVrArBehavior: isVrArShowcaseCategory(vrHero.activeCategory) });
   if (vrHero.playbackMode === 'playing') {
     playVrHeroVideo(layer.video);
+    syncVrHeroMp4AlphaMaskPlayback(layer, layer.mp4AlphaMaskVideo);
   }
   return true;
 }
@@ -1629,9 +1829,11 @@ function setVrHeroPlaybackMode(mode, options = {}) {
   Object.entries(vrHero.layers).forEach(([layerKey, layer]) => {
     stopVrHeroLayer(layer);
     pauseVrHeroVideo(layer.video);
+    pauseVrHeroVideo(layer.mp4AlphaMaskVideo);
 
     if (nextMode === 'inactive') {
       safelySetVrHeroTime(layer.video, 0);
+      safelySetVrHeroTime(layer.mp4AlphaMaskVideo, 0);
       clearVrHeroLayer(layer);
       return;
     }
@@ -1661,8 +1863,10 @@ function setVrHeroPlaybackMode(mode, options = {}) {
     if (nextMode === 'playing') {
       if (Number.isFinite(layer.video.duration) && layer.video.duration > 0 && layer.video.currentTime >= layer.video.duration - 0.08) {
         safelySetVrHeroTime(layer.video, 0);
+        safelySetVrHeroTime(layer.mp4AlphaMaskVideo, 0);
       }
       if (playVrHeroVideo(layer.video)) {
+        syncVrHeroMp4AlphaMaskPlayback(layer, layer.mp4AlphaMaskVideo);
         startVrHeroLayer(layer);
       }
     }
