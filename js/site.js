@@ -355,7 +355,7 @@ const vrHeroShowcaseConfig = {
       keyLow: 0,
       keyHigh: 6,
       edgeFeather: 0.64,
-      edgeSoftFeather: 0.36,
+      edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 196,
       sources: architectureHeroAssets.light
     }
@@ -385,7 +385,7 @@ const vrHeroShowcaseConfig = {
       keyLow: 0,
       keyHigh: 6,
       edgeFeather: 0.64,
-      edgeSoftFeather: 0.36,
+      edgeSoftFeather: 0.56,
       edgeSoftAlphaMax: 196,
       sources: architectureHeroAssets.light
     }
