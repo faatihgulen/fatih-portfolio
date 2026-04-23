@@ -2679,7 +2679,7 @@ function renderProjectStorySection(p) {
     <article class="pm-story-item ${i === currentProjectImageIndex ? 'active' : ''}" data-story-index="${i}" onclick="setProjectImage(${i})">
       ${isVideoMedia(img)
         ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="event.stopPropagation(); openImageLightbox(this.currentSrc || this.src)"></video>`
-        : `<img class="pm-story-media pm-story-image" src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" onclick="event.stopPropagation(); openImageLightbox(this.getAttribute('data-base-src') || this.currentSrc || this.src)">`
+        : `<img class="pm-story-media pm-story-image" src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" decoding="async" fetchpriority="low" onclick="event.stopPropagation(); openImageLightbox(this.getAttribute('data-base-src') || this.currentSrc || this.src)">`
       }
       ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
     </article>
@@ -3159,8 +3159,8 @@ function renderProjectModal(p) {
         ? `<div class="pm-hero-embed" data-project-embed="${p.id}"></div>`
         : (activeImage ? (
         activeIsVideo
-          ? '<video class="pm-hero-video" id="pmHeroVideo" src="'+activeImage+'" playsinline muted loop autoplay controls onclick="openImageLightbox(this.currentSrc || this.src)"></video>'
-          : '<img class="pm-hero-img" id="pmHeroImage" src="'+activePreviewImage+'" data-base-src="'+activeImage+'" alt="'+p.title+'" onclick="openImageLightbox(this.getAttribute(\'data-base-src\') || this.currentSrc || this.src)">'
+          ? '<video class="pm-hero-video" id="pmHeroVideo" src="'+activeImage+'" playsinline muted loop autoplay controls preload="metadata" onclick="openImageLightbox(this.currentSrc || this.src)"></video>'
+          : '<img class="pm-hero-img" id="pmHeroImage" src="'+activePreviewImage+'" data-base-src="'+activeImage+'" alt="'+p.title+'" loading="eager" decoding="async" fetchpriority="high" onclick="openImageLightbox(this.getAttribute(\'data-base-src\') || this.currentSrc || this.src)">'
       ) : '<div class="pm-hero-emoji">'+p.thumbnail+'</div>')}
       <div class="pm-hero-gradient"></div>
       ${activeImage && !useEmbedAsCover ? `
@@ -3186,7 +3186,7 @@ function renderProjectModal(p) {
         <button class="pm-gallery-thumb ${i === currentProjectImageIndex ? 'active' : ''}" onclick="setProjectImage(${i})">
           ${isVideoMedia(img)
             ? `<video src="${img}" muted loop autoplay playsinline preload="metadata"></video>`
-            : `<img src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' ' + (i + 1)}" loading="lazy">`
+            : `<img src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' ' + (i + 1)}" loading="lazy" decoding="async" fetchpriority="low">`
           }
           ${currentProjectCaptions[img] ? `<div class="pm-gallery-caption">${currentProjectCaptions[img]}</div>` : ''}
         </button>

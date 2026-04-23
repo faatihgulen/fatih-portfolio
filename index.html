@@ -104,7 +104,7 @@
     document.documentElement.dataset.theme = getGermanyTheme(new Date());
   })();
 </script>
-<link rel="stylesheet" href="css/site.css?v=202604231222">
+<link rel="stylesheet" href="css/site.css?v=202604231222" fetchpriority="high">
 </head>
 <body>
 <div class="ambient-glow"></div>
@@ -127,7 +127,7 @@
     </button>
     <div class="modal-header">
       <div class="modal-avatar">
-        <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih Gulen">
+        <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih Gulen" loading="lazy" decoding="async" fetchpriority="low">
       </div>
       <div class="modal-name">Fatih Gulen</div>
       <div class="modal-title">Real-Time Experience Designer</div>
@@ -271,13 +271,13 @@
       <div class="hero-vr-frame">
         <div class="hero-vr-media hero-vr-media-dark" aria-hidden="true">
           <canvas class="hero-vr-canvas" id="heroVrCanvasDark"></canvas>
-          <video class="hero-vr-video-source" id="heroVrVideoDark" muted loop playsinline preload="auto">
+          <video class="hero-vr-video-source" id="heroVrVideoDark" muted loop playsinline preload="metadata">
             <source src="Video/Firefly A cinematic animation of a futuristic LEGO micro-city made of black and neon green LEGO piec (1).mp4?v=20260420133639" type="video/mp4">
           </video>
         </div>
         <div class="hero-vr-media hero-vr-media-light" aria-hidden="true">
           <canvas class="hero-vr-canvas" id="heroVrCanvasLight"></canvas>
-          <video class="hero-vr-video-source" id="heroVrVideoLight" muted loop playsinline preload="auto">
+          <video class="hero-vr-video-source" id="heroVrVideoLight" muted loop playsinline preload="metadata">
             <source src="Video/Firefly A clean, futuristic animation of a VR headset placed in the center, surrounded by multiple c.mp4?v=20260420174305" type="video/mp4">
           </video>
         </div>
@@ -338,7 +338,7 @@
     <div class="ai-answer-main" id="aiAnswerMain">
       <aside class="ai-profile-panel" id="aiProfilePanel" hidden>
         <div class="ai-profile-image-shell">
-          <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih G&#252;len" loading="lazy">
+          <img src="images/Fatih_Gulen/BE850BFB-C48D-4FF7-91A2-4BFC9C0CB79C.jpeg" alt="Fatih G&#252;len" loading="lazy" decoding="async" fetchpriority="low">
         </div>
         <div class="ai-profile-meta">
           <div class="ai-profile-name">Fatih G&#252;len</div>
@@ -380,6 +380,6 @@
   </footer>
 </div>
 
-<script src="js/site.js?v=202604231315" defer></script>
+<script src="js/site.js?v=202604231330" defer fetchpriority="high"></script>
 </body>
 </html>
