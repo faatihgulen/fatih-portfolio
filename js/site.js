@@ -202,32 +202,34 @@ const spatialHeroMp4BlueFallback = {
   keyHigh: 6,
   alphaGamma: 1,
   alphaErodeIterations: 1,
-  edgeFeather: 0.88,
-  edgeSoftFeather: 0.86,
-  edgeSoftAlphaMax: 192,
+  edgeFeather: 0.84,
+  edgeSoftFeather: 0.74,
+  edgeSoftAlphaMax: 208,
   colorKey: {
     r: 0,
     g: 0,
     b: 255,
-    distanceLow: 28,
-    distanceHigh: 82,
-    minBlue: 148,
-    dominanceLow: 36
+    distanceLow: 34,
+    distanceHigh: 98,
+    minBlue: 132,
+    dominanceLow: 24
   }
 };
 
 const spatialHeroMp4BlueFallbackLight = {
   ...spatialHeroMp4BlueFallback,
-  edgeFeather: 0.92,
-  edgeSoftFeather: 0.82,
-  edgeSoftAlphaMax: 160
+  sourceInset: 1,
+  edgeFeather: 0.8,
+  edgeSoftFeather: 0.66,
+  edgeSoftAlphaMax: 188
 };
 
 const spatialHeroMp4BlueFallbackDark = {
   ...spatialHeroMp4BlueFallback,
-  edgeFeather: 0.9,
-  edgeSoftFeather: 0.8,
-  edgeSoftAlphaMax: 164
+  sourceInset: 1,
+  edgeFeather: 0.82,
+  edgeSoftFeather: 0.68,
+  edgeSoftAlphaMax: 192
 };
 
 const vrArHeroMobileOverrides = {
@@ -380,7 +382,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftAlphaMax: 168,
       mp4Fallback: {
         ...spatialHeroMp4BlueFallbackDark,
-        drawInset: 4
+        drawInset: 5
       },
       sources: architectureHeroAssets.dark
     },
@@ -399,7 +401,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
         ...spatialHeroMp4BlueFallbackLight,
-        drawInset: 4
+        drawInset: 5
       },
       sources: architectureHeroAssets.light
     }
@@ -421,7 +423,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftAlphaMax: 168,
       mp4Fallback: {
         ...spatialHeroMp4BlueFallbackDark,
-        drawInset: 4
+        drawInset: 5
       },
       sources: architectureHeroAssets.dark
     },
@@ -437,7 +439,7 @@ const vrHeroShowcaseConfig = {
       edgeSoftAlphaMax: 244,
       mp4Fallback: {
         ...spatialHeroMp4BlueFallbackLight,
-        drawInset: 3
+        drawInset: 4
       },
       sources: architectureHeroAssets.light
     }
