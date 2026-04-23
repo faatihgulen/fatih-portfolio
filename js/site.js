@@ -2158,6 +2158,7 @@ let storyPreviewActive = false;
 let projectStoryTrackScrollFrame = 0;
 let projectStoryTrackIgnoreScroll = false;
 let projectStoryTrackReleaseTimer = 0;
+let projectEmbedObserver = null;
 const preferredImageCache = new Map();
 const preferredImagePending = new Map();
 let imageLightboxSources = [];
@@ -2352,7 +2353,7 @@ function buildPreferredCandidates(src) {
   const base = m[1];
   const ext = m[2].toLowerCase();
   const query = m[3] || '';
-  if (ext === 'webp' || ext === 'gif') return [clean];
+  if (ext === 'webp' || ext === 'gif' || ext === 'mp4' || ext === 'webm' || ext === 'mov') return [clean];
   return [
     `${base}.webp${query}`,
     clean
@@ -2424,9 +2425,9 @@ function normalizeGalleryEntry(entry) {
 
 const galleryConfig = {
   p01: [
-    'images/UI/AERONIX/1230.mp4',
-    'images/UI/AERONIX/Charge.webp',
     'images/UI/AERONIX/Drive.webp',
+    'images/UI/AERONIX/Charge.webp',
+    'images/UI/AERONIX/1230.mp4',
     'images/UI/AERONIX/1.webp',
     'images/UI/AERONIX/2.webp',
     'images/UI/AERONIX/fe022a73-4746-4b02-a481-e89392b3561b_rw_1920.png',
@@ -2834,7 +2835,7 @@ function renderProjectStorySection(p) {
   const itemsHtml = currentProjectGallery.map((img, i) => `
     <article class="pm-story-item ${i === currentProjectImageIndex ? 'active' : ''}" data-story-index="${i}" onclick="setProjectImage(${i})">
       ${isVideoMedia(img)
-        ? `<video class="pm-story-media pm-story-video" src="${img}" muted loop autoplay playsinline preload="metadata" onclick="event.stopPropagation(); openImageLightbox(this.currentSrc || this.src)"></video>`
+        ? `<div class="pm-story-media pm-story-video-thumb" role="img" aria-label="${p.title + ' video ' + (i + 1)}"><span class="pm-video-thumb-badge">Video</span><span class="pm-video-thumb-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 6.5v11l9-5.5-9-5.5z"></path></svg></span></div>`
         : `<img class="pm-story-media pm-story-image" src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' visual ' + (i + 1)}" loading="lazy" decoding="async" fetchpriority="low" onclick="event.stopPropagation(); openImageLightbox(this.getAttribute('data-base-src') || this.currentSrc || this.src)">`
       }
       ${currentProjectCaptions[img] ? `<div class="pm-story-caption">${currentProjectCaptions[img]}</div>` : ''}
@@ -2884,6 +2885,26 @@ function mountIframeEmbed(container, cfg) {
   container.appendChild(iframe);
 }
 
+function disconnectProjectEmbedObserver() {
+  if (!projectEmbedObserver) return;
+  projectEmbedObserver.disconnect();
+  projectEmbedObserver = null;
+}
+
+function renderProjectEmbedPlaceholder(host) {
+  if (!host) return;
+  host.innerHTML = '<div class="pm-embed-placeholder"><span class="pm-embed-placeholder-badge">Interactive Media</span></div>';
+}
+
+function mountProjectEmbedHost(host, cfg) {
+  if (!host || !cfg || host.dataset.embedMounted === 'true') return;
+  host.dataset.embedMounted = 'true';
+  host.classList.add('is-mounted');
+  if (cfg.type === 'kuula') mountKuulaEmbed(host, cfg);
+  if (cfg.type === 'iframe') mountIframeEmbed(host, cfg);
+  if (cfg.type === 'multi-iframe') mountMultiIframeEmbed(host, cfg);
+}
+
 function createEmbedIframe(cfg) {
   const iframe = document.createElement('iframe');
   iframe.width = cfg.width || '100%';
@@ -2918,13 +2939,37 @@ function mountMultiIframeEmbed(container, cfg) {
 }
 
 function mountProjectEmbeds(projectId) {
+  disconnectProjectEmbedObserver();
   const cfg = projectEmbeds[projectId];
   if (!cfg) return;
-  document.querySelectorAll(`[data-project-embed="${projectId}"]`).forEach((host) => {
-    if (cfg.type === 'kuula') mountKuulaEmbed(host, cfg);
-    if (cfg.type === 'iframe') mountIframeEmbed(host, cfg);
-    if (cfg.type === 'multi-iframe') mountMultiIframeEmbed(host, cfg);
+  const hosts = Array.from(document.querySelectorAll(`[data-project-embed="${projectId}"]`));
+  if (!hosts.length) return;
+
+  hosts.forEach((host) => {
+    host.dataset.embedMounted = 'false';
+    host.classList.remove('is-mounted');
+    renderProjectEmbedPlaceholder(host);
   });
+
+  if (typeof IntersectionObserver !== 'function') {
+    hosts.forEach((host) => mountProjectEmbedHost(host, cfg));
+    return;
+  }
+
+  const modalRoot = document.getElementById('projectModalContent');
+  projectEmbedObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      mountProjectEmbedHost(entry.target, cfg);
+      if (projectEmbedObserver) projectEmbedObserver.unobserve(entry.target);
+    });
+  }, {
+    root: modalRoot || null,
+    rootMargin: '120px 0px',
+    threshold: 0.12
+  });
+
+  hosts.forEach((host) => projectEmbedObserver.observe(host));
 }
 
 function prefetchImageAsset(src) {
@@ -2946,6 +2991,7 @@ function prefetchProjectCardImages(projectList, limit = 6) {
 function prefetchProjectMedia(project, limit = 3) {
   if (!project) return;
   getProjectGallery(project).slice(0, limit).forEach((src) => {
+    if (isVideoMedia(src)) return;
     prefetchImageAsset(getImmediatePreferredImage(src));
   });
 }
@@ -2998,6 +3044,7 @@ function openProject(projectId, options = {}) {
 function closeProject(options = {}) {
   closeProjectSummary();
   closeImageLightbox();
+  disconnectProjectEmbedObserver();
   projectStoryTrackIgnoreScroll = false;
   clearTimeout(projectStoryTrackReleaseTimer);
   if (projectStoryTrackScrollFrame) cancelAnimationFrame(projectStoryTrackScrollFrame);
@@ -3403,7 +3450,7 @@ function renderProjectModal(p) {
       ${currentProjectGallery.map((img, i) => `
         <button class="pm-gallery-thumb ${i === currentProjectImageIndex ? 'active' : ''}" onclick="setProjectImage(${i})">
           ${isVideoMedia(img)
-            ? `<video src="${img}" muted loop autoplay playsinline preload="metadata"></video>`
+            ? `<div class="pm-gallery-video-thumb" role="img" aria-label="${p.title + ' video ' + (i + 1)}"><span class="pm-video-thumb-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 6.5v11l9-5.5-9-5.5z"></path></svg></span><span class="pm-video-thumb-badge">Video</span></div>`
             : `<img src="${getImmediatePreferredImage(img)}" data-base-src="${img}" alt="${p.title + ' ' + (i + 1)}" loading="lazy" decoding="async" fetchpriority="low">`
           }
           ${currentProjectCaptions[img] ? `<div class="pm-gallery-caption">${currentProjectCaptions[img]}</div>` : ''}
@@ -4884,20 +4931,22 @@ function scheduleAiServiceStatusInit() {
     aiStatusBooted = true;
     initAiServiceStatus();
   };
-  const earlyBoot = () => {
+  const bootSelectors = '#chatInput, #submitBtn, .suggest-chip, .ai-followup-chip, #pmAiWizard';
+  const earlyBoot = (event) => {
+    const target = event && event.target && typeof event.target.closest === 'function'
+      ? event.target.closest(bootSelectors)
+      : null;
+    if (!target) return;
     window.removeEventListener('pointerdown', earlyBoot);
     window.removeEventListener('keydown', earlyBoot);
     window.removeEventListener('touchstart', earlyBoot);
+    document.removeEventListener('focusin', earlyBoot);
     boot();
   };
-  window.addEventListener('pointerdown', earlyBoot, { once: true, passive: true });
-  window.addEventListener('keydown', earlyBoot, { once: true });
-  window.addEventListener('touchstart', earlyBoot, { once: true, passive: true });
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(() => boot(), { timeout: 4000 });
-  } else {
-    window.setTimeout(() => boot(), 2500);
-  }
+  window.addEventListener('pointerdown', earlyBoot, { passive: true });
+  window.addEventListener('keydown', earlyBoot);
+  window.addEventListener('touchstart', earlyBoot, { passive: true });
+  document.addEventListener('focusin', earlyBoot);
 }
 
 function applyCategoryFilter(catId, options = {}) {
