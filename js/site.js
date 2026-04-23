@@ -910,13 +910,13 @@ function setVrHeroFrameReady(isReady) {
   const hasTransitionSnapshot = hasVrHeroTransitionSnapshot();
   vrHero.frameReady = Boolean(isReady);
   if (!vrHero.section) return;
-  const shouldShowcaseStayVisible = Boolean(vrHero.active && (vrHero.frameReady || hasTransitionSnapshot));
+  const shouldShowcaseStayVisible = Boolean(vrHero.active || hasTransitionSnapshot);
   vrHero.section.classList.toggle('vr-showcase-active', shouldShowcaseStayVisible);
   vrHero.section.classList.toggle('vr-showcase-pending', !vrHero.frameReady && vrHero.active && !hasTransitionSnapshot);
   if (vrHero.showcase) {
     vrHero.showcase.setAttribute('aria-hidden', shouldShowcaseStayVisible ? 'false' : 'true');
   }
-  if (!vrHero.frameReady && !hasTransitionSnapshot) {
+  if (!vrHero.active && !vrHero.frameReady && !hasTransitionSnapshot) {
     resetVrHeroScrollStyles();
   }
   if (!wasReady && vrHero.frameReady && hasTransitionSnapshot) {
@@ -1327,7 +1327,6 @@ function ensureVrHeroLayerReady(layer, options = {}) {
   const preserveVrArBehavior = Boolean(options.preserveVrArBehavior);
   const targetReadyState = eager ? 2 : 1;
   primeVrHeroVideo(layer.video);
-  ensureVrHeroMp4MaskReady(layer);
   layer.video.preload = preserveVrArBehavior ? 'auto' : (eager ? 'auto' : 'metadata');
   if (layer.video.readyState >= targetReadyState) {
     vrHeroDiagnostics.loadSkips += 1;
