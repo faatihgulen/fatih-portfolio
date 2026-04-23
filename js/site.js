@@ -184,10 +184,10 @@ const uiAiHeroMobileOverrides = {
 
 const spatialHeroMobileOverrides = {
   dark: {
-    mobileScaleBoost: 0.78,
+    mobileScaleBoost: 0.82,
     mobileSourceInset: 0,
     mobileDrawInset: 0,
-    mobileOffsetY: 40
+    mobileOffsetY: 30
   },
   light: {
     mobileScaleBoost: 0.78,
